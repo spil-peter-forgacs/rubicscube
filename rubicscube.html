@@ -264,10 +264,10 @@ function animateScene() {
     renderer.render(scene, camera);
     
     if (MOUSE_STATE_AXIS_X == mouseState) {
-        var rotateXtmp = ( targetRotationX - rotateX ) * 0.08;
+        var rotateXtmp = ( targetRotationX - rotateX ) * 0.2;
         rotateAroundWorldAxis(rubicsCube, xAxis, rotateXtmp);
         rotateX += rotateXtmp;
-        if (mouseUp && Math.abs(rotateXtmp) < 0.001) {
+        if (mouseUp && Math.abs(rotateXtmp) < 0.003) {
             mouseState = MOUSE_STATE_NULL;
             for (var i = 0; i < 100; i++) {
                 var rotateXtmp = ( targetRotationX - rotateX ) * 0.08;
@@ -277,10 +277,10 @@ function animateScene() {
         }
     }
     else if (MOUSE_STATE_AXIS_Y == mouseState) {
-        var rotateYtmp = ( targetRotationY - rotateY ) * 0.08;
+        var rotateYtmp = ( targetRotationY - rotateY ) * 0.2;
         rotateAroundWorldAxis(rubicsCube, yAxis, rotateYtmp);
         rotateY += rotateYtmp;
-        if (mouseUp && Math.abs(rotateYtmp) < 0.001) {
+        if (mouseUp && Math.abs(rotateYtmp) < 0.003) {
             mouseState = MOUSE_STATE_NULL;
             for (var i = 0; i < 100; i++) {
                 var rotateYtmp = ( targetRotationY - rotateY ) * 0.08;
@@ -290,10 +290,10 @@ function animateScene() {
         }
     }
     else if (MOUSE_STATE_AXIS_Z == mouseState) {
-        var rotateZtmp = ( targetRotationZ - rotateZ ) * 0.08;
+        var rotateZtmp = ( targetRotationZ - rotateZ ) * 0.2;
         rotateAroundWorldAxis(rubicsCube, zAxis, rotateZtmp);
         rotateZ += rotateZtmp;
-        if (mouseUp && Math.abs(rotateZtmp) < 0.001) {
+        if (mouseUp && Math.abs(rotateZtmp) < 0.003) {
             mouseState = MOUSE_STATE_NULL;
             for (var i = 0; i < 100; i++) {
                 var rotateZtmp = ( targetRotationZ - rotateZ ) * 0.08;

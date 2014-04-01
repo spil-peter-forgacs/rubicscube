@@ -28,6 +28,7 @@ var projector = new THREE.Projector();
 document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+document.addEventListener( 'touchend', onDocumentTouchEnd, false );
 
 function onDocumentMouseDown( event ) {
     event.preventDefault();
@@ -114,6 +115,8 @@ function onDocumentTouchStart( event ) {
     if ( event.touches.length === 1 ) {
         event.preventDefault();
         
+        mouseUp = false;
+        
         var intersects = getClickTargetObjects(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY);
         
         if ( intersects.length > 0 ) {
@@ -121,14 +124,13 @@ function onDocumentTouchStart( event ) {
             
             //intersects[ 0 ].object.position = {x: 5, y: 0, z: 0};
         }
-        else {
-            mouseState = MOUSE_STATE_NULL;
-            
-            mouseXOnMouseDown = event.touches[ 0 ].pageX - windowHalfX;
-            mouseYOnMouseDown = event.touches[ 0 ].pageY - windowHalfY;
-            
-            targetRotationYOnMouseDown = targetRotationY;
-        }
+        
+        mouseXOnMouseDown = event.touches[ 0 ].pageX - windowHalfX;
+        mouseYOnMouseDown = event.touches[ 0 ].pageY - windowHalfY;
+        
+        targetRotationXOnMouseDown = targetRotationX;
+        targetRotationYOnMouseDown = targetRotationY;
+        targetRotationZOnMouseDown = targetRotationZ;
     }
 }
 
@@ -136,13 +138,45 @@ function onDocumentTouchMove( event ) {
     if ( event.touches.length === 1 ) {
         event.preventDefault();
         
-        mouseX = event.touches[ 0 ].pageX - windowHalfX;
-        mouseY = event.touches[ 0 ].pageY - windowHalfX;
-        
-        targetRotationY = targetRotationYOnMouseDown + ( mouseX - mouseXOnMouseDown ) * 0.01;
-        
-        fixTargetRotationY();
+        if (MOUSE_STATE_CLICK == mouseState) {
+            // TODO
+        }
+        else {
+            mouseX = event.touches[ 0 ].pageX - windowHalfX;
+            mouseY = event.touches[ 0 ].pageY - windowHalfY;
+            
+            mouseXDelta = mouseX - mouseXOnMouseDown;
+            mouseYDelta = mouseY - mouseYOnMouseDown;
+            
+            if (MOUSE_STATE_NULL == mouseState && ((Math.abs(mouseXDelta) > 10 || Math.abs(mouseYDelta) > 10))) {
+                if (Math.abs(mouseXDelta) > Math.abs(mouseYDelta)) {
+                    mouseState = MOUSE_STATE_AXIS_Y;
+                }
+                else {
+                    mouseState = (mouseX < 0 ? MOUSE_STATE_AXIS_Z : MOUSE_STATE_AXIS_X);
+                }
+            }
+            
+            if (MOUSE_STATE_AXIS_X == mouseState) {
+                targetRotationX = targetRotationXOnMouseDown + mouseYDelta * 0.015;
+                fixTargetRotationX();
+            }
+            else if (MOUSE_STATE_AXIS_Y == mouseState) {
+                targetRotationY = targetRotationYOnMouseDown + mouseXDelta * 0.008;
+                fixTargetRotationY();
+            }
+            else if (MOUSE_STATE_AXIS_Z == mouseState) {
+                targetRotationZ = targetRotationZOnMouseDown + mouseYDelta * 0.015;
+                fixTargetRotationZ();
+            }
+        }
     }
+}
+
+function onDocumentTouchEnd( event ) {
+    event.preventDefault();
+        
+    mouseUp = true;
 }
 
 function fixTargetRotationX() {
