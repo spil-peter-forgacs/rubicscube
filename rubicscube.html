@@ -250,6 +250,14 @@ function rotateVector(vector) {
     return vector;
 }
 
+function rotateXYZ(targetRotation, rotate, axis) {
+    var rotatetmp = ( targetRotation - rotate ) * 0.08;
+    rotateAroundWorldAxis(rubicsCube, axis, rotatetmp);
+    rotate += rotatetmp;
+    
+    return rotatetmp;
+}
+
 function animateScene() {
     requestAnimationFrame(animateScene);
     
