@@ -33,7 +33,7 @@ var rubicsCube;
 var cubeMesh = [];
 var cubePage = [];
 var xAxis, yAxis, zAxis;
-var rotateY;
+var rotateX, rotateY, rotateZ;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -83,8 +83,12 @@ function initializeScene() {
     // Rotation
     rubicsCube.rotation.y = Math.PI / 4;
     rubicsCube.rotation.x = Math.PI / 4;
+    targetRotationX = 0;
+    rotateX = 0;
     targetRotationY = rubicsCube.rotation.y;
     rotateY = Math.PI / 4;
+    targetRotationZ = rubicsCube.rotation.z;
+    rotateZ = 0;
     xAxis = rotateVector(new THREE.Vector3(1, 0, 0));
     yAxis = rotateVector(new THREE.Vector3(0, 1, 0));
     zAxis = rotateVector(new THREE.Vector3(0, 0, 1));
@@ -249,19 +253,47 @@ function rotateVector(vector) {
 function animateScene() {
     requestAnimationFrame(animateScene);
     
+    renderer.render(scene, camera);
+    
     if (MOUSE_STATE_AXIS_X == mouseState) {
-        rotateAroundWorldAxis(rubicsCube, xAxis, Math.PI / 180);
+        var rotateXtmp = ( targetRotationX - rotateX ) * 0.08;
+        rotateAroundWorldAxis(rubicsCube, xAxis, rotateXtmp);
+        rotateX += rotateXtmp;
+        if (mouseUp && Math.abs(rotateXtmp) < 0.001) {
+            mouseState = MOUSE_STATE_NULL;
+            for (var i = 0; i < 100; i++) {
+                var rotateXtmp = ( targetRotationX - rotateX ) * 0.08;
+                rotateAroundWorldAxis(rubicsCube, xAxis, rotateXtmp);
+                rotateX += rotateXtmp;
+            }
+        }
     }
     else if (MOUSE_STATE_AXIS_Y == mouseState) {
-        var rotateYtmp = ( targetRotationY - rotateY ) * 0.05;
+        var rotateYtmp = ( targetRotationY - rotateY ) * 0.08;
         rotateAroundWorldAxis(rubicsCube, yAxis, rotateYtmp);
         rotateY += rotateYtmp;
+        if (mouseUp && Math.abs(rotateYtmp) < 0.001) {
+            mouseState = MOUSE_STATE_NULL;
+            for (var i = 0; i < 100; i++) {
+                var rotateYtmp = ( targetRotationY - rotateY ) * 0.08;
+                rotateAroundWorldAxis(rubicsCube, yAxis, rotateYtmp);
+                rotateY += rotateYtmp;
+            }
+        }
     }
     else if (MOUSE_STATE_AXIS_Z == mouseState) {
-        rotateAroundWorldAxis(rubicsCube, zAxis, Math.PI / 180);
+        var rotateZtmp = ( targetRotationZ - rotateZ ) * 0.08;
+        rotateAroundWorldAxis(rubicsCube, zAxis, rotateZtmp);
+        rotateZ += rotateZtmp;
+        if (mouseUp && Math.abs(rotateZtmp) < 0.001) {
+            mouseState = MOUSE_STATE_NULL;
+            for (var i = 0; i < 100; i++) {
+                var rotateZtmp = ( targetRotationZ - rotateZ ) * 0.08;
+                rotateAroundWorldAxis(rubicsCube, zAxis, rotateZtmp);
+                rotateZ += rotateZtmp;
+            }
+        }
     }
-    
-    renderer.render(scene, camera);
 }
 
 function moveCubePage(degree) {
