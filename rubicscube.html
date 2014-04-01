@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<!-- The previous line tells the browser, that the page uses the HTML5 standard. -->
+
+<html>
+<head>
+    <title>Rubic's cube</title>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    
+    <!-- The following meta line optimizes the site for mobile devices. It sets the viewport size
+    to the screen size, so it will be displayed maximized, but unscaled. -->
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+    <style type="text/css">
+        body {
+            /* Set the background color of the HTML page to black. */
+            background-color: #000000;
+            /* Hide oversized content. This prevents the scroll bars. */
+            overflow: hidden;
+        }
+    </style>
+    <!-- Include libraries.
+    1. Three.js (core library)
+    2. Detector.js (checks the browsers WebGL capabilities) -->
+    <script src="js/three.min.js"></script>
+    <script src="js/detector.js"></script>
+    <script src="js/mouse.js"></script>
+</head>
+<body>
+<script>
+// Global objects.
+var scene, camera, renderer;
+var geometry, material, mesh;
+var rubicsCube;
+var cubeMesh = [];
+var cubePage = [];
+
+var windowHalfX = window.innerWidth / 2;
+var windowHalfY = window.innerHeight / 2;
+
+window.addEventListener( 'resize', onWindowResize, false );
+
+initializeScene();
+animateScene();
+
+function initializeScene() {
+    // Setup renderer.
+    if(Detector.webgl) {
+        renderer = new THREE.WebGLRenderer({antialias:true});
+    }
+    else {
+        renderer = new THREE.CanvasRenderer();
+    }
+    
+    // Set the background color of the renderer to black, with full opacity.
+    renderer.setClearColor(0x000000, 1);
+    
+    // Get the size of the inner window (content area) to create a full size renderer.
+    canvasWidth = window.innerWidth;
+    canvasHeight = window.innerHeight;
+    
+    // Set the renderers size to the content areas size.
+    renderer.setSize(canvasWidth, canvasHeight);
+    
+    // Append the renderers DOM.
+    document.body.style.margin = 0;
+    document.body.style.overflow = 'hidden';
+    document.body.appendChild(renderer.domElement);
+    
+    
+    // Create the scene, in which all objects are stored (e. g. camera, lights, geometries, ...).
+    scene = new THREE.Scene();
+    
+    var aspect = canvasWidth / canvasHeight;
+    camera = new THREE.PerspectiveCamera(45, aspect, 1, 100);
+    camera.position.set(0, 0, 10);
+    scene.add(camera);
+    
+    // The Rubic's cube.
+    rubicsCube = new THREE.Object3D();
+    scene.add(rubicsCube);
+    rubicsCube.rotation.y = Math.PI / 4;
+    rubicsCube.rotation.x = Math.PI / 4;
+    targetRotation = rubicsCube.rotation.y;
+    
+    // Pages.
+    var shape = new THREE.PlaneGeometry(3, 3);
+    var materials = [
+        new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.4 } )
+    ];
+    //var cover = new THREE.MeshNormalMaterial();
+    var cover = new THREE.MeshFaceMaterial( materials );
+    var i = 0;
+    cubePage[i] = new THREE.Mesh(shape, cover);
+    rubicsCube.add(cubePage[i]);
+    cubePage[i].position.set(0, 0, 1.6);
+    i++;
+    cubePage[i] = new THREE.Mesh(shape, cover);
+    rubicsCube.add(cubePage[i]);
+    cubePage[i].rotation.x = Math.PI;
+    cubePage[i].position.set(0, 0, -1.6);
+    i++;
+    cubePage[i] = new THREE.Mesh(shape, cover);
+    rubicsCube.add(cubePage[i]);
+    cubePage[i].rotation.x = -Math.PI / 2;
+    cubePage[i].position.set(0, 1.6, 0);
+    i++;
+    cubePage[i] = new THREE.Mesh(shape, cover);
+    rubicsCube.add(cubePage[i]);
+    cubePage[i].rotation.x = Math.PI / 2;
+    cubePage[i].position.set(0, -1.6, 0);
+    i++;
+    cubePage[i] = new THREE.Mesh(shape, cover);
+    rubicsCube.add(cubePage[i]);
+    cubePage[i].rotation.y = Math.PI / 2;
+    cubePage[i].position.set(1.6, 0, 0);
+    i++;
+    cubePage[i] = new THREE.Mesh(shape, cover);
+    rubicsCube.add(cubePage[i]);
+    cubePage[i].rotation.y = -Math.PI / 2;
+    cubePage[i].position.set(-1.6, 0, 0);
+    
+    // Create the cube.
+    // When the CanvasRenderer is used, the texture has some distortions.
+    // To get rid of this, you only have to increase the number of cube segments.
+    // The WebGLRenderer doesn't needs this workaround.
+    // Original: var cubeGeometry = new THREE.CubeGeometry(2.0, 2.0, 2.0);
+    var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 4, 4, 4);
+    // Load images as textures.
+    var cubeTexture = [
+        new THREE.ImageUtils.loadTexture("pics/green.jpg"),
+        new THREE.ImageUtils.loadTexture("pics/blue.jpg"),
+        new THREE.ImageUtils.loadTexture("pics/yellow.jpg"),
+        new THREE.ImageUtils.loadTexture("pics/white.jpg"),
+        new THREE.ImageUtils.loadTexture("pics/red.jpg"),
+        new THREE.ImageUtils.loadTexture("pics/orange.jpg"),
+    ];
+    
+    // Cube colors: yellow, blue, red, green, orange, white
+    // Color order:
+    //  y   (Top)
+    // brgo (Side)
+    //  w   (Bottom)
+    
+    // Define six texture materials.
+    var cubeMaterials = [
+        // Example for color.
+        //new THREE.MeshBasicMaterial({color:0x000000}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[0]}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[1]}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[2]}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[3]}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[4]}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
+        /*
+        new THREE.MeshBasicMaterial({map:cubeTexture[0], side:THREE.DoubleSide}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[1], side:THREE.DoubleSide}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[2], side:THREE.DoubleSide}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[3], side:THREE.DoubleSide}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[4], side:THREE.DoubleSide}),
+        new THREE.MeshBasicMaterial({map:cubeTexture[5], side:THREE.DoubleSide}),
+        */
+    ];
+    for (var i = -1; i <= 1; i++) {
+        cubeMesh[i] = [];
+        for (var j = -1; j <= 1; j++) {
+            cubeMesh[i][j] = [];
+            for (var k = -1; k <= 1; k++) {
+                var cubeMaterialsPiece = cubeMaterials;
+                
+                // TODO Make the non visible sides black.
+                
+                // Create a MeshFaceMaterial, which allows the cube to have different materials on each face.
+                var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterialsPiece);
+                
+                cubeMesh[i][j][k] = new THREE.Mesh(cubeGeometry, cubeMaterial);
+                cubeMesh[i][j][k].position.set(i, j, k);
+                rubicsCube.add(cubeMesh[i][j][k]);
+                
+            }
+        }
+    }
+    //cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    //cubeMesh.position.set(0.0, 0.0, 0.0);
+    //rubicsCube.add(cubeMesh);
+}
+
+function onWindowResize() {
+    windowHalfX = window.innerWidth / 2;
+    windowHalfY = window.innerHeight / 2;
+    
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    
+    renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+function animateScene() {
+    requestAnimationFrame(animateScene);
+    
+    //rubicsCube.rotateOnAxis(new THREE.Vector3(1, 1, 1).normalize(), 0.025);
+    rubicsCube.rotation.y += ( targetRotation - rubicsCube.rotation.y ) * 0.05;
+    
+    renderer.render(scene, camera);
+}
+
+function moveCubePage(degree) {
+}
+</script>
+</body>
+</html>
