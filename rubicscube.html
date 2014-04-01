@@ -33,6 +33,7 @@ var rubicsCube;
 var cubeMesh = [];
 var cubePage = [];
 var xAxis, yAxis, zAxis;
+var rotateY;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -82,7 +83,8 @@ function initializeScene() {
     // Rotation
     rubicsCube.rotation.y = Math.PI / 4;
     rubicsCube.rotation.x = Math.PI / 4;
-    targetRotation = rubicsCube.rotation.y;
+    targetRotationY = rubicsCube.rotation.y;
+    rotateY = Math.PI / 4;
     xAxis = rotateVector(new THREE.Vector3(1, 0, 0));
     yAxis = rotateVector(new THREE.Vector3(0, 1, 0));
     zAxis = rotateVector(new THREE.Vector3(0, 0, 1));
@@ -249,16 +251,14 @@ function animateScene() {
     
     if (MOUSE_STATE_AXIS_X == mouseState) {
         rotateAroundWorldAxis(rubicsCube, xAxis, Math.PI / 180);
-//        rubicsCube.rotation.x += ( targetRotation - rubicsCube.rotation.x ) * 0.05;
     }
     else if (MOUSE_STATE_AXIS_Y == mouseState) {
-    	console.warn('z', targetRotation, rubicsCube.rotation.y);
-        rotateAroundWorldAxis(rubicsCube, yAxis, Math.PI / 180);
-//        rubicsCube.rotation.y += ( targetRotation - rubicsCube.rotation.y ) * 0.05;
+        var rotateYtmp = ( targetRotationY - rotateY ) * 0.05;
+        rotateAroundWorldAxis(rubicsCube, yAxis, rotateYtmp);
+        rotateY += rotateYtmp;
     }
     else if (MOUSE_STATE_AXIS_Z == mouseState) {
         rotateAroundWorldAxis(rubicsCube, zAxis, Math.PI / 180);
-//        rubicsCube.rotation.z += ( targetRotation - rubicsCube.rotation.z ) * 0.05;
     }
     
     renderer.render(scene, camera);
