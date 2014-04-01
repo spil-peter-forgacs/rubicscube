@@ -32,6 +32,7 @@ var geometry, material, mesh;
 var rubicsCube;
 var cubeMesh = [];
 var cubePage = [];
+var xAxis, yAxis, zAxis;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -77,14 +78,19 @@ function initializeScene() {
     // The Rubic's cube.
     rubicsCube = new THREE.Object3D();
     scene.add(rubicsCube);
+    
+    // Rotation
     rubicsCube.rotation.y = Math.PI / 4;
     rubicsCube.rotation.x = Math.PI / 4;
     targetRotation = rubicsCube.rotation.y;
+    xAxis = rotateVector(new THREE.Vector3(1, 0, 0));
+    yAxis = rotateVector(new THREE.Vector3(0, 1, 0));
+    zAxis = rotateVector(new THREE.Vector3(0, 0, 1));
     
     // Pages.
     var shape = new THREE.PlaneGeometry(3, 3);
     var materials = [
-        new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.4 } )
+        new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.0 } )
     ];
     //var cover = new THREE.MeshNormalMaterial();
     var cover = new THREE.MeshFaceMaterial( materials );
@@ -150,14 +156,7 @@ function initializeScene() {
         new THREE.MeshBasicMaterial({map:cubeTexture[3]}),
         new THREE.MeshBasicMaterial({map:cubeTexture[4]}),
         new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
-        /*
-        new THREE.MeshBasicMaterial({map:cubeTexture[0], side:THREE.DoubleSide}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[1], side:THREE.DoubleSide}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[2], side:THREE.DoubleSide}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[3], side:THREE.DoubleSide}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[4], side:THREE.DoubleSide}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[5], side:THREE.DoubleSide}),
-        */
+        //new THREE.MeshBasicMaterial({map:cubeTexture[5], side:THREE.DoubleSide}),
     ];
     for (var i = -1; i <= 1; i++) {
         cubeMesh[i] = [];
@@ -193,11 +192,74 @@ function onWindowResize() {
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
+//Rotate an object around an arbitrary axis in object space
+var rotObjectMatrix;
+function rotateAroundObjectAxis(object, axis, radians) {
+    rotObjectMatrix = new THREE.Matrix4();
+    rotObjectMatrix.makeRotationAxis(axis.normalize(), radians);
+
+    // old code for Three.JS pre r54:
+    // object.matrix.multiplySelf(rotObjectMatrix);      // post-multiply
+    // new code for Three.JS r55+:
+    object.matrix.multiply(rotObjectMatrix);
+
+    // old code for Three.js pre r49:
+    // object.rotation.getRotationFromMatrix(object.matrix, object.scale);
+    // new code for Three.js r50+:
+    object.rotation.setFromRotationMatrix(object.matrix);
+}
+
+var rotWorldMatrix;
+// Rotate an object around an arbitrary axis in world space       
+function rotateAroundWorldAxis(object, axis, radians) {
+    rotWorldMatrix = new THREE.Matrix4();
+    rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
+
+    // old code for Three.JS pre r54:
+    //  rotWorldMatrix.multiply(object.matrix);
+    // new code for Three.JS r55+:
+    rotWorldMatrix.multiply(object.matrix);                // pre-multiply
+
+    object.matrix = rotWorldMatrix;
+
+    // old code for Three.js pre r49:
+    // object.rotation.getRotationFromMatrix(object.matrix, object.scale);
+    // old code for Three.js pre r59:
+    // object.rotation.setEulerFromRotationMatrix(object.matrix);
+    // code for r59+:
+    object.rotation.setFromRotationMatrix(object.matrix);
+}
+
+function rotateVector(vector) {
+    var axis = new THREE.Vector3( 0, 1, 0 );
+    var angle = Math.PI / 4;
+    var matrix = new THREE.Matrix4().makeRotationAxis( axis, angle );
+    vector.applyMatrix4( matrix );
+    
+    var axis = new THREE.Vector3( 1, 0, 0 );
+    var angle = Math.PI / 4;
+    var matrix = new THREE.Matrix4().makeRotationAxis( axis, angle );
+    vector.applyMatrix4( matrix );
+    
+    return vector;
+}
+
 function animateScene() {
     requestAnimationFrame(animateScene);
     
-    //rubicsCube.rotateOnAxis(new THREE.Vector3(1, 1, 1).normalize(), 0.025);
-    rubicsCube.rotation.y += ( targetRotation - rubicsCube.rotation.y ) * 0.05;
+    if (MOUSE_STATE_AXIS_X == mouseState) {
+        rotateAroundWorldAxis(rubicsCube, xAxis, Math.PI / 180);
+//        rubicsCube.rotation.x += ( targetRotation - rubicsCube.rotation.x ) * 0.05;
+    }
+    else if (MOUSE_STATE_AXIS_Y == mouseState) {
+    	console.warn('z', targetRotation, rubicsCube.rotation.y);
+        rotateAroundWorldAxis(rubicsCube, yAxis, Math.PI / 180);
+//        rubicsCube.rotation.y += ( targetRotation - rubicsCube.rotation.y ) * 0.05;
+    }
+    else if (MOUSE_STATE_AXIS_Z == mouseState) {
+        rotateAroundWorldAxis(rubicsCube, zAxis, Math.PI / 180);
+//        rubicsCube.rotation.z += ( targetRotation - rubicsCube.rotation.z ) * 0.05;
+    }
     
     renderer.render(scene, camera);
 }
