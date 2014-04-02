@@ -4,6 +4,7 @@ var MOUSE_STATE_AXIS_Y = 11;
 var MOUSE_STATE_AXIS_Z = 12;
 var MOUSE_STATE_CLICK = 20;
 var MOUSE_STATE_CLICK_CAPTURED = 21;
+var MOUSE_STATE_RELEASED = 22;
 var mouseState = MOUSE_STATE_NULL;
 
 var targetRotationX = 0;
@@ -36,6 +37,10 @@ function onDocumentMouseDown( event ) {
     event.preventDefault();
     
     mouseUp = false;
+    
+    if (MOUSE_STATE_RELEASED == mouseState) {
+    	mouseState = MOUSE_STATE_NULL;
+    }
     
     var intersects = getClickTargetObjects(event.clientX, event.clientY);
     
@@ -78,20 +83,21 @@ function onDocumentMouseMove( event ) {
             if (found >= 0) {
                 console.warn('x', clickedObjects[ 1 ].object.position, clickedObjects[ 0 ].object.position, intersects[ 0 ].object.position);
                 
-                var x = clickedObjects[ 1 ].object.position.x;
-                var y = clickedObjects[ 1 ].object.position.y;
-                var z = clickedObjects[ 1 ].object.position.z;
+                mouseState = MOUSE_STATE_CLICK_CAPTURED;
+                
+                var point = clickedObjects[ 0 ].point;
                 var x1 = clickedObjects[ 0 ].object.position.x;
                 var y1 = clickedObjects[ 0 ].object.position.y;
                 var z1 = clickedObjects[ 0 ].object.position.z;
                 var x2 = intersects[ 0 ].object.position.x;
                 var y2 = intersects[ 0 ].object.position.y;
                 var z2 = intersects[ 0 ].object.position.z;
-                rotatePage(x, y, z, x1, y1, z1, x2, y2, z2);
-                
-                mouseState = MOUSE_STATE_CLICK_CAPTURED;
+                rotatePage(point, x1, y1, z1, x2, y2, z2);
             }
         }
+    }
+    else if (MOUSE_STATE_CLICK_CAPTURED == mouseState) {
+        // Do nothing.
     }
     else {
         mouseX = event.clientX - windowHalfX;

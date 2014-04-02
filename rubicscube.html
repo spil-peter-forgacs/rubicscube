@@ -35,6 +35,7 @@ var cubeMesh = [];
 var cubePage = [];
 var xAxis, yAxis, zAxis;
 var rotateX, rotateY, rotateZ;
+var clickPoint;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -80,6 +81,10 @@ function initializeScene() {
     // The Rubic's cube.
     rubicsCube = new THREE.Object3D();
     scene.add(rubicsCube);
+    
+    // Click point for page rotation.
+    clickPoint = new THREE.Object3D();
+    scene.add(clickPoint);
     
     // Rotation
     rubicsCube.rotation.y = Math.PI / 4;
@@ -266,7 +271,7 @@ function rotateXYZ(targetRotation, rotate, axis) {
     return rotatetmp;
 }
 
-function rotatePage(x, y, z, x1, y1, z1, x2, y2, z2) {
+function rotatePage(point, x1, y1, z1, x2, y2, z2) {
     var xAxisLocal = new THREE.Vector3(1, 0, 0);
     var yAxisLocal = new THREE.Vector3(0, 1, 0);
     var zAxisLocal = new THREE.Vector3(0, 0, 1);
@@ -287,6 +292,10 @@ function rotatePage(x, y, z, x1, y1, z1, x2, y2, z2) {
         rotAngle = (Math.PI / 2) * (y1 > y2 ? 1 : -1);
     }
     
+    var x = 0;
+    var y = 0;
+    var z = 0;
+    
     var p = [];
     var pi = 0;
     for (p[0] = -1; p[0] <= 1; p[0]++) {
@@ -298,9 +307,8 @@ function rotatePage(x, y, z, x1, y1, z1, x2, y2, z2) {
             rotateAroundObjectAxis(rubicsPage[xi][yi][zi], axisLocal, rotAngle);
         }
     }
-    //rotateAroundObjectAxis(rubicsPage[-1][1][1], xAxisLocal, rotAngle);
-    //rotateAroundObjectAxis(rubicsPage[-1][1][0], xAxisLocal, rotAngle);
-    //rotateAroundObjectAxis(rubicsPage[-1][0][0], xAxisLocal, rotAngle);
+    
+    mouseState = MOUSE_STATE_RELEASED;
 }
 
 function animateScene() {
