@@ -3,6 +3,7 @@ var MOUSE_STATE_AXIS_X = 10;
 var MOUSE_STATE_AXIS_Y = 11;
 var MOUSE_STATE_AXIS_Z = 12;
 var MOUSE_STATE_CLICK = 20;
+var MOUSE_STATE_CLICK_CAPTURED = 21;
 var mouseState = MOUSE_STATE_NULL;
 
 var targetRotationX = 0;
@@ -24,6 +25,7 @@ var mouseUp = true;
 var piHalf = (Math.PI / 2);
 
 var projector = new THREE.Projector();
+var clickedObjects;
 
 document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 document.addEventListener( 'touchstart', onDocumentTouchStart, false );
@@ -37,15 +39,18 @@ function onDocumentMouseDown( event ) {
     
     var intersects = getClickTargetObjects(event.clientX, event.clientY);
     
-    if ( intersects.length > 0 ) {
-        mouseState = MOUSE_STATE_CLICK;
-        
-        // TODO
-        
-        //intersects[ 0 ].object.position = {x: 5, y: 0, z: 0};
-        //intersects[ 0 ].object.rotation.y = Math.PI / 2;
-        //console.warn('x', intersects, intersects[ 0 ].object, event.clientX, event.clientY, intersects[ 0 ].object.position);
-        //console.warn('x', intersects[ 0 ].object.position, event.clientX, event.clientY);
+    if ( intersects.length > 1 ) {
+        var found = -1;
+        for (var i = 0; i < cubePage.length; i++) {
+            if (cubePage[i].id == intersects[ 0 ].object.id) {
+                found = i;
+            }
+        }
+        if (found >= 0) {
+            mouseState = MOUSE_STATE_CLICK;
+            
+            clickedObjects = intersects;
+        }
     }
     
     mouseXOnMouseDown = event.clientX - windowHalfX;
@@ -62,7 +67,21 @@ function onDocumentMouseDown( event ) {
 
 function onDocumentMouseMove( event ) {
     if (MOUSE_STATE_CLICK == mouseState) {
-        // TODO
+        var intersects = getClickTargetObjects(event.clientX, event.clientY);
+        if ( intersects.length > 0 && clickedObjects[ 0 ].object != intersects[ 0 ].object) {
+            var found = -1;
+            for (var i = 0; i < cubePage.length; i++) {
+                if (cubePage[i].id == intersects[ 0 ].object.id) {
+                    found = i;
+                }
+            }
+            if (found >= 0) {
+                console.warn('x', clickedObjects[ 1 ].object.position, clickedObjects[ 0 ].object.position, intersects[ 0 ].object.position);
+                rotatePage();
+                // TODO
+                mouseState = MOUSE_STATE_CLICK_CAPTURED;
+            }
+        }
     }
     else {
         mouseX = event.clientX - windowHalfX;
@@ -119,7 +138,7 @@ function onDocumentTouchStart( event ) {
         
         var intersects = getClickTargetObjects(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY);
         
-        if ( intersects.length > 0 ) {
+        if ( intersects.length > 1 ) {
             mouseState = MOUSE_STATE_CLICK;
             
             //intersects[ 0 ].object.position = {x: 5, y: 0, z: 0};
@@ -195,7 +214,17 @@ function getClickTargetObjects(eventX, eventY) {
     
     var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
     
-    var intersects = raycaster.intersectObjects( rubicsCube.children );
+    var children = [];
+    for (var i = 0; i < rubicsCube.children.length; i++) {
+        if (rubicsCube.children[i].children.length > 0) {
+            children.push(rubicsCube.children[i].children[0]);
+        }
+        else {
+            children.push(rubicsCube.children[i]);
+        }
+    }
+    
+    var intersects = raycaster.intersectObjects( children );
     
     return intersects;
 }

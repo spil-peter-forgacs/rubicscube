@@ -30,6 +30,7 @@
 var scene, camera, renderer;
 var geometry, material, mesh;
 var rubicsCube;
+var rubicsPage = [];
 var cubeMesh = [];
 var cubePage = [];
 var xAxis, yAxis, zAxis;
@@ -166,8 +167,10 @@ function initializeScene() {
     ];
     for (var i = -1; i <= 1; i++) {
         cubeMesh[i] = [];
+        rubicsPage[i] = [];
         for (var j = -1; j <= 1; j++) {
             cubeMesh[i][j] = [];
+            rubicsPage[i][j] = [];
             for (var k = -1; k <= 1; k++) {
                 var cubeMaterialsPiece = cubeMaterials;
                 
@@ -178,8 +181,13 @@ function initializeScene() {
                 
                 cubeMesh[i][j][k] = new THREE.Mesh(cubeGeometry, cubeMaterial);
                 cubeMesh[i][j][k].position.set(i, j, k);
-                rubicsCube.add(cubeMesh[i][j][k]);
                 
+                //rubicsCube.add(cubeMesh[i][j][k]);
+                
+                rubicsPage[i][j][k] = new THREE.Object3D();
+                rubicsCube.add(rubicsPage[i][j][k]);
+                
+                rubicsPage[i][j][k].add(cubeMesh[i][j][k]);
             }
         }
     }
@@ -256,6 +264,23 @@ function rotateXYZ(targetRotation, rotate, axis) {
     rotate += rotatetmp;
     
     return rotatetmp;
+}
+
+function rotatePage() {
+    var xAxisLocal = new THREE.Vector3(1, 0, 0);
+    var yAxisLocal = new THREE.Vector3(0, 1, 0);
+    var zAxisLocal = new THREE.Vector3(0, 0, 1);
+    
+    rotAngle = Math.PI / 2;
+    
+    for (var p = -1; p <= 1; p++) {
+        for (var q = -1; q <= 1; q++) {
+            rotateAroundObjectAxis(rubicsPage[-1][p][q], xAxisLocal, rotAngle);
+        }
+    }
+    //rotateAroundObjectAxis(rubicsPage[-1][1][1], xAxisLocal, rotAngle);
+    //rotateAroundObjectAxis(rubicsPage[-1][1][0], xAxisLocal, rotAngle);
+    //rotateAroundObjectAxis(rubicsPage[-1][0][0], xAxisLocal, rotAngle);
 }
 
 function animateScene() {
