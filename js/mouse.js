@@ -96,7 +96,7 @@ function onDocumentMouseMove( event ) {
             }
         }
     }
-    else if (MOUSE_STATE_CLICK_CAPTURED == mouseState) {
+    else if (MOUSE_STATE_CLICK_CAPTURED == mouseState || MOUSE_STATE_RELEASED == mouseState) {
         // Do nothing.
     }
     else {
