@@ -266,16 +266,36 @@ function rotateXYZ(targetRotation, rotate, axis) {
     return rotatetmp;
 }
 
-function rotatePage() {
+function rotatePage(x, y, z, x1, y1, z1, x2, y2, z2) {
     var xAxisLocal = new THREE.Vector3(1, 0, 0);
     var yAxisLocal = new THREE.Vector3(0, 1, 0);
     var zAxisLocal = new THREE.Vector3(0, 0, 1);
     
-    rotAngle = Math.PI / 2;
+    var rotAngle;
     
-    for (var p = -1; p <= 1; p++) {
-        for (var q = -1; q <= 1; q++) {
-            rotateAroundObjectAxis(rubicsPage[-1][p][q], xAxisLocal, rotAngle);
+    var axisLocal;
+    if (x1 == x2) {
+        axisLocal = xAxisLocal;
+        rotAngle = (Math.PI / 2) * (y1 > y2 ? 1 : -1);
+    }
+    else if (y1 == y2) {
+        axisLocal = yAxisLocal;
+        rotAngle = (Math.PI / 2) * (z1 < z2 ? 1 : -1);
+    }
+    else {
+        axisLocal = zAxisLocal;
+        rotAngle = (Math.PI / 2) * (y1 > y2 ? 1 : -1);
+    }
+    
+    var p = [];
+    var pi = 0;
+    for (p[0] = -1; p[0] <= 1; p[0]++) {
+        for (p[1] = -1; p[1] <= 1; p[1]++) {
+            pi = 0;
+            var xi = (x1 == x2 ? x : p[pi++]);
+            var yi = (y1 == y2 ? y : p[pi++]);
+            var zi = (z1 == z2 ? z : p[pi++]);
+            rotateAroundObjectAxis(rubicsPage[xi][yi][zi], axisLocal, rotAngle);
         }
     }
     //rotateAroundObjectAxis(rubicsPage[-1][1][1], xAxisLocal, rotAngle);
