@@ -191,6 +191,8 @@ function initializeScene() {
                 
                 rubicsPage[i][j][k] = new THREE.Object3D();
                 rubicsCube.add(rubicsPage[i][j][k]);
+                // Name it.
+                rubicsPage[i][j][k].name = i + ',' + j + ',' + k;
                 
                 rubicsPage[i][j][k].add(cubeMesh[i][j][k]);
             }
@@ -280,21 +282,28 @@ function rotatePage(point, x1, y1, z1, x2, y2, z2) {
     
     var axisLocal;
     if (x1 == x2) {
+        console.warn('xAxis');
         axisLocal = xAxisLocal;
         rotAngle = (Math.PI / 2) * (y1 > y2 ? 1 : -1);
     }
     else if (y1 == y2) {
+        console.warn('yAxis');
         axisLocal = yAxisLocal;
         rotAngle = (Math.PI / 2) * (z1 < z2 ? 1 : -1);
     }
-    else {
+    else if (z1 == z2) {
+        console.warn('zAxis');
         axisLocal = zAxisLocal;
         rotAngle = (Math.PI / 2) * (y1 > y2 ? 1 : -1);
     }
+    else {
+        console.warn('Exception');
+    }
     
-    var x = 0;
-    var y = 0;
-    var z = 0;
+    console.warn(point);
+    var x =  1 * (Math.floor(Math.abs(point.x) / 0.7) - 1);
+    var y = -1 * (Math.floor(Math.abs(point.y) / 0.7) - 1);
+    var z = -1 * (Math.floor(Math.abs(point.x) / 0.7) - 1);
     
     var p = [];
     var pi = 0;
@@ -304,11 +313,170 @@ function rotatePage(point, x1, y1, z1, x2, y2, z2) {
             var xi = (x1 == x2 ? x : p[pi++]);
             var yi = (y1 == y2 ? y : p[pi++]);
             var zi = (z1 == z2 ? z : p[pi++]);
-            rotateAroundObjectAxis(rubicsPage[xi][yi][zi], axisLocal, rotAngle);
+            rotateAroundWorldAxis(rubicsPage[xi][yi][zi], axisLocal, rotAngle);
+            console.warn('rotate', xi, yi, zi, rubicsPage[xi][yi][zi].name, rotAngle);
         }
+    }
+    console.warn('-----------');
+    
+    logCube();
+    if (x1 == x2) {
+        movePageX(-rotAngle, x);
+        console.warn('xxx');
+        logCube();
+    }
+    else if (y1 == y2) {
+        movePageY(rotAngle, y);
+        console.warn('yyy');
+        logCube();
+    }
+    else if (z1 == z2) {
+        movePageZ(-rotAngle, z);
+        console.warn('zzz');
+        logCube();
     }
     
     mouseState = MOUSE_STATE_RELEASED;
+}
+
+function logCube() {
+    for (var i = -1; i <= 1; i++) {
+        for (var j = -1; j <= 1; j++) {
+            for (var k = -1; k <= 1; k++) {
+                console.warn('logcube', i, j, k, rubicsPage[i][j][k].name);
+            }
+        }
+    }
+    console.warn('-----------');
+}
+
+function moveMiddleX(direction, i) {
+    var tmp = rubicsPage[i][0][1];
+    if (direction > 0) {
+        rubicsPage[i][0][1] = rubicsPage[i][-1][0];
+        rubicsPage[i][-1][0] = rubicsPage[i][0][-1];
+        rubicsPage[i][0][-1] = rubicsPage[i][1][0];
+        rubicsPage[i][1][0] = tmp;
+    }
+    else {
+        rubicsPage[i][0][1] = rubicsPage[i][1][0];
+        rubicsPage[i][1][0] = rubicsPage[i][0][-1];
+        rubicsPage[i][0][-1] = rubicsPage[i][-1][0];
+        rubicsPage[i][-1][0] = tmp;
+    }
+}
+
+function moveMiddleY(direction, i) {
+    var tmp = rubicsPage[0][i][1];
+    if (direction > 0) {
+        rubicsPage[0][i][1] = rubicsPage[-1][i][0];
+        rubicsPage[-1][i][0] = rubicsPage[0][i][-1];
+        rubicsPage[0][i][-1] = rubicsPage[1][i][0];
+        rubicsPage[1][i][0] = tmp;
+    }
+    else {
+        rubicsPage[0][i][1] = rubicsPage[1][i][0];
+        rubicsPage[1][i][0] = rubicsPage[0][i][-1];
+        rubicsPage[0][i][-1] = rubicsPage[-1][i][0];
+        rubicsPage[-1][i][0] = tmp;
+    }
+}
+
+function moveMiddleZ(direction, i) {
+    var tmp = rubicsPage[0][1][i];
+    if (direction > 0) {
+        rubicsPage[0][1][i] = rubicsPage[-1][0][i];
+        rubicsPage[-1][0][i] = rubicsPage[0][-1][i];
+        rubicsPage[0][-1][i] = rubicsPage[1][0][i];
+        rubicsPage[1][0][i] = tmp;
+    }
+    else {
+        rubicsPage[0][1][i] = rubicsPage[1][0][i];
+        rubicsPage[1][0][i] = rubicsPage[0][-1][i];
+        rubicsPage[0][-1][i] = rubicsPage[-1][0][i];
+        rubicsPage[-1][0][i] = tmp;
+    }
+}
+
+function moveCornerX(direction, i) {
+    var tmp = rubicsPage[i][1][1];
+    if (direction > 0) {
+        rubicsPage[i][1][1] = rubicsPage[i][-1][1];
+        rubicsPage[i][-1][1] = rubicsPage[i][-1][-1];
+        rubicsPage[i][-1][-1] = rubicsPage[i][1][-1];
+        rubicsPage[i][1][-1] = tmp;
+    }
+    else {
+        rubicsPage[i][1][1] = rubicsPage[i][1][-1];
+        rubicsPage[i][1][-1] = rubicsPage[i][-1][-1];
+        rubicsPage[i][-1][-1] = rubicsPage[i][-1][1];
+        rubicsPage[i][-1][1] = tmp;
+    }
+}
+
+function moveCornerY(direction, i) {
+    var tmp = rubicsPage[1][i][1];
+    if (direction > 0) {
+        rubicsPage[1][i][1] = rubicsPage[-1][i][1];
+        rubicsPage[-1][i][1] = rubicsPage[-1][i][-1];
+        rubicsPage[-1][i][-1] = rubicsPage[1][i][-1];
+        rubicsPage[1][i][-1] = tmp;
+    }
+    else {
+        rubicsPage[1][i][1] = rubicsPage[1][i][-1];
+        rubicsPage[1][i][-1] = rubicsPage[-1][i][-1];
+        rubicsPage[-1][i][-1] = rubicsPage[-1][i][1];
+        rubicsPage[-1][i][1] = tmp;
+    }
+}
+
+function moveCornerZ(direction, i) {
+    var tmp = rubicsPage[1][1][i];
+    if (direction > 0) {
+        rubicsPage[1][1][i] = rubicsPage[-1][1][i];
+        rubicsPage[-1][1][i] = rubicsPage[-1][-1][i];
+        rubicsPage[-1][-1][i] = rubicsPage[1][-1][i];
+        rubicsPage[1][-1][i] = tmp;
+    }
+    else {
+        rubicsPage[1][1][i] = rubicsPage[1][-1][i];
+        rubicsPage[1][-1][i] = rubicsPage[-1][-1][i];
+        rubicsPage[-1][-1][i] = rubicsPage[-1][1][i];
+        rubicsPage[-1][1][i] = tmp;
+    }
+}
+
+function movePageX(direction, i) {
+  moveCornerX(direction, i);
+  moveMiddleX(direction, i);
+}
+
+function movePageY(direction, i) {
+  moveCornerY(direction, i);
+  moveMiddleY(direction, i);
+}
+
+function movePageZ(direction, i) {
+  moveCornerZ(direction, i);
+  moveMiddleZ(direction, i);
+}
+
+function movePageXAll(direction) {
+    for (var i = -1; i <= 1; i++) {
+        movePageX(direction, i);
+    }
+}
+
+function movePageYAll(direction) {
+    for (var i = -1; i <= 1; i++) {
+        movePageY(direction, i);
+    }
+}
+
+function movePageZAll(direction) {
+    for (var i = -1; i <= 1; i++) {
+        movePageZ(direction, i);
+    }
 }
 
 function animateScene() {
@@ -326,6 +494,8 @@ function animateScene() {
                 var rotateXtmp = ( targetRotationX - rotateX ) * 0.08;
                 rotateAroundWorldAxis(rubicsCube, xAxis, rotateXtmp);
                 rotateX += rotateXtmp;
+                
+                movePageXAll(rotateXtmp);
             }
         }
     }
@@ -339,6 +509,8 @@ function animateScene() {
                 var rotateYtmp = ( targetRotationY - rotateY ) * 0.08;
                 rotateAroundWorldAxis(rubicsCube, yAxis, rotateYtmp);
                 rotateY += rotateYtmp;
+                
+                movePageYAll(rotateXtmp);
             }
         }
     }
@@ -352,6 +524,8 @@ function animateScene() {
                 var rotateZtmp = ( targetRotationZ - rotateZ ) * 0.08;
                 rotateAroundWorldAxis(rubicsCube, zAxis, rotateZtmp);
                 rotateZ += rotateZtmp;
+                
+                movePageZAll(rotateXtmp);
             }
         }
     }
