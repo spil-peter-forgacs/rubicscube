@@ -7,21 +7,12 @@ var MOUSE_STATE_CLICK_CAPTURED = 21;
 var MOUSE_STATE_CLICK_RELEASED = 22;
 var mouseState = MOUSE_STATE_NULL;
 
-var targetRotationX = 0;
-var targetRotationXOnMouseDown = 0;
-var targetRotationY = 0;
-var targetRotationYOnMouseDown = 0;
-var targetRotationZ = 0;
-var targetRotationZOnMouseDown = 0;
-
 var mouseX = 0;
 var mouseY = 0;
 var mouseXOnMouseDown = 0;
 var mouseYOnMouseDown = 0;
 var mouseXDelta = 0;
 var mouseYDelta = 0;
-
-var mouseUp = true;
 
 var piHalf = (Math.PI / 2);
 
@@ -35,8 +26,6 @@ document.addEventListener( 'touchend', onDocumentTouchEnd, false );
 
 function onDocumentMouseDown( event ) {
     event.preventDefault();
-    
-    mouseUp = false;
     
     if (MOUSE_STATE_CLICK_RELEASED == mouseState) {
     	mouseState = MOUSE_STATE_NULL;
@@ -60,10 +49,6 @@ function onDocumentMouseDown( event ) {
     
     mouseXOnMouseDown = event.clientX - windowHalfX;
     mouseYOnMouseDown = event.clientY - windowHalfY;
-    
-    targetRotationXOnMouseDown = targetRotationX;
-    targetRotationYOnMouseDown = targetRotationY;
-    targetRotationZOnMouseDown = targetRotationZ;
     
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
     document.addEventListener( 'mouseup', onDocumentMouseUp, false );
@@ -153,16 +138,12 @@ function onDocumentMouseMove( event ) {
 }
 
 function onDocumentMouseUp( event ) {
-    mouseUp = true;
-    
     document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
     document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
     document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
 }
 
 function onDocumentMouseOut( event ) {
-    //mouseUp = true;
-    
     //document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
     //document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
     //document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
@@ -171,8 +152,6 @@ function onDocumentMouseOut( event ) {
 function onDocumentTouchStart( event ) {
     if ( event.touches.length === 1 ) {
         event.preventDefault();
-        
-        mouseUp = false;
         
         var intersects = getClickTargetObjects(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY);
         
@@ -184,10 +163,6 @@ function onDocumentTouchStart( event ) {
         
         mouseXOnMouseDown = event.touches[ 0 ].pageX - windowHalfX;
         mouseYOnMouseDown = event.touches[ 0 ].pageY - windowHalfY;
-        
-        targetRotationXOnMouseDown = targetRotationX;
-        targetRotationYOnMouseDown = targetRotationY;
-        targetRotationZOnMouseDown = targetRotationZ;
     }
 }
 
@@ -215,16 +190,10 @@ function onDocumentTouchMove( event ) {
             }
             
             if (MOUSE_STATE_AXIS_X == mouseState) {
-                targetRotationX = targetRotationXOnMouseDown + mouseYDelta * 0.015;
-                fixTargetRotationX();
             }
             else if (MOUSE_STATE_AXIS_Y == mouseState) {
-                targetRotationY = targetRotationYOnMouseDown + mouseXDelta * 0.008;
-                fixTargetRotationY();
             }
             else if (MOUSE_STATE_AXIS_Z == mouseState) {
-                targetRotationZ = targetRotationZOnMouseDown + mouseYDelta * 0.015;
-                fixTargetRotationZ();
             }
         }
     }
@@ -232,18 +201,6 @@ function onDocumentTouchMove( event ) {
 
 function onDocumentTouchEnd( event ) {
     event.preventDefault();
-        
-    mouseUp = true;
-}
-
-function fixTargetRotationX() {
-    targetRotationX = Math.floor(targetRotationX / piHalf) * piHalf;
-}
-function fixTargetRotationY() {
-    targetRotationY = Math.floor(targetRotationY / piHalf) * piHalf + (Math.PI / 4);
-}
-function fixTargetRotationZ() {
-    targetRotationZ = Math.floor(targetRotationZ / piHalf) * piHalf;
 }
 
 function getClickTargetObjects(eventX, eventY) {
