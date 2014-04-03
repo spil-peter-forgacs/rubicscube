@@ -29,20 +29,30 @@
 // Global objects.
 var scene, camera, renderer;
 var geometry, material;
+
+// Whole cube.
 var rubicsCube;
+// Container of small cubes.
 var rubicsPage = [];
+// Small cubes.
 var cubeMesh = [];
+// Pages around the cube.
+// Used for capturing the movements.
 var cubePage = [];
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
-window.addEventListener( 'resize', onWindowResize, false );
+window.addEventListener('resize', onWindowResize, false);
 
 initializeScene();
 animateScene();
 
 function initializeScene() {
+    //
+    // Basic staff.
+    //
+    
     // Setup renderer.
     if(Detector.webgl) {
         renderer = new THREE.WebGLRenderer({antialias:true});
@@ -75,6 +85,10 @@ function initializeScene() {
     camera.position.set(0, 0, 10);
     scene.add(camera);
     
+    //
+    // Rubic's cube.
+    //
+    
     // The Rubic's cube.
     rubicsCube = new THREE.Object3D();
     scene.add(rubicsCube);
@@ -88,7 +102,6 @@ function initializeScene() {
     var materials = [
         new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.0 } )
     ];
-    //var cover = new THREE.MeshNormalMaterial();
     var cover = new THREE.MeshFaceMaterial( materials );
     var i = 0;
     cubePage[i] = new THREE.Mesh(shape, cover);
@@ -145,14 +158,12 @@ function initializeScene() {
     // Define six texture materials.
     var cubeMaterials = [
         // Example for color.
-        //new THREE.MeshBasicMaterial({color:0x000000}),
         new THREE.MeshBasicMaterial({map:cubeTexture[0]}),
         new THREE.MeshBasicMaterial({map:cubeTexture[1]}),
         new THREE.MeshBasicMaterial({map:cubeTexture[2]}),
         new THREE.MeshBasicMaterial({map:cubeTexture[3]}),
         new THREE.MeshBasicMaterial({map:cubeTexture[4]}),
         new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
-        //new THREE.MeshBasicMaterial({map:cubeTexture[5], side:THREE.DoubleSide}),
     ];
     for (var i = -1; i <= 1; i++) {
         cubeMesh[i] = [];
@@ -167,17 +178,16 @@ function initializeScene() {
                 
                 // Create a MeshFaceMaterial, which allows the cube to have different materials on each face.
                 var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterialsPiece);
-                
                 cubeMesh[i][j][k] = new THREE.Mesh(cubeGeometry, cubeMaterial);
                 cubeMesh[i][j][k].position.set(i, j, k);
                 
-                //rubicsCube.add(cubeMesh[i][j][k]);
-                
+                // Containers.
                 rubicsPage[i][j][k] = new THREE.Object3D();
                 rubicsCube.add(rubicsPage[i][j][k]);
-                // Name it.
+                // Name it for debugging reason.
                 rubicsPage[i][j][k].name = i + ',' + j + ',' + k;
                 
+                // Add the small cubes to their container.
                 rubicsPage[i][j][k].add(cubeMesh[i][j][k]);
             }
         }
@@ -227,7 +237,6 @@ function rotatePage(mouseX, mouseY, x1, y1, z1, x2, y2, z2) {
     var zAxisLocal = new THREE.Vector3(0, 0, 1);
     
     var rotAngle;
-    
     var axisLocal;
     if (x1 == x2) {
         console.warn('xAxis');
@@ -248,6 +257,7 @@ function rotatePage(mouseX, mouseY, x1, y1, z1, x2, y2, z2) {
         console.warn('Exception');
     }
     
+    // Calculating the correct page.
     var windowHalfXY = (windowHalfX < windowHalfY ? windowHalfX : windowHalfY);
     var pointX = mouseX / windowHalfXY;
     var pointY = mouseY / windowHalfXY;
@@ -256,6 +266,7 @@ function rotatePage(mouseX, mouseY, x1, y1, z1, x2, y2, z2) {
     var y = -1 * (Math.floor(Math.abs(pointY) / 0.2) - 1);
     var z = -1 * (Math.floor(Math.abs(pointX) / 0.2) - 1);
     
+    // Moving visible.
     var p = [];
     var pi = 0;
     for (p[0] = -1; p[0] <= 1; p[0]++) {
@@ -265,31 +276,26 @@ function rotatePage(mouseX, mouseY, x1, y1, z1, x2, y2, z2) {
             var yi = (y1 == y2 ? y : p[pi++]);
             var zi = (z1 == z2 ? z : p[pi++]);
             rotateAroundWorldAxis(rubicsPage[xi][yi][zi], axisLocal, rotAngle);
-            //console.warn('rotate', xi, yi, zi, rubicsPage[xi][yi][zi].name, rotAngle);
         }
     }
-    //console.warn('-----------');
     
-    logCube();
+    // Moving virtual containers.
     if (x1 == x2) {
         movePageX(-rotAngle, x);
-        console.warn('xxx');
-        logCube();
     }
     else if (y1 == y2) {
         movePageY(rotAngle, y);
-        console.warn('yyy');
-        logCube();
     }
     else if (z1 == z2) {
         movePageZ(-rotAngle, z);
-        console.warn('zzz');
-        logCube();
     }
     
     mouseState = MOUSE_STATE_CLICK_RELEASED;
 }
 
+/**
+ * Logging, debugging.
+ */
 function logCube() {
     return;
     for (var i = -1; i <= 1; i++) {
