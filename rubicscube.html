@@ -28,7 +28,7 @@
 <script>
 // Global objects.
 var scene, camera, renderer;
-var geometry, material, mesh;
+var geometry, material;
 var rubicsCube;
 var rubicsPage = [];
 var cubeMesh = [];
@@ -496,92 +496,6 @@ function animateScene() {
     requestAnimationFrame(animateScene);
     
     renderer.render(scene, camera);
-    
-    if (MOUSE_STATE_AXIS_X == mouseState) {
-        var rotateXtmp = ( targetRotationX - rotateX ) * 0.2;
-        rotateAroundWorldAxis(rubicsCube, xAxis, rotateXtmp);
-        rotateX += rotateXtmp;
-        if (mouseUp && Math.abs(rotateXtmp) < 0.003) {
-            mouseState = MOUSE_STATE_NULL;
-            for (var i = 0; i < 100; i++) {
-                var rotateXtmp = ( targetRotationX - rotateX ) * 0.08;
-                rotateAroundWorldAxis(rubicsCube, xAxis, rotateXtmp);
-                rotateX += rotateXtmp;
-            }
-            
-            //logCube();
-            //movePageXAll(-rotateXtmp);
-            //logCube();
-            var rotateNumTmp = Math.round((rotateX - Math.PI / 4) / (Math.PI / 2)) % 4;
-            rotateNumTmp = Math.round((rotateNumTmp < 0 ? rotateNumTmp + 4 : rotateNumTmp));
-            console.warn('xxxxx', rotateNumX, rotateNumTmp, rotateX);
-            /*
-            while (rotateNumX != rotateNumTmp) {
-                var GlobalTmp = zGlobal;
-                zGlobal = -1 * yGlobal;
-                yGlobal = GlobalTmp;
-                rotateNumX = (rotateNumX + 1) % 4;
-            }
-            */
-        }
-    }
-    else if (MOUSE_STATE_AXIS_Y == mouseState) {
-        var rotateYtmp = ( targetRotationY - rotateY ) * 0.2;
-        rotateAroundWorldAxis(rubicsCube, yAxis, rotateYtmp);
-        rotateY += rotateYtmp;
-        if (mouseUp && Math.abs(rotateYtmp) < 0.003) {
-            mouseState = MOUSE_STATE_NULL;
-            for (var i = 0; i < 100; i++) {
-                var rotateYtmp = ( targetRotationY - rotateY ) * 0.08;
-                rotateAroundWorldAxis(rubicsCube, yAxis, rotateYtmp);
-                rotateY += rotateYtmp;
-            }
-            
-            //logCube();
-            //movePageYAll(rotateYtmp);
-            //logCube();
-            var rotateNumTmp = Math.round((rotateY - Math.PI / 4) / (Math.PI / 2)) % 4;
-            rotateNumTmp = (rotateNumTmp < 0 ? rotateNumTmp + 4 : rotateNumTmp);
-            console.warn('yyyyy', rotateNumY, rotateNumTmp, rotateY);
-            while (rotateNumY != rotateNumTmp) {
-                var GlobalTmp = xGlobal;
-                xGlobal = -1 * zGlobal;
-                zGlobal = GlobalTmp;
-                rotateNumY = (rotateNumY + 1) % 4;
-            }
-        }
-    }
-    else if (MOUSE_STATE_AXIS_Z == mouseState) {
-        var rotateZtmp = ( targetRotationZ - rotateZ ) * 0.2;
-        rotateAroundWorldAxis(rubicsCube, zAxis, rotateZtmp);
-        rotateZ += rotateZtmp;
-        if (mouseUp && Math.abs(rotateZtmp) < 0.003) {
-            mouseState = MOUSE_STATE_NULL;
-            for (var i = 0; i < 100; i++) {
-                var rotateZtmp = ( targetRotationZ - rotateZ ) * 0.08;
-                rotateAroundWorldAxis(rubicsCube, zAxis, rotateZtmp);
-                rotateZ += rotateZtmp;
-            }
-            
-            //logCube();
-            //movePageZAll(-rotateZtmp);
-            //logCube();
-            var rotateNumTmp = Math.round((rotateZ - Math.PI / 4) / (Math.PI / 2)) % 4;
-            rotateNumTmp = (rotateNumTmp < 0 ? rotateNumTmp + 4 : rotateNumTmp);
-            console.warn('zzzz', rotateNumZ, rotateNumTmp, rotateZ);
-            /*
-            while (rotateNumZ != rotateNumTmp) {
-                var GlobalTmp = yGlobal;
-                yGlobal = -1 * xGlobal;
-                xGlobal = GlobalTmp;
-                rotateNumZ = (rotateNumZ + 1) % 4;
-            }
-            */
-        }
-    }
-}
-
-function moveCubePage(degree) {
 }
 </script>
 </body>
