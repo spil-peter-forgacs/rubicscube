@@ -93,17 +93,44 @@ function moveWithMouse(mouseX, mouseY) {
                 var y2 = intersects[ 0 ].object.position.y;
                 var z2 = intersects[ 0 ].object.position.z;
                 
-                
-                // Calculating the correct page.
-                var windowHalfXY = (windowHalfX < windowHalfY ? windowHalfX : windowHalfY);
-                var pointX = mouseX / windowHalfXY;
-                var pointY = mouseY / windowHalfXY;
-                var x = 1 * (Math.floor(Math.abs(pointX) / 0.2) - 1);
-                var y = -1 * (Math.floor(Math.abs(pointY) / 0.2) - 1);
-                var z = -1 * (Math.floor(Math.abs(pointX) / 0.2) - 1);
-console.warn(pointX, pointY);
-                
-                rotatePage(x, y, z, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
+                if (clickedObjects.length > 1) {
+                    var x, y, z;
+                    
+                    var foundedCube;
+                    for (var q = 0; q < clickedObjects.length; q++) {
+                        for (var i = -1; i <= 1; i++) {
+                            if (rubicsPage[i][1][1].children[0] == clickedObjects[ q ].object) {
+                                foundedCube = q;
+                                console.warn('x', i);
+                                x = i; y = 1; z = 1;
+                            }
+                            else if (rubicsPage[-1][i][1].children[0] == clickedObjects[ q ].object) {
+                                foundedCube = q;
+                                console.warn('y', i);
+                                x = -1; y = i; z = 1;
+                            }
+                            else if (rubicsPage[-1][1][i].children[0] == clickedObjects[ q ].object) {
+                                foundedCube = q;
+                                console.warn('z', i);
+                                x = -1; y = 1; z = i;
+                            }
+                            if (foundedCube) {
+                                break;
+                            }
+                        }
+                        if (foundedCube) {
+                            break;
+                        }
+                    }
+                    console.warn(foundedCube, clickedObjects[ foundedCube ].object.position);
+                    //var x = clickedObjects[ foundedCube ].object.position.x;
+                    //var y = clickedObjects[ foundedCube ].object.position.y;
+                    //var z = clickedObjects[ foundedCube ].object.position.z;
+                    
+                    if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+                        rotatePage(x, y, z, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
+                    }
+                }
             }
         }
     }
