@@ -36,6 +36,8 @@ var cubePage = [];
 var xAxis, yAxis, zAxis;
 var rotateX, rotateY, rotateZ;
 var clickPoint;
+var xGlobal, yGlobal, zGlobal;
+var rotateNumX, rotateNumY, rotateNumZ;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -98,6 +100,13 @@ function initializeScene() {
     xAxis = rotateVector(new THREE.Vector3(1, 0, 0));
     yAxis = rotateVector(new THREE.Vector3(0, 1, 0));
     zAxis = rotateVector(new THREE.Vector3(0, 0, 1));
+    
+    xGlobal = 1;
+    yGlobal = -1;
+    zGlobal = -1;
+    rotateNumX = 0;
+    rotateNumY = 0;
+    rotateNumZ = 0;
     
     // Pages.
     var shape = new THREE.PlaneGeometry(3, 3);
@@ -304,9 +313,9 @@ function rotatePage(mouseX, mouseY, x1, y1, z1, x2, y2, z2) {
     var pointX = mouseX / windowHalfXY;
     var pointY = mouseY / windowHalfXY;
     console.warn('mouseXY', mouseX, mouseY, windowHalfXY, windowHalfXY, pointX, pointY);
-    var x =  1 * (Math.floor(Math.abs(pointX) / 0.2) - 1);
-    var y = -1 * (Math.floor(Math.abs(pointY) / 0.2) - 1);
-    var z = -1 * (Math.floor(Math.abs(pointX) / 0.2) - 1);
+    var x = xGlobal * (Math.floor(Math.abs(pointX) / 0.2) - 1);
+    var y = yGlobal * (Math.floor(Math.abs(pointY) / 0.2) - 1);
+    var z = zGlobal * (Math.floor(Math.abs(pointX) / 0.2) - 1);
     
     var p = [];
     var pi = 0;
@@ -317,10 +326,10 @@ function rotatePage(mouseX, mouseY, x1, y1, z1, x2, y2, z2) {
             var yi = (y1 == y2 ? y : p[pi++]);
             var zi = (z1 == z2 ? z : p[pi++]);
             rotateAroundWorldAxis(rubicsPage[xi][yi][zi], axisLocal, rotAngle);
-            console.warn('rotate', xi, yi, zi, rubicsPage[xi][yi][zi].name, rotAngle);
+            //console.warn('rotate', xi, yi, zi, rubicsPage[xi][yi][zi].name, rotAngle);
         }
     }
-    console.warn('-----------');
+    //console.warn('-----------');
     
     logCube();
     if (x1 == x2) {
@@ -343,6 +352,7 @@ function rotatePage(mouseX, mouseY, x1, y1, z1, x2, y2, z2) {
 }
 
 function logCube() {
+    return;
     for (var i = -1; i <= 1; i++) {
         for (var j = -1; j <= 1; j++) {
             for (var k = -1; k <= 1; k++) {
@@ -499,10 +509,20 @@ function animateScene() {
                 rotateX += rotateXtmp;
             }
             
-            console.warn('xxxxx');
             //logCube();
             //movePageXAll(-rotateXtmp);
             //logCube();
+            var rotateNumTmp = Math.round((rotateX - Math.PI / 4) / (Math.PI / 2)) % 4;
+            rotateNumTmp = Math.round((rotateNumTmp < 0 ? rotateNumTmp + 4 : rotateNumTmp));
+            console.warn('xxxxx', rotateNumX, rotateNumTmp, rotateX);
+            /*
+            while (rotateNumX != rotateNumTmp) {
+                var GlobalTmp = zGlobal;
+                zGlobal = -1 * yGlobal;
+                yGlobal = GlobalTmp;
+                rotateNumX = (rotateNumX + 1) % 4;
+            }
+            */
         }
     }
     else if (MOUSE_STATE_AXIS_Y == mouseState) {
@@ -517,10 +537,18 @@ function animateScene() {
                 rotateY += rotateYtmp;
             }
             
-            console.warn('yyyyy');
             //logCube();
             //movePageYAll(rotateYtmp);
             //logCube();
+            var rotateNumTmp = Math.round((rotateY - Math.PI / 4) / (Math.PI / 2)) % 4;
+            rotateNumTmp = (rotateNumTmp < 0 ? rotateNumTmp + 4 : rotateNumTmp);
+            console.warn('yyyyy', rotateNumY, rotateNumTmp, rotateY);
+            while (rotateNumY != rotateNumTmp) {
+                var GlobalTmp = xGlobal;
+                xGlobal = -1 * zGlobal;
+                zGlobal = GlobalTmp;
+                rotateNumY = (rotateNumY + 1) % 4;
+            }
         }
     }
     else if (MOUSE_STATE_AXIS_Z == mouseState) {
@@ -535,10 +563,20 @@ function animateScene() {
                 rotateZ += rotateZtmp;
             }
             
-            console.warn('zzzzz');
             //logCube();
             //movePageZAll(-rotateZtmp);
             //logCube();
+            var rotateNumTmp = Math.round((rotateZ - Math.PI / 4) / (Math.PI / 2)) % 4;
+            rotateNumTmp = (rotateNumTmp < 0 ? rotateNumTmp + 4 : rotateNumTmp);
+            console.warn('zzzz', rotateNumZ, rotateNumTmp, rotateZ);
+            /*
+            while (rotateNumZ != rotateNumTmp) {
+                var GlobalTmp = yGlobal;
+                yGlobal = -1 * xGlobal;
+                xGlobal = GlobalTmp;
+                rotateNumZ = (rotateNumZ + 1) % 4;
+            }
+            */
         }
     }
 }
