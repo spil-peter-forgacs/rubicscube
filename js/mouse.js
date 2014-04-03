@@ -4,7 +4,7 @@ var MOUSE_STATE_AXIS_Y = 11;
 var MOUSE_STATE_AXIS_Z = 12;
 var MOUSE_STATE_CLICK = 20;
 var MOUSE_STATE_CLICK_CAPTURED = 21;
-var MOUSE_STATE_RELEASED = 22;
+var MOUSE_STATE_CLICK_RELEASED = 22;
 var mouseState = MOUSE_STATE_NULL;
 
 var targetRotationX = 0;
@@ -38,7 +38,7 @@ function onDocumentMouseDown( event ) {
     
     mouseUp = false;
     
-    if (MOUSE_STATE_RELEASED == mouseState) {
+    if (MOUSE_STATE_CLICK_RELEASED == mouseState) {
     	mouseState = MOUSE_STATE_NULL;
     }
     
@@ -71,6 +71,9 @@ function onDocumentMouseDown( event ) {
 }
 
 function onDocumentMouseMove( event ) {
+    mouseX = event.clientX - windowHalfX;
+    mouseY = event.clientY - windowHalfY;
+    
     if (MOUSE_STATE_CLICK == mouseState) {
         var intersects = getClickTargetObjects(event.clientX, event.clientY);
         if ( intersects.length > 0 && clickedObjects[ 0 ].object != intersects[ 0 ].object) {
@@ -92,17 +95,14 @@ function onDocumentMouseMove( event ) {
                 var x2 = intersects[ 0 ].object.position.x;
                 var y2 = intersects[ 0 ].object.position.y;
                 var z2 = intersects[ 0 ].object.position.z;
-                rotatePage(point, x1, y1, z1, x2, y2, z2);
+                rotatePage(mouseX, mouseY, x1, y1, z1, x2, y2, z2);
             }
         }
     }
-    else if (MOUSE_STATE_CLICK_CAPTURED == mouseState || MOUSE_STATE_RELEASED == mouseState) {
+    else if (MOUSE_STATE_CLICK_CAPTURED == mouseState || MOUSE_STATE_CLICK_RELEASED == mouseState) {
         // Do nothing.
     }
     else {
-        mouseX = event.clientX - windowHalfX;
-        mouseY = event.clientY - windowHalfY;
-        
         mouseXDelta = mouseX - mouseXOnMouseDown;
         mouseYDelta = mouseY - mouseYOnMouseDown;
         

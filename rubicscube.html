@@ -273,7 +273,7 @@ function rotateXYZ(targetRotation, rotate, axis) {
     return rotatetmp;
 }
 
-function rotatePage(point, x1, y1, z1, x2, y2, z2) {
+function rotatePage(mouseX, mouseY, x1, y1, z1, x2, y2, z2) {
     var xAxisLocal = new THREE.Vector3(1, 0, 0);
     var yAxisLocal = new THREE.Vector3(0, 1, 0);
     var zAxisLocal = new THREE.Vector3(0, 0, 1);
@@ -300,10 +300,13 @@ function rotatePage(point, x1, y1, z1, x2, y2, z2) {
         console.warn('Exception');
     }
     
-    console.warn(point);
-    var x =  1 * (Math.floor(Math.abs(point.x) / 0.7) - 1);
-    var y = -1 * (Math.floor(Math.abs(point.y) / 0.7) - 1);
-    var z = -1 * (Math.floor(Math.abs(point.x) / 0.7) - 1);
+    var windowHalfXY = (windowHalfX < windowHalfY ? windowHalfX : windowHalfY);
+    var pointX = mouseX / windowHalfXY;
+    var pointY = mouseY / windowHalfXY;
+    console.warn('mouseXY', mouseX, mouseY, windowHalfXY, windowHalfXY, pointX, pointY);
+    var x =  1 * (Math.floor(Math.abs(pointX) / 0.2) - 1);
+    var y = -1 * (Math.floor(Math.abs(pointY) / 0.2) - 1);
+    var z = -1 * (Math.floor(Math.abs(pointX) / 0.2) - 1);
     
     var p = [];
     var pi = 0;
@@ -336,7 +339,7 @@ function rotatePage(point, x1, y1, z1, x2, y2, z2) {
         logCube();
     }
     
-    mouseState = MOUSE_STATE_RELEASED;
+    mouseState = MOUSE_STATE_CLICK_RELEASED;
 }
 
 function logCube() {
@@ -497,9 +500,9 @@ function animateScene() {
             }
             
             console.warn('xxxxx');
-            logCube();
-            movePageXAll(-rotateXtmp);
-            logCube();
+            //logCube();
+            //movePageXAll(-rotateXtmp);
+            //logCube();
         }
     }
     else if (MOUSE_STATE_AXIS_Y == mouseState) {
@@ -515,9 +518,9 @@ function animateScene() {
             }
             
             console.warn('yyyyy');
-            logCube();
-            movePageYAll(rotateYtmp);
-            logCube();
+            //logCube();
+            //movePageYAll(rotateYtmp);
+            //logCube();
         }
     }
     else if (MOUSE_STATE_AXIS_Z == mouseState) {
@@ -533,9 +536,9 @@ function animateScene() {
             }
             
             console.warn('zzzzz');
-            logCube();
-            movePageZAll(-rotateZtmp);
-            logCube();
+            //logCube();
+            //movePageZAll(-rotateZtmp);
+            //logCube();
         }
     }
 }
