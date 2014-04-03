@@ -95,7 +95,17 @@ function onDocumentMouseMove( event ) {
                 var x2 = intersects[ 0 ].object.position.x;
                 var y2 = intersects[ 0 ].object.position.y;
                 var z2 = intersects[ 0 ].object.position.z;
-                rotatePage(mouseX, mouseY, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
+                
+                
+                // Calculating the correct page.
+                var windowHalfXY = (windowHalfX < windowHalfY ? windowHalfX : windowHalfY);
+                var pointX = mouseX / windowHalfXY;
+                var pointY = mouseY / windowHalfXY;
+                var x = 1 * (Math.floor(Math.abs(pointX) / 0.2) - 1);
+                var y = -1 * (Math.floor(Math.abs(pointY) / 0.2) - 1);
+                var z = -1 * (Math.floor(Math.abs(pointX) / 0.2) - 1);
+                
+                rotatePage(x, y, z, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
             }
         }
     }
@@ -115,17 +125,29 @@ function onDocumentMouseMove( event ) {
             }
         }
         
+        var x = y = z = 0;
+        var xStatic = yStatic = zStatic = false;
+        var xDirection = yDirection = zDirection = null;
         if (MOUSE_STATE_AXIS_X == mouseState) {
-            targetRotationX = targetRotationXOnMouseDown + mouseYDelta * 0.02;
-            fixTargetRotationX();
+            xStatic = true;
+            xDirection = (mouseYDelta >= 0);
+            for (var x = -1; x <= 1; x++) {
+                rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
+            }
         }
         else if (MOUSE_STATE_AXIS_Y == mouseState) {
-            targetRotationY = targetRotationYOnMouseDown + mouseXDelta * 0.008;
-            fixTargetRotationY();
+            yStatic = true;
+            yDirection = (mouseXDelta >= 0);
+            for (var y = -1; y <= 1; y++) {
+                rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
+            }
         }
         else if (MOUSE_STATE_AXIS_Z == mouseState) {
-            targetRotationZ = targetRotationZOnMouseDown + mouseYDelta * 0.02;
-            fixTargetRotationZ();
+            zStatic = true;
+            zDirection = (mouseYDelta >= 0);
+            for (var z = -1; z <= 1; z++) {
+                rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
+            }
         }
     }
 }
