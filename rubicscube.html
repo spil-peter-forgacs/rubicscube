@@ -494,9 +494,12 @@ function animateScene() {
                 var rotateXtmp = ( targetRotationX - rotateX ) * 0.08;
                 rotateAroundWorldAxis(rubicsCube, xAxis, rotateXtmp);
                 rotateX += rotateXtmp;
-                
-                movePageXAll(rotateXtmp);
             }
+            
+            console.warn('xxxxx');
+            logCube();
+            movePageXAll(-rotateXtmp);
+            logCube();
         }
     }
     else if (MOUSE_STATE_AXIS_Y == mouseState) {
@@ -509,9 +512,12 @@ function animateScene() {
                 var rotateYtmp = ( targetRotationY - rotateY ) * 0.08;
                 rotateAroundWorldAxis(rubicsCube, yAxis, rotateYtmp);
                 rotateY += rotateYtmp;
-                
-                movePageYAll(rotateXtmp);
             }
+            
+            console.warn('yyyyy');
+            logCube();
+            movePageYAll(rotateYtmp);
+            logCube();
         }
     }
     else if (MOUSE_STATE_AXIS_Z == mouseState) {
@@ -524,9 +530,12 @@ function animateScene() {
                 var rotateZtmp = ( targetRotationZ - rotateZ ) * 0.08;
                 rotateAroundWorldAxis(rubicsCube, zAxis, rotateZtmp);
                 rotateZ += rotateZtmp;
-                
-                movePageZAll(rotateXtmp);
             }
+            
+            console.warn('zzzzz');
+            logCube();
+            movePageZAll(-rotateZtmp);
+            logCube();
         }
     }
 }
