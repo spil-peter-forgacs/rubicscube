@@ -1,9 +1,8 @@
-var MOUSE_STATE_NULL = 0;
 var MOUSE_STATE_AXIS = 10;
 var MOUSE_STATE_CLICK = 20;
 var MOUSE_STATE_CLICK_CAPTURED = 21;
 var MOUSE_STATE_CLICK_RELEASED = 22;
-var mouseState = MOUSE_STATE_NULL;
+var mouseState = MOUSE_STATE_CLICK_RELEASED;
 
 var mouseX = 0;
 var mouseY = 0;
@@ -35,8 +34,8 @@ function onDocumentMouseDown( event ) {
 }
 
 function clickWithMouse(mouseX, mouseY) {
-    if (MOUSE_STATE_CLICK_RELEASED == mouseState) {
-        mouseState = MOUSE_STATE_NULL;
+    if (MOUSE_STATE_CLICK_RELEASED != mouseState) {
+        return;
     }
     
     var intersects = getClickTargetObjects(mouseX, mouseY);
@@ -80,8 +79,6 @@ function moveWithMouse(mouseX, mouseY) {
                 }
             }
             if (found >= 0) {
-                mouseState = MOUSE_STATE_CLICK_CAPTURED;
-                
                 var point = clickedObjects[ 0 ].point;
                 var x1 = clickedObjects[ 0 ].object.position.x;
                 var y1 = clickedObjects[ 0 ].object.position.y;
@@ -98,17 +95,14 @@ function moveWithMouse(mouseX, mouseY) {
                         for (var i = -1; i <= 1; i++) {
                             if (rubicsPage[i][1][1].children[0] == clickedObjects[ q ].object) {
                                 foundedCube = q;
-                                console.warn('x', i);
                                 x = i; y = 1; z = 1;
                             }
                             else if (rubicsPage[-1][i][1].children[0] == clickedObjects[ q ].object) {
                                 foundedCube = q;
-                                console.warn('y', i);
                                 x = -1; y = i; z = 1;
                             }
                             else if (rubicsPage[-1][1][i].children[0] == clickedObjects[ q ].object) {
                                 foundedCube = q;
-                                console.warn('z', i);
                                 x = -1; y = 1; z = i;
                             }
                             if (foundedCube) {
@@ -121,6 +115,9 @@ function moveWithMouse(mouseX, mouseY) {
                     }
                     
                     if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+                        
+                        mouseState = MOUSE_STATE_CLICK_CAPTURED;
+                        
                         rotatePage(x, y, z, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
                     }
                 }
@@ -136,6 +133,9 @@ function moveWithMouse(mouseX, mouseY) {
         
         var axis = '';
         if ((Math.abs(mouseXDelta) > 10 || Math.abs(mouseYDelta) > 10)) {
+            
+            mouseState = MOUSE_STATE_CLICK_CAPTURED;
+            
             if (Math.abs(mouseXDelta) > Math.abs(mouseYDelta)) {
                 axis = 'y';
             }
@@ -167,8 +167,6 @@ function moveWithMouse(mouseX, mouseY) {
                     rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
                 }
             }
-            
-            mouseState = MOUSE_STATE_NULL;
         }
     }
 }

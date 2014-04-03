@@ -254,31 +254,42 @@ function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, 
         console.warn('Exception');
     }
     
-    // Moving visible.
-    var p = [];
-    var pi = 0;
-    for (p[0] = -1; p[0] <= 1; p[0]++) {
-        for (p[1] = -1; p[1] <= 1; p[1]++) {
-            pi = 0;
-            var xi = (xStatic ? x : p[pi++]);
-            var yi = (yStatic ? y : p[pi++]);
-            var zi = (zStatic ? z : p[pi++]);
-            rotateAroundWorldAxis(rubicsPage[xi][yi][zi], axisLocal, rotAngle);
+    var rotAngleDiff = 0;
+    var rotAndleDelta = rotAngle / 16;
+    moveCubes();
+    function moveCubes() {
+        if (Math.abs(rotAngleDiff) < Math.abs(rotAngle)) {
+            rotAngleDiff += rotAndleDelta;
+            
+            // Moving visible.
+            var p = [];
+            var pi = 0;
+            for (p[0] = -1; p[0] <= 1; p[0]++) {
+                for (p[1] = -1; p[1] <= 1; p[1]++) {
+                    pi = 0;
+                    var xi = (xStatic ? x : p[pi++]);
+                    var yi = (yStatic ? y : p[pi++]);
+                    var zi = (zStatic ? z : p[pi++]);
+                    rotateAroundWorldAxis(rubicsPage[xi][yi][zi], axisLocal, rotAndleDelta);
+                }
+            }
+            setTimeout(function () {moveCubes()}, 10);
+        }
+        else {
+            // Moving virtual containers.
+            if (xStatic) {
+                movePageX(-rotAngle, x);
+            }
+            else if (yStatic) {
+                movePageY(rotAngle, y);
+            }
+            else if (zStatic) {
+                movePageZ(-rotAngle, z);
+            }
+            
+            mouseState = MOUSE_STATE_CLICK_RELEASED;
         }
     }
-    
-    // Moving virtual containers.
-    if (xStatic) {
-        movePageX(-rotAngle, x);
-    }
-    else if (yStatic) {
-        movePageY(rotAngle, y);
-    }
-    else if (zStatic) {
-        movePageZ(-rotAngle, z);
-    }
-    
-    mouseState = MOUSE_STATE_CLICK_RELEASED;
 }
 
 /**
