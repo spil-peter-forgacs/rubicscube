@@ -70,11 +70,8 @@ function onDocumentMouseMove( event ) {
 }
 
 function moveWithMouse(mouseX, mouseY) {
-    mouseX = mouseX - windowHalfX;
-    mouseY = mouseY - windowHalfY;
-    
     if (MOUSE_STATE_CLICK == mouseState) {
-        var intersects = getClickTargetObjects(event.clientX, event.clientY);
+        var intersects = getClickTargetObjects(mouseX, mouseY);
         if ( intersects.length > 0 && clickedObjects[ 0 ].object != intersects[ 0 ].object) {
             var found = -1;
             for (var i = 0; i < cubePage.length; i++) {
@@ -122,10 +119,6 @@ function moveWithMouse(mouseX, mouseY) {
                             break;
                         }
                     }
-                    console.warn(foundedCube, clickedObjects[ foundedCube ].object.position);
-                    //var x = clickedObjects[ foundedCube ].object.position.x;
-                    //var y = clickedObjects[ foundedCube ].object.position.y;
-                    //var z = clickedObjects[ foundedCube ].object.position.z;
                     
                     if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
                         rotatePage(x, y, z, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
@@ -135,8 +128,11 @@ function moveWithMouse(mouseX, mouseY) {
         }
     }
     else if (MOUSE_STATE_AXIS == mouseState) {
-        mouseXDelta = mouseX - mouseXOnMouseDown;
-        mouseYDelta = mouseY - mouseYOnMouseDown;
+        mX = mouseX - windowHalfX;
+        mY = mouseY - windowHalfY;
+        
+        mouseXDelta = mX - mouseXOnMouseDown;
+        mouseYDelta = mY - mouseYOnMouseDown;
         
         var axis = '';
         if ((Math.abs(mouseXDelta) > 10 || Math.abs(mouseYDelta) > 10)) {
@@ -144,7 +140,7 @@ function moveWithMouse(mouseX, mouseY) {
                 axis = 'y';
             }
             else {
-                axis = (mouseX < 0 ? 'z' : 'x');
+                axis = (mX < 0 ? 'z' : 'x');
             }
             
             var x = y = z = 0;
