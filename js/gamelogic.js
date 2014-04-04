@@ -17,11 +17,8 @@ var game = (function(){
     var windowHalfY = window.innerHeight / 2;
     
     // Mouse states
-    var MOUSE_STATE_AXIS = 10;
-    var MOUSE_STATE_CLICK = 20;
-    var MOUSE_STATE_CLICK_CAPTURED = 21;
-    var MOUSE_STATE_CLICK_RELEASED = 22;
-    var mouseState = MOUSE_STATE_CLICK_RELEASED;
+    var mouseStates = {'axis':1, 'click':2, 'clickCaptured':3, 'clickReleased':4};
+    var mouseState = mouseStates.clickReleased;
     
     // Mouse data
     var mouseX = 0;
@@ -321,7 +318,7 @@ var game = (function(){
                     movePageZ(-rotAngle, z);
                 }
                 
-                mouseState = MOUSE_STATE_CLICK_RELEASED;
+                mouseState = mouseStates.clickReleased;
             }
         }
     }
@@ -492,7 +489,7 @@ var game = (function(){
     }
     
     function clickWithMouse(mouseX, mouseY) {
-        if (MOUSE_STATE_CLICK_RELEASED != mouseState) {
+        if (mouseState != mouseStates.clickReleased) {
             return;
         }
         
@@ -506,13 +503,13 @@ var game = (function(){
                 }
             }
             if (found >= 0) {
-                mouseState = MOUSE_STATE_CLICK;
+                mouseState = mouseStates.click;
                 
                 clickedObjects = intersects;
             }
         }
         else {
-            mouseState = MOUSE_STATE_AXIS;
+            mouseState = mouseStates.axis;
         }
         
         mouseXOnMouseDown = mouseX - windowHalfX;
@@ -527,12 +524,12 @@ var game = (function(){
     }
     
     function moveWithMouse(mouseX, mouseY) {
-        if (MOUSE_STATE_CLICK == mouseState) {
+        if (mouseState == mouseStates.click) {
             var intersects = getClickTargetObjects(mouseX, mouseY);
             
             // The user navigate away from cube.
             if (intersects.length == 0) {
-                mouseState = MOUSE_STATE_CLICK_RELEASED;
+                mouseState = mouseStates.clickReleased;
                 return;
             }
             
@@ -586,18 +583,18 @@ var game = (function(){
                         
                         if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
                             
-                            mouseState = MOUSE_STATE_CLICK_CAPTURED;
+                            mouseState = mouseStates.clickCaptured;
                             
                             rotatePage(x, y, z, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
                         }
                         else {
-                            mouseState = MOUSE_STATE_CLICK_RELEASED;
+                            mouseState = mouseStates.clickReleased;
                         }
                     }
                 }
             }
         }
-        else if (MOUSE_STATE_AXIS == mouseState) {
+        else if (mouseState == mouseStates.axis) {
             mX = mouseX - windowHalfX;
             mY = mouseY - windowHalfY;
             
@@ -607,7 +604,7 @@ var game = (function(){
             var axis = '';
             if ((Math.abs(mouseXDelta) > 10 || Math.abs(mouseYDelta) > 10)) {
                 
-                mouseState = MOUSE_STATE_CLICK_CAPTURED;
+                mouseState = mouseStates.clickCaptured;
                 
                 if (Math.abs(mouseXDelta) > Math.abs(mouseYDelta)) {
                     axis = 'y';
