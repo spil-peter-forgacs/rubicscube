@@ -251,9 +251,9 @@ var game = (function(){
     /**
      * Rotate a single page.
      * 
-     * @param x int X coordinate of rotation
-     * @param y int Y coordinate of rotation
-     * @param z int Z coordinate of rotation
+     * @param x integer X coordinate of rotation
+     * @param y integer Y coordinate of rotation
+     * @param z integer Z coordinate of rotation
      * @param xStatic boolean True, if X is the rotation axis
      * @param yStatic boolean True, if Y is the rotation axis
      * @param zStatic boolean True, if Z is the rotation axis
