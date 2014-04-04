@@ -71,6 +71,13 @@ function onDocumentMouseMove( event ) {
 function moveWithMouse(mouseX, mouseY) {
     if (MOUSE_STATE_CLICK == mouseState) {
         var intersects = getClickTargetObjects(mouseX, mouseY);
+        
+        // The user navigate away from cube.
+        if (intersects.length == 0) {
+            mouseState = MOUSE_STATE_CLICK_RELEASED;
+            return;
+        }
+        
         if ( intersects.length > 0 && clickedObjects[ 0 ].object != intersects[ 0 ].object) {
             var found = -1;
             for (var i = 0; i < cubePage.length; i++) {
