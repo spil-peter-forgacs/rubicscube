@@ -158,6 +158,7 @@ function initializeScene() {
     // Define six texture materials.
     var cubeMaterials = [
         // Example for color.
+        //new THREE.MeshBasicMaterial({color:0x000000}),
         new THREE.MeshBasicMaterial({map:cubeTexture[0]}),
         new THREE.MeshBasicMaterial({map:cubeTexture[1]}),
         new THREE.MeshBasicMaterial({map:cubeTexture[2]}),
@@ -172,12 +173,10 @@ function initializeScene() {
             cubeMesh[i][j] = [];
             rubicsPage[i][j] = [];
             for (var k = -1; k <= 1; k++) {
-                var cubeMaterialsPiece = cubeMaterials;
-                
                 // TODO Make the non visible sides black.
                 
                 // Create a MeshFaceMaterial, which allows the cube to have different materials on each face.
-                var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterialsPiece);
+                var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
                 cubeMesh[i][j][k] = new THREE.Mesh(cubeGeometry, cubeMaterial);
                 cubeMesh[i][j][k].position.set(i, j, k);
                 
