@@ -32,6 +32,9 @@ var game = (function(){
     var projector = new THREE.Projector();
     var clickedObjects;
     
+    // Texts
+    var textMenu;
+    
     /**
      * Booting.
      */
@@ -90,9 +93,18 @@ var game = (function(){
         scene = new THREE.Scene();
         
         var aspect = canvasWidth / canvasHeight;
-        camera = new THREE.PerspectiveCamera(45, aspect, 1, 100);
+        camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 10000);
         camera.position.set(0, 0, 10);
         scene.add(camera);
+        camera.lookAt(scene.position);
+        
+        
+        // Menu
+        var x = windowHalfX;
+        var y = windowHalfY;
+        //textMenu = createLabel("Menu", -20, -100, -300, 16, "black", "blue", 10);
+        //scene.add(textMenu);
+        
         
         //
         // Rubic's cube.
@@ -182,7 +194,6 @@ var game = (function(){
                         new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
                     ];
                     // Make the non visible sides black.
-                    /*
                     if (1 != i) {
                         cubeMaterials[0] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
                     }
@@ -201,7 +212,6 @@ var game = (function(){
                     if (-1 != k) {
                         cubeMaterials[5] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
                     }
-                     */
                     
                     // Create a MeshFaceMaterial, which allows the cube to have different materials on each face.
                     var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
@@ -219,6 +229,31 @@ var game = (function(){
                 }
             }
         }
+        
+        // Light
+        var light = new THREE.PointLight(0xffffff);
+        light.position.set(0,0,1000);
+        scene.add(light);
+        
+        var material = new THREE.MeshPhongMaterial({
+            color: 0xeeeeee
+        });
+        var textGeom = new THREE.TextGeometry( 'MENU', {
+            size: 30,
+            height: 20, // extrude thickness
+            font: "helvetiker", // font family in lower case
+            weight: "normal", // or e.g. bold
+            style: "normal", // or e.g. italics
+            bevelEnabled: false
+        });
+        textMenu = new THREE.Mesh( textGeom, material );
+        
+        // Do some optional calculations.
+        textGeom.computeBoundingBox();
+        textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
+        
+        textMenu.position.set( -0.5 * textWidth, 120, -400 );
+        //scene.add( textMenu );
     }
     
     /**
@@ -713,6 +748,53 @@ var game = (function(){
         
         renderer.setSize( window.innerWidth, window.innerHeight );
     }
+    
+    function createLabel(text, x, y, z, size, color, backGroundColor, backgroundMargin) {
+        if(!backgroundMargin)
+            backgroundMargin = 50;
+        
+        var canvas = document.createElement("canvas");
+        
+        var context = canvas.getContext("2d");
+        context.font = size + "pt Arial";
+        
+        var textWidth = context.measureText(text).width;
+        
+        canvas.width = textWidth + backgroundMargin;
+        canvas.height = size + backgroundMargin;
+        context = canvas.getContext("2d");
+        context.font = size + "pt Arial";
+        
+        if(backGroundColor) {
+            context.fillStyle = backGroundColor;
+            context.fillRect(canvas.width / 2 - textWidth / 2 - backgroundMargin / 2, canvas.height / 2 - size / 2 - +backgroundMargin / 2, textWidth + backgroundMargin, size + backgroundMargin);
+        }
+        
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillStyle = color;
+        context.fillText(text, canvas.width / 2, canvas.height / 2);
+        
+        // context.strokeStyle = "black";
+        // context.strokeRect(0, 0, canvas.width, canvas.height);
+        
+        var texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+        
+        var material = new THREE.MeshBasicMaterial({
+            map : texture
+        });
+        
+        var mesh = new THREE.Mesh(new THREE.PlaneGeometry(canvas.width, canvas.height), material);
+        // mesh.overdraw = true;
+        mesh.doubleSided = true;
+        mesh.position.x = x - canvas.width/2;
+        mesh.position.y = y - canvas.height/2;
+        mesh.position.z = z;
+        
+        return mesh;
+    }
+    
     
     window.addEventListener('load', booting, false);
 })();
