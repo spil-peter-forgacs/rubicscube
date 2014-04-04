@@ -231,6 +231,9 @@ function rotateAroundWorldAxis(object, axis, radians) {
     object.rotation.setFromRotationMatrix(object.matrix);
 }
 
+/**
+ * Rotate a single page.
+ */
 function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection) {
     var xAxisLocal = new THREE.Vector3(1, 0, 0);
     var yAxisLocal = new THREE.Vector3(0, 1, 0);

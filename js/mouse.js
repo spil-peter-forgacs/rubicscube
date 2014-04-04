@@ -100,17 +100,22 @@ function moveWithMouse(mouseX, mouseY) {
                     var foundedCube;
                     for (var q = 0; q < clickedObjects.length; q++) {
                         for (var i = -1; i <= 1; i++) {
-                            if (rubicsPage[i][1][1].children[0] == clickedObjects[ q ].object) {
-                                foundedCube = q;
-                                x = i; y = 1; z = 1;
-                            }
-                            else if (rubicsPage[-1][i][1].children[0] == clickedObjects[ q ].object) {
-                                foundedCube = q;
-                                x = -1; y = i; z = 1;
-                            }
-                            else if (rubicsPage[-1][1][i].children[0] == clickedObjects[ q ].object) {
-                                foundedCube = q;
-                                x = -1; y = 1; z = i;
+                            for (var j = -1; j <= 1; j++) {
+                                if (rubicsPage[i][j][1].children[0] == clickedObjects[ q ].object) {
+                                    foundedCube = q;
+                                    x = i; y = j; z = 1;
+                                }
+                                else if (rubicsPage[-1][i][j].children[0] == clickedObjects[ q ].object) {
+                                    foundedCube = q;
+                                    x = -1; y = i; z = j;
+                                }
+                                else if (rubicsPage[j][1][i].children[0] == clickedObjects[ q ].object) {
+                                    foundedCube = q;
+                                    x = j; y = 1; z = i;
+                                }
+                                if (foundedCube) {
+                                    break;
+                                }
                             }
                             if (foundedCube) {
                                 break;
