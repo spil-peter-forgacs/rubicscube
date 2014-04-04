@@ -255,7 +255,7 @@ function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, 
     }
     
     var rotAngleDiff = 0;
-    var rotAndleDelta = rotAngle / 16;
+    var rotAndleDelta = rotAngle / 8;
     moveCubes();
     function moveCubes() {
         if (Math.abs(rotAngleDiff) < Math.abs(rotAngle)) {
@@ -273,7 +273,7 @@ function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, 
                     rotateAroundWorldAxis(rubicsPage[xi][yi][zi], axisLocal, rotAndleDelta);
                 }
             }
-            setTimeout(function () {moveCubes()}, 10);
+            setTimeout(function () {moveCubes()}, 20);
         }
         else {
             // Moving virtual containers.
