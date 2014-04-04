@@ -173,6 +173,7 @@ function initializeScene() {
                     new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
                 ];
                 // Make the non visible sides black.
+                /*
                 if (1 != i) {
                     cubeMaterials[0] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
                 }
@@ -191,6 +192,7 @@ function initializeScene() {
                 if (-1 != k) {
                     cubeMaterials[5] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
                 }
+                 */
                 
                 // Create a MeshFaceMaterial, which allows the cube to have different materials on each face.
                 var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
