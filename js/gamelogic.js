@@ -2,7 +2,7 @@ var game = (function(){
     
     // Basic variables for 3d.
     var scene, camera, renderer;
-
+    
     // Whole cube.
     var rubicsCube;
     // Container of small cubes.
@@ -12,20 +12,54 @@ var game = (function(){
     // Pages around the cube.
     // Used for capturing the movements.
     var cubePage = [];
-
+    
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
     
+    // Mouse states
+    var MOUSE_STATE_AXIS = 10;
+    var MOUSE_STATE_CLICK = 20;
+    var MOUSE_STATE_CLICK_CAPTURED = 21;
+    var MOUSE_STATE_CLICK_RELEASED = 22;
+    var mouseState = MOUSE_STATE_CLICK_RELEASED;
+    
+    // Mouse data
+    var mouseX = 0;
+    var mouseY = 0;
+    var mouseXOnMouseDown = 0;
+    var mouseYOnMouseDown = 0;
+    var mouseXDelta = 0;
+    var mouseYDelta = 0;
+    
+    // Variables for the click event
+    var projector = new THREE.Projector();
+    var clickedObjects;
+    
+    /**
+     * Booting.
+     */
     function booting() {
         windowHalfX = window.innerWidth / 2;
         windowHalfY = window.innerHeight / 2;
         
         window.addEventListener('resize', onWindowResize, false);
         
+        // Normal mouse events.
+        document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+        
+        // Touch events.
+        document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+        document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+        document.addEventListener( 'touchend', onDocumentTouchEnd, false );
+        
+        // Initialize and start animating.
         initializeScene();
         animateScene();
     }
     
+    /**
+     * Initialize scene.
+     */
     function initializeScene() {
         //
         // Basic staff.
@@ -189,46 +223,46 @@ var game = (function(){
             }
         }
     }
-
-    function onWindowResize() {
-        windowHalfX = window.innerWidth / 2;
-        windowHalfY = window.innerHeight / 2;
-        
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        
-        renderer.setSize( window.innerWidth, window.innerHeight );
-    }
-
+    
     /**
      * Rotate an object around an arbitrary axis in object space
      */
     function rotateAroundObjectAxis(object, axis, radians) {
         var rotObjectMatrix = new THREE.Matrix4();
         rotObjectMatrix.makeRotationAxis(axis.normalize(), radians);
-
+        
         // post-multiply
         object.matrix.multiply(rotObjectMatrix);
-
+        
         object.rotation.setFromRotationMatrix(object.matrix);
     }
-
+    
     /**
      * Rotate an object around an arbitrary axis in world space
      */
     function rotateAroundWorldAxis(object, axis, radians) {
         var rotWorldMatrix = new THREE.Matrix4();
         rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
-
+        
         // pre-multiply
         rotWorldMatrix.multiply(object.matrix);
         object.matrix = rotWorldMatrix;
-
+        
         object.rotation.setFromRotationMatrix(object.matrix);
     }
-
+    
     /**
      * Rotate a single page.
+     * 
+     * @param x int X coordinate of rotation
+     * @param y int Y coordinate of rotation
+     * @param z int Z coordinate of rotation
+     * @param xStatic boolean True, if X is the rotation axis
+     * @param yStatic boolean True, if Y is the rotation axis
+     * @param zStatic boolean True, if Z is the rotation axis
+     * @param xDirection boolean True, if X rotation is clockwise
+     * @param yDirection boolean True, if Y rotation is clockwise
+     * @param zDirection boolean True, if Z rotation is clockwise
      */
     function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection) {
         var xAxisLocal = new THREE.Vector3(1, 0, 0);
@@ -256,6 +290,7 @@ var game = (function(){
         var rotAngleDiff = 0;
         var rotAndleDelta = rotAngle / 8;
         moveCubes();
+        // Animate the cube movements
         function moveCubes() {
             if (Math.abs(rotAngleDiff) < Math.abs(rotAngle)) {
                 rotAngleDiff += rotAndleDelta;
@@ -290,7 +325,7 @@ var game = (function(){
             }
         }
     }
-
+    
     /**
      * Logging, debugging.
      */
@@ -304,7 +339,7 @@ var game = (function(){
         }
         console.warn('-----------');
     }
-
+    
     function moveMiddleX(direction, i) {
         var tmp = rubicsPage[i][0][1];
         if (direction > 0) {
@@ -320,7 +355,7 @@ var game = (function(){
             rubicsPage[i][-1][0] = tmp;
         }
     }
-
+    
     function moveMiddleY(direction, i) {
         var tmp = rubicsPage[0][i][1];
         if (direction > 0) {
@@ -336,7 +371,7 @@ var game = (function(){
             rubicsPage[-1][i][0] = tmp;
         }
     }
-
+    
     function moveMiddleZ(direction, i) {
         var tmp = rubicsPage[0][1][i];
         if (direction > 0) {
@@ -352,7 +387,7 @@ var game = (function(){
             rubicsPage[-1][0][i] = tmp;
         }
     }
-
+    
     function moveCornerX(direction, i) {
         var tmp = rubicsPage[i][1][1];
         if (direction > 0) {
@@ -368,7 +403,7 @@ var game = (function(){
             rubicsPage[i][-1][1] = tmp;
         }
     }
-
+    
     function moveCornerY(direction, i) {
         var tmp = rubicsPage[1][i][1];
         if (direction > 0) {
@@ -384,7 +419,7 @@ var game = (function(){
             rubicsPage[-1][i][1] = tmp;
         }
     }
-
+    
     function moveCornerZ(direction, i) {
         var tmp = rubicsPage[1][1][i];
         if (direction > 0) {
@@ -400,68 +435,49 @@ var game = (function(){
             rubicsPage[-1][1][i] = tmp;
         }
     }
-
+    
     function movePageX(direction, i) {
       moveCornerX(direction, i);
       moveMiddleX(direction, i);
     }
-
+    
     function movePageY(direction, i) {
       moveCornerY(direction, i);
       moveMiddleY(direction, i);
     }
-
+    
     function movePageZ(direction, i) {
       moveCornerZ(direction, i);
       moveMiddleZ(direction, i);
     }
-
+    
     function movePageXAll(direction) {
         for (var i = -1; i <= 1; i++) {
             movePageX(direction, i);
         }
     }
-
+    
     function movePageYAll(direction) {
         for (var i = -1; i <= 1; i++) {
             movePageY(direction, i);
         }
     }
-
+    
     function movePageZAll(direction) {
         for (var i = -1; i <= 1; i++) {
             movePageZ(direction, i);
         }
     }
-
+    
+    /**
+     * Animate the scene time to time.
+     */
     function animateScene() {
         requestAnimationFrame(animateScene);
         
         renderer.render(scene, camera);
     }
     
-    var MOUSE_STATE_AXIS = 10;
-    var MOUSE_STATE_CLICK = 20;
-    var MOUSE_STATE_CLICK_CAPTURED = 21;
-    var MOUSE_STATE_CLICK_RELEASED = 22;
-    var mouseState = MOUSE_STATE_CLICK_RELEASED;
-
-    var mouseX = 0;
-    var mouseY = 0;
-    var mouseXOnMouseDown = 0;
-    var mouseYOnMouseDown = 0;
-    var mouseXDelta = 0;
-    var mouseYDelta = 0;
-
-    var projector = new THREE.Projector();
-    var clickedObjects;
-
-    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-
-    document.addEventListener( 'touchstart', onDocumentTouchStart, false );
-    document.addEventListener( 'touchmove', onDocumentTouchMove, false );
-    document.addEventListener( 'touchend', onDocumentTouchEnd, false );
-
     function onDocumentMouseDown( event ) {
         event.preventDefault();
         
@@ -474,7 +490,7 @@ var game = (function(){
         document.addEventListener( 'mouseup', onDocumentMouseUp, false );
         document.addEventListener( 'mouseout', onDocumentMouseOut, false );
     }
-
+    
     function clickWithMouse(mouseX, mouseY) {
         if (MOUSE_STATE_CLICK_RELEASED != mouseState) {
             return;
@@ -502,14 +518,14 @@ var game = (function(){
         mouseXOnMouseDown = mouseX - windowHalfX;
         mouseYOnMouseDown = mouseY - windowHalfY;
     }
-
+    
     function onDocumentMouseMove( event ) {
         mouseX = event.clientX;
         mouseY = event.clientY;
         
         moveWithMouse(mouseX, mouseY);
     }
-
+    
     function moveWithMouse(mouseX, mouseY) {
         if (MOUSE_STATE_CLICK == mouseState) {
             var intersects = getClickTargetObjects(mouseX, mouseY);
@@ -627,19 +643,19 @@ var game = (function(){
             }
         }
     }
-
+    
     function onDocumentMouseUp( event ) {
         document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
         document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
         document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
     }
-
+    
     function onDocumentMouseOut( event ) {
         document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
         document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
         document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
     }
-
+    
     function onDocumentTouchStart( event ) {
         if ( event.touches.length === 1 ) {
             event.preventDefault();
@@ -650,7 +666,7 @@ var game = (function(){
             clickWithMouse(mouseX, mouseY);
         }
     }
-
+    
     function onDocumentTouchMove( event ) {
         if ( event.touches.length === 1 ) {
             event.preventDefault();
@@ -661,11 +677,14 @@ var game = (function(){
             moveWithMouse(mouseX, mouseY);
         }
     }
-
+    
     function onDocumentTouchEnd( event ) {
         event.preventDefault();
     }
-
+    
+    /**
+     * Getting the clicked objects.
+     */
     function getClickTargetObjects(eventX, eventY) {
         var vector = new THREE.Vector3( ( eventX / window.innerWidth ) * 2 - 1, - ( eventY / window.innerHeight ) * 2 + 1, 0.5 );
         projector.unprojectVector( vector, camera );
@@ -685,6 +704,17 @@ var game = (function(){
         var intersects = raycaster.intersectObjects( children );
         
         return intersects;
+    }
+    
+    
+    function onWindowResize() {
+        windowHalfX = window.innerWidth / 2;
+        windowHalfY = window.innerHeight / 2;
+        
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        
+        renderer.setSize( window.innerWidth, window.innerHeight );
     }
     
     window.addEventListener('load', booting, false);
