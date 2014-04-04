@@ -147,6 +147,7 @@ function initializeScene() {
         new THREE.ImageUtils.loadTexture("pics/white.jpg"),
         new THREE.ImageUtils.loadTexture("pics/red.jpg"),
         new THREE.ImageUtils.loadTexture("pics/orange.jpg"),
+        new THREE.ImageUtils.loadTexture("pics/black.jpg"),
     ];
     
     // Cube colors: yellow, blue, red, green, orange, white
@@ -155,17 +156,6 @@ function initializeScene() {
     // brgo (Side)
     //  w   (Bottom)
     
-    // Define six texture materials.
-    var cubeMaterials = [
-        // Example for color.
-        //new THREE.MeshBasicMaterial({color:0x000000}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[0]}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[1]}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[2]}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[3]}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[4]}),
-        new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
-    ];
     for (var i = -1; i <= 1; i++) {
         cubeMesh[i] = [];
         rubicsPage[i] = [];
@@ -173,7 +163,34 @@ function initializeScene() {
             cubeMesh[i][j] = [];
             rubicsPage[i][j] = [];
             for (var k = -1; k <= 1; k++) {
-                // TODO Make the non visible sides black.
+                // Define six texture materials.
+                var cubeMaterials = [
+                    new THREE.MeshBasicMaterial({map:cubeTexture[0]}),
+                    new THREE.MeshBasicMaterial({map:cubeTexture[1]}),
+                    new THREE.MeshBasicMaterial({map:cubeTexture[2]}),
+                    new THREE.MeshBasicMaterial({map:cubeTexture[3]}),
+                    new THREE.MeshBasicMaterial({map:cubeTexture[4]}),
+                    new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
+                ];
+                // Make the non visible sides black.
+                if (1 != i) {
+                    cubeMaterials[0] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                }
+                if (-1 != i) {
+                    cubeMaterials[1] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                }
+                if (1 != j) {
+                    cubeMaterials[2] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                }
+                if (-1 != j) {
+                    cubeMaterials[3] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                }
+                if (1 != k) {
+                    cubeMaterials[4] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                }
+                if (-1 != k) {
+                    cubeMaterials[5] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                }
                 
                 // Create a MeshFaceMaterial, which allows the cube to have different materials on each face.
                 var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
