@@ -158,30 +158,36 @@ var game = (function(){
         
         gameState = gameStates.shuffle;
         
-        for (var i = 0; i < 1; i++) {
-            var x = y = z = 0;
-            var xStatic = yStatic = zStatic = false;
-            var xDirection = yDirection = zDirection = null;
-            var axis = Math.floor(Math.random() * 3);
-            
-            if (0 == axis) {
-                xStatic = true;
-                xDirection = (Math.floor(Math.random() * 2) >= 1);
-                x = Math.floor(Math.random() * 3) - 1;
-            }
-            else if (1 == axis) {
-                yStatic = true;
-                yDirection = (Math.floor(Math.random() * 2) >= 1);
-                y = Math.floor(Math.random() * 3) - 1;
-            }
-            else if (2 == axis) {
-                zStatic = true;
-                zDirection = (Math.floor(Math.random() * 2) >= 1);
-                z = Math.floor(Math.random() * 3) - 1;
-            }
-            
-            rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
+        randomMove(Math.floor(Math.random() * 4) + 5);
+    }
+    
+    function randomMove(i) {
+        if (i <= 0) {
+            return;
         }
+        
+        var x = y = z = 0;
+        var xStatic = yStatic = zStatic = false;
+        var xDirection = yDirection = zDirection = null;
+        var axis = Math.floor(Math.random() * 3);
+        
+        if (0 == axis) {
+            xStatic = true;
+            xDirection = (Math.floor(Math.random() * 2) >= 1);
+            x = Math.floor(Math.random() * 3) - 1;
+        }
+        else if (1 == axis) {
+            yStatic = true;
+            yDirection = (Math.floor(Math.random() * 2) >= 1);
+            y = Math.floor(Math.random() * 3) - 1;
+        }
+        else if (2 == axis) {
+            zStatic = true;
+            zDirection = (Math.floor(Math.random() * 2) >= 1);
+            z = Math.floor(Math.random() * 3) - 1;
+        }
+        
+        rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, randomMove, i);
     }
     
     /**
@@ -404,7 +410,7 @@ var game = (function(){
      * @param yDirection boolean True, if Y rotation is clockwise
      * @param zDirection boolean True, if Z rotation is clockwise
      */
-    function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection) {
+    function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i) {
         var xAxisLocal = new THREE.Vector3(1, 0, 0);
         var yAxisLocal = new THREE.Vector3(0, 1, 0);
         var zAxisLocal = new THREE.Vector3(0, 0, 1);
@@ -462,7 +468,13 @@ var game = (function(){
                     movePageZ(-rotAngle, z);
                 }
                 
-                gameState = gameStates.playing;
+                if (cb && !isNaN(i) && i > 1) {
+                    i--;
+                    cb(i);
+                }
+                else {
+                    gameState = gameStates.playing;
+                }
             }
         }
     }
