@@ -23,6 +23,7 @@ var game = (function(){
     
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
+    var xBiggerY = (windowHalfX > windowHalfY);
     
     // Mouse states
     var mouseStates = {'axis':1, 'click':2, 'clickReleased':3};
@@ -73,8 +74,23 @@ var game = (function(){
      * Initialize menu.
      */
     function initializeMenu() {
-        addMenuItem({x: windowHalfX * 0.4, y: 0, width: 50, height: 50, pic: 'pics/solve.png', cb: solveCube});
-        addMenuItem({x: windowHalfX * 0.4, y: 60, width: 50, height: 50, pic: 'pics/shuffle.png', cb: shuffleCube});
+        var widthHeight = (xBiggerY ? windowHalfY * 0.3 : windowHalfX * 0.3);
+        
+        addMenuItem({
+            x: windowHalfX - (windowHalfX * (xBiggerY ? 0.6 : 0.9)),
+            y: 0,
+            width: widthHeight,
+            height: widthHeight,
+            pic: 'pics/solve.png',
+            cb: solveCube
+        });
+        addMenuItem({
+            x: windowHalfX - (windowHalfX * (xBiggerY ? 0.6 : 0.9)),
+            y: 1.1 * widthHeight,
+            width: widthHeight,
+            height: widthHeight,
+            pic: 'pics/shuffle.png', cb: shuffleCube
+        });
     }
     
     /**
@@ -98,6 +114,7 @@ var game = (function(){
         menuContainer.src = menuObject.pic;
         
         var menuContainerMouseUp = function () {
+            mouseState = mouseStates.clickReleased;
             menuObject.cb();
             
             // Animate.
@@ -803,6 +820,7 @@ var game = (function(){
     function onWindowResize() {
         windowHalfX = window.innerWidth / 2;
         windowHalfY = window.innerHeight / 2;
+        xBiggerY = (windowHalfX > windowHalfY);
         
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
