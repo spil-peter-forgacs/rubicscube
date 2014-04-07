@@ -1,3 +1,11 @@
+/**
+ * Rubic's Cube
+ * 
+ * @author Peter Forgacs
+ * @version 1.0
+ * @created 31-March-2014 - 11-April-2014
+ */
+
 var game = (function(){
     
     // Basic variables for 3d.
