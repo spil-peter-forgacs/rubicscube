@@ -32,9 +32,6 @@ var game = (function(){
     var projector = new THREE.Projector();
     var clickedObjects;
     
-    // Texts
-    //var textMenu;
-    
     var gameStates = {'loading': 0, 'playing': 1, 'shuffle': 2};
     var gameState = gameStates.loading;
     
@@ -124,13 +121,6 @@ var game = (function(){
         camera.position.set(0, 0, 9);
         scene.add(camera);
         camera.lookAt(scene.position);
-        
-        
-        // Menu
-        var x = windowHalfX;
-        var y = windowHalfY;
-        //textMenu = createLabel("Menu", -20, -100, -300, 16, "black", "blue", 10);
-        //scene.add(textMenu);
         
         
         //
@@ -255,28 +245,6 @@ var game = (function(){
         var light = new THREE.PointLight(0xffffff);
         light.position.set(0,0,1000);
         scene.add(light);
-        
-        /*
-        var material = new THREE.MeshPhongMaterial({
-            color: 0xeeeeee
-        });
-        var textGeom = new THREE.TextGeometry( 'MENU', {
-            size: 30,
-            height: 20, // extrude thickness
-            font: "helvetiker", // font family in lower case
-            weight: "normal", // or e.g. bold
-            style: "normal", // or e.g. italics
-            bevelEnabled: false
-        });
-        textMenu = new THREE.Mesh( textGeom, material );
-        
-        // Do some optional calculations.
-        textGeom.computeBoundingBox();
-        textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
-        
-        textMenu.position.set( -0.5 * textWidth, 120, -400 );
-        scene.add( textMenu );
-         */
     }
     
     /**
@@ -773,54 +741,8 @@ var game = (function(){
         renderer.setSize( window.innerWidth, window.innerHeight );
     }
     
-    /*
-    function createLabel(text, x, y, z, size, color, backGroundColor, backgroundMargin) {
-        if(!backgroundMargin)
-            backgroundMargin = 50;
-        
-        var canvas = document.createElement("canvas");
-        
-        var context = canvas.getContext("2d");
-        context.font = size + "pt Arial";
-        
-        var textWidth = context.measureText(text).width;
-        
-        canvas.width = textWidth + backgroundMargin;
-        canvas.height = size + backgroundMargin;
-        context = canvas.getContext("2d");
-        context.font = size + "pt Arial";
-        
-        if(backGroundColor) {
-            context.fillStyle = backGroundColor;
-            context.fillRect(canvas.width / 2 - textWidth / 2 - backgroundMargin / 2, canvas.height / 2 - size / 2 - +backgroundMargin / 2, textWidth + backgroundMargin, size + backgroundMargin);
-        }
-        
-        context.textAlign = "center";
-        context.textBaseline = "middle";
-        context.fillStyle = color;
-        context.fillText(text, canvas.width / 2, canvas.height / 2);
-        
-        // context.strokeStyle = "black";
-        // context.strokeRect(0, 0, canvas.width, canvas.height);
-        
-        var texture = new THREE.Texture(canvas);
-        texture.needsUpdate = true;
-        
-        var material = new THREE.MeshBasicMaterial({
-            map : texture
-        });
-        
-        var mesh = new THREE.Mesh(new THREE.PlaneGeometry(canvas.width, canvas.height), material);
-        // mesh.overdraw = true;
-        mesh.doubleSided = true;
-        mesh.position.x = x - canvas.width/2;
-        mesh.position.y = y - canvas.height/2;
-        mesh.position.z = z;
-        
-        return mesh;
-    }
-     */
     
+    // Writing some basic texts.
     var writeTextContainer;
     function writeText(text) {
         if (!writeTextContainer) {
@@ -853,6 +775,9 @@ var game = (function(){
         document.body.removeChild(writeTextContainer);
     }
     
+    /**
+     * Preloader.
+     */
     function preloadResources() {
         var text = 'Loading, please wait.';
         var textEnding = '';
@@ -909,18 +834,6 @@ var game = (function(){
         imageObj[i] = new Image();
         imageObj[i].src = 'pics/whitespil.jpg';
         i++;
-        
-        /*
-        var scoreboard = new Scoreboard();
-        scoreboard.countdown(45);
-        scoreboard.score();
-        scoreboard.help(
-            'Arrow keys to move. ' +
-            'Space bar to jump for fruit. ' +
-            'Watch for shaking trees with fruit.' +
-            'Get near the tree and jump before the fruit is gone!'
-        );
-         */
     }
     preloadResources();
     
