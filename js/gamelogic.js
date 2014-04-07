@@ -123,7 +123,7 @@ var game = (function(){
     }
     
     function solveCube() {
-        console.warn('solve was clicked');
+        createCubeMesh();
     }
     
     function shuffleCube() {
@@ -206,6 +206,27 @@ var game = (function(){
         cubePage[i].rotation.y = -Math.PI / 2;
         cubePage[i].position.set(-1.6, 0, 0);
         
+        // Light
+        var light = new THREE.PointLight(0xffffff);
+        light.position.set(0,0,1000);
+        scene.add(light);
+        
+        createCubeMesh();
+    }
+    
+    function createCubeMesh() {
+        // Remove previous cube, if there is any.
+        if (cubeMesh[0]) {
+            for (var i = -1; i <= 1; i++) {
+                for (var j = -1; j <= 1; j++) {
+                    for (var k = -1; k <= 1; k++) {
+                        rubicsPage[i][j][k].remove(cubeMesh[i][j][k]);
+                        rubicsCube.remove(rubicsPage[i][j][k]);
+                    }
+                }
+            }
+        }
+        
         // Create the cube.
         // When the CanvasRenderer is used, the texture has some distortions.
         // To get rid of this, you only have to increase the number of cube segments.
@@ -287,11 +308,6 @@ var game = (function(){
                 }
             }
         }
-        
-        // Light
-        var light = new THREE.PointLight(0xffffff);
-        light.position.set(0,0,1000);
-        scene.add(light);
     }
     
     /**
