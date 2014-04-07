@@ -156,7 +156,7 @@ var game = (function(){
             new THREE.ImageUtils.loadTexture("pics/white.jpg"),
             new THREE.ImageUtils.loadTexture("pics/red.jpg"),
             new THREE.ImageUtils.loadTexture("pics/orange.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/black.jpg"),
+            new THREE.ImageUtils.loadTexture("pics/gray.png"),
         ];
         
         // Cube colors: yellow, blue, red, green, orange, white
