@@ -40,7 +40,7 @@ var game = (function(){
     var projector = new THREE.Projector();
     var clickedObjects;
     
-    var gameStates = {'loading': 0, 'playing': 1, 'shuffle': 2};
+    var gameStates = {'loading': 0, 'playing': 1, 'movepage': 2, 'solve': 3, 'shuffle': 4};
     var gameState = gameStates.loading;
     
     /**
@@ -123,11 +123,26 @@ var game = (function(){
     }
     
     function solveCube() {
+        if (gameState != gameStates.playing) {
+            return;
+        }
+        
+        gameState = gameStates.solve;
+        
         createCubeMesh();
+        
+        gameState = gameStates.playing;
     }
     
     function shuffleCube() {
+        if (gameState != gameStates.playing) {
+            return;
+        }
+        
+        gameState = gameStates.shuffle;
+        
         console.warn('shuffle was clicked');
+        gameState = gameStates.playing;
     }
     
     /**
@@ -351,6 +366,12 @@ var game = (function(){
      * @param zDirection boolean True, if Z rotation is clockwise
      */
     function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection) {
+        if (gameState != gameStates.playing) {
+            return;
+        }
+        
+        gameState = gameStates.movepage;
+        
         var xAxisLocal = new THREE.Vector3(1, 0, 0);
         var yAxisLocal = new THREE.Vector3(0, 1, 0);
         var zAxisLocal = new THREE.Vector3(0, 0, 1);
@@ -409,22 +430,9 @@ var game = (function(){
                 }
                 
                 mouseState = mouseStates.clickReleased;
+                gameState = gameStates.playing;
             }
         }
-    }
-    
-    /**
-     * Logging, debugging.
-     */
-    function logCube() {
-        for (var i = -1; i <= 1; i++) {
-            for (var j = -1; j <= 1; j++) {
-                for (var k = -1; k <= 1; k++) {
-                    console.warn('logcube', i, j, k, rubicsPage[i][j][k].name);
-                }
-            }
-        }
-        console.warn('-----------');
     }
     
     function moveMiddleX(direction, i) {
@@ -692,7 +700,7 @@ var game = (function(){
             mouseYDelta = mY - mouseYOnMouseDown;
             
             var axis = '';
-            if ((Math.abs(mouseXDelta) > 10 || Math.abs(mouseYDelta) > 10)) {
+            if ((Math.abs(mouseXDelta) > 40 || Math.abs(mouseYDelta) > 40)) {
                 
                 mouseState = mouseStates.clickCaptured;
                 
@@ -715,7 +723,8 @@ var game = (function(){
                 }
                 else if ('y' == axis) {
                     yStatic = true;
-                    yDirection = (mouseXDelta >= 0);
+                    // There are different rotation on the top and on the bottom of cube.
+                    yDirection = ((mouseXDelta >= 0 && mY >= 0) || (mouseXDelta < 0 && mY < 0));
                     for (var y = -1; y <= 1; y++) {
                         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
                     }
