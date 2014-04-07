@@ -108,8 +108,6 @@ var game = (function(){
         renderer.setSize(canvasWidth, canvasHeight);
         
         // Append the renderers DOM.
-        document.body.style.margin = 0;
-        document.body.style.overflow = 'hidden';
         document.body.appendChild(renderer.domElement);
         
         
@@ -753,8 +751,8 @@ var game = (function(){
             writeTextContainer.style.opacity = 0.7;
             writeTextContainer.style.borderRadius = "5px";
             writeTextContainer.style.padding = "5px 20px";
-            writeTextContainer.style.right = windowHalfX;
-            writeTextContainer.style.top = windowHalfY;
+            writeTextContainer.style.left = (windowHalfX / 2) + 'px';
+            writeTextContainer.style.top = '10px';
             writeTextContainer.style.width = (window.innerWidth * 0.2) + "px";
             writeTextContainer.style.minWidth = '200px';
             writeTextContainer.style.color = 'yellow';
@@ -779,6 +777,9 @@ var game = (function(){
      * Preloader.
      */
     function preloadResources() {
+        document.body.style.margin = 0;
+        document.body.style.overflow = 'hidden';
+        
         var text = 'Loading, please wait.';
         var textEnding = '';
         writeText(text);
