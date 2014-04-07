@@ -158,8 +158,30 @@ var game = (function(){
         
         gameState = gameStates.shuffle;
         
-        console.warn('shuffle was clicked');
-        gameState = gameStates.playing;
+        for (var i = 0; i < 1; i++) {
+            var x = y = z = 0;
+            var xStatic = yStatic = zStatic = false;
+            var xDirection = yDirection = zDirection = null;
+            var axis = Math.floor(Math.random() * 3);
+            
+            if (0 == axis) {
+                xStatic = true;
+                xDirection = (Math.floor(Math.random() * 2) >= 1);
+                x = Math.floor(Math.random() * 3) - 1;
+            }
+            else if (1 == axis) {
+                yStatic = true;
+                yDirection = (Math.floor(Math.random() * 2) >= 1);
+                y = Math.floor(Math.random() * 3) - 1;
+            }
+            else if (2 == axis) {
+                zStatic = true;
+                zDirection = (Math.floor(Math.random() * 2) >= 1);
+                z = Math.floor(Math.random() * 3) - 1;
+            }
+            
+            rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
+        }
     }
     
     /**
