@@ -116,7 +116,7 @@ var game = (function(){
         
         // Rotation
         rubicsCube.rotation.y = Math.PI / 4;
-        rubicsCube.rotation.x = Math.PI / 4;
+        rubicsCube.rotation.x = Math.PI / 5;
         
         // Pages.
         var shape = new THREE.PlaneGeometry(3, 3);
