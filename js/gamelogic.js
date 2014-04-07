@@ -81,12 +81,53 @@ var game = (function(){
      * Create menu elements.
      */
     function addMenuItem(menuObject) {
+        var thisOpacity = 0.7;
+        
+        var menuContainer = document.createElement('img');
+        menuContainer.style.position = 'absolute';
+        menuContainer.style.backgroundColor = 'black';
+        menuContainer.style.opacity = thisOpacity;
+        menuContainer.style.borderRadius = "5px";
+        menuContainer.style.padding = "5px 20px";
+        menuContainer.style.left = menuObject.x + 'px';
+        menuContainer.style.top = menuObject.y + 'px';
+        menuContainer.style.width = menuObject.width + "px";
+        menuContainer.style.height = menuObject.height + "px";
+        menuContainer.style.color = 'yellow';
+        
+        menuContainer.src = menuObject.pic;
+        
+        var menuContainerMouseUp = function () {
+            menuObject.cb();
+            
+            // Animate.
+            var opacityDirection = 0.1;
+            var animMenu = function () {
+                setTimeout(function () {
+                    if (parseFloat(menuContainer.style.opacity) >= 1) {
+                        opacityDirection = -opacityDirection;
+                    }
+                    menuContainer.style.opacity = parseFloat(menuContainer.style.opacity) + opacityDirection;
+                    
+                    if (parseFloat(menuContainer.style.opacity) > thisOpacity) {
+                        animMenu();
+                    }
+                }, 20);
+            }
+            animMenu();
+        };
+        menuContainer.addEventListener( 'mouseup', menuContainerMouseUp, false );
+        menuContainer.addEventListener( 'touchend', menuContainerMouseUp, false );
+        
+        document.body.appendChild(menuContainer);
     }
     
     function solveCube() {
+        console.warn('solve was clicked');
     }
     
     function shuffleCube() {
+        console.warn('shuffle was clicked');
     }
     
     /**
@@ -842,6 +883,12 @@ var game = (function(){
         i++;
         imageObj[i] = new Image();
         imageObj[i].src = 'pics/whitespil.jpg';
+        i++;
+        imageObj[i] = new Image();
+        imageObj[i].src = 'pics/solve.png';
+        i++;
+        imageObj[i] = new Image();
+        imageObj[i].src = 'pics/shuffle.png';
         i++;
     }
     preloadResources();
