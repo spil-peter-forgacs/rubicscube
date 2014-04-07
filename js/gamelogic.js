@@ -124,30 +124,18 @@ var game = (function(){
             new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.0 } )
         ];
         var cover = new THREE.MeshFaceMaterial( materials );
+        // Right
         var i = 0;
         cubePage[i] = new THREE.Mesh(shape, cover);
         rubicsCube.add(cubePage[i]);
         cubePage[i].position.set(0, 0, 1.6);
-        i++;
-        cubePage[i] = new THREE.Mesh(shape, cover);
-        rubicsCube.add(cubePage[i]);
-        cubePage[i].rotation.x = Math.PI;
-        cubePage[i].position.set(0, 0, -1.6);
+        // Top
         i++;
         cubePage[i] = new THREE.Mesh(shape, cover);
         rubicsCube.add(cubePage[i]);
         cubePage[i].rotation.x = -Math.PI / 2;
         cubePage[i].position.set(0, 1.6, 0);
-        i++;
-        cubePage[i] = new THREE.Mesh(shape, cover);
-        rubicsCube.add(cubePage[i]);
-        cubePage[i].rotation.x = Math.PI / 2;
-        cubePage[i].position.set(0, -1.6, 0);
-        i++;
-        cubePage[i] = new THREE.Mesh(shape, cover);
-        rubicsCube.add(cubePage[i]);
-        cubePage[i].rotation.y = Math.PI / 2;
-        cubePage[i].position.set(1.6, 0, 0);
+        // Left
         i++;
         cubePage[i] = new THREE.Mesh(shape, cover);
         rubicsCube.add(cubePage[i]);
