@@ -202,6 +202,7 @@ var game = (function(){
                         cubeMaterials[5] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
                     }
                     
+                    // Logo on middle white item.
                     if (0 == i && 1 == j && 0 == k) {
                         cubeMaterials[2] = new THREE.MeshBasicMaterial({map:cubeTexture[7]});
                     }
