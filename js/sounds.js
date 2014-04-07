@@ -2,7 +2,7 @@ function Sound(name) {
   this.name = name;
   this.audio = document.createElement('audio');
   var source = document.createElement('source');
-  source.src = '/sounds/' + name + '.mp3';
+  source.src = 'sounds/' + name + '.mp3';
   this.audio.appendChild(source);
 }
 

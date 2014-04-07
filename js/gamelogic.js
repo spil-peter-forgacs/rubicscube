@@ -430,6 +430,8 @@ var game = (function(){
      * @param zDirection boolean True, if Z rotation is clockwise
      */
     function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i) {
+        Sounds.scratch.repeat();
+        
         var xAxisLocal = new THREE.Vector3(1, 0, 0);
         var yAxisLocal = new THREE.Vector3(0, 1, 0);
         var zAxisLocal = new THREE.Vector3(0, 0, 1);
@@ -487,6 +489,7 @@ var game = (function(){
                     movePageZ(-rotAngle, z);
                 }
                 
+                Sounds.scratch.stop();
                 if (cb && !isNaN(i) && i > 1) {
                     i--;
                     cb(i);
