@@ -33,7 +33,10 @@ var game = (function(){
     var clickedObjects;
     
     // Texts
-    var textMenu;
+    //var textMenu;
+    
+    var gameStates = {'loading': 0, 'playing': 1, 'shuffle': 2};
+    var gameState = gameStates.loading;
     
     /**
      * Booting.
@@ -52,9 +55,33 @@ var game = (function(){
         document.addEventListener( 'touchmove', onDocumentTouchMove, false );
         document.addEventListener( 'touchend', onDocumentTouchEnd, false );
         
+        initializeMenu();
+        
         // Initialize and start animating.
         initializeScene();
         animateScene();
+        
+        gameState = gameStates.playing;
+    }
+    
+    /**
+     * Initialize menu.
+     */
+    function initializeMenu() {
+        addMenuItem({x: windowHalfX * 0.4, y: 0, width: 50, height: 50, pic: 'pics/solve.png', cb: solveCube});
+        addMenuItem({x: windowHalfX * 0.4, y: 60, width: 50, height: 50, pic: 'pics/shuffle.png', cb: shuffleCube});
+    }
+    
+    /**
+     * Create menu elements.
+     */
+    function addMenuItem(menuObject) {
+    }
+    
+    function solveCube() {
+    }
+    
+    function shuffleCube() {
     }
     
     /**
@@ -229,6 +256,7 @@ var game = (function(){
         light.position.set(0,0,1000);
         scene.add(light);
         
+        /*
         var material = new THREE.MeshPhongMaterial({
             color: 0xeeeeee
         });
@@ -247,18 +275,7 @@ var game = (function(){
         textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
         
         textMenu.position.set( -0.5 * textWidth, 120, -400 );
-        //scene.add( textMenu );
-        
-        /*
-        var scoreboard = new Scoreboard();
-        scoreboard.countdown(45);
-        scoreboard.score();
-        scoreboard.help(
-            'Arrow keys to move. ' +
-            'Space bar to jump for fruit. ' +
-            'Watch for shaking trees with fruit.' +
-            'Get near the tree and jump before the fruit is gone!'
-        );
+        scene.add( textMenu );
          */
     }
     
@@ -756,6 +773,7 @@ var game = (function(){
         renderer.setSize( window.innerWidth, window.innerHeight );
     }
     
+    /*
     function createLabel(text, x, y, z, size, color, backGroundColor, backgroundMargin) {
         if(!backgroundMargin)
             backgroundMargin = 50;
@@ -801,7 +819,110 @@ var game = (function(){
         
         return mesh;
     }
+     */
     
+    var writeTextContainer;
+    function writeText(text) {
+        if (!writeTextContainer) {
+            writeTextContainer = document.createElement('div');
+            writeTextContainer.id = 'gameinfo';
+            writeTextContainer.style.position = 'absolute';
+            writeTextContainer.style.backgroundColor = 'black';
+            writeTextContainer.style.opacity = 0.7;
+            writeTextContainer.style.borderRadius = "5px";
+            writeTextContainer.style.padding = "5px 20px";
+            writeTextContainer.style.right = windowHalfX;
+            writeTextContainer.style.top = windowHalfY;
+            writeTextContainer.style.width = (window.innerWidth * 0.2) + "px";
+            writeTextContainer.style.minWidth = '200px';
+            writeTextContainer.style.color = 'yellow';
+            writeTextContainer.style.fontFamily = 'Arial, San Serif';
+            writeTextContainer.style.fontWeight = 'bold';
+            writeTextContainer.style.fontSize = (window.innerHeight * 0.033) + "px";
+            
+            document.body.appendChild(writeTextContainer);
+        }
+        
+        writeTextContainer.innerHTML = text;
+    }
+    function clearText() {
+        if (!writeTextContainer) {
+            return;
+        }
+        
+        document.body.removeChild(writeTextContainer);
+    }
+    
+    function preloadResources() {
+        var text = 'Loading, please wait.';
+        var textEnding = '';
+        writeText(text);
+        
+        animateText();
+        function animateText() {
+            setTimeout(
+                function () {
+                    if (textEnding.length < 2) {
+                        textEnding += '.';
+                    }
+                    else {
+                        textEnding = '';
+                    }
+                    writeText(text + textEnding);
+                    
+                    if (gameState == gameStates.loading) {
+                        animateText();
+                    }
+                    else {
+                        clearText();
+                    }
+                },
+                200
+            );
+        }
+        
+        // Counter.
+        var i = 0;
+        // Create objects.
+        var imageObj = [];
+        imageObj[i] = new Image();
+        imageObj[i].src = 'pics/orange.jpg';
+        i++;
+        imageObj[i] = new Image();
+        imageObj[i].src = 'pics/red.jpg';
+        i++;
+        imageObj[i] = new Image();
+        imageObj[i].src = 'pics/white.jpg';
+        i++;
+        imageObj[i] = new Image();
+        imageObj[i].src = 'pics/yellow.jpg';
+        i++;
+        imageObj[i] = new Image();
+        imageObj[i].src = 'pics/blue.jpg';
+        i++;
+        imageObj[i] = new Image();
+        imageObj[i].src = 'pics/green.jpg';
+        i++;
+        imageObj[i] = new Image();
+        imageObj[i].src = 'pics/gray.png';
+        i++;
+        imageObj[i] = new Image();
+        imageObj[i].src = 'pics/whitespil.jpg';
+        i++;
+        
+        /*
+        var scoreboard = new Scoreboard();
+        scoreboard.countdown(45);
+        scoreboard.score();
+        scoreboard.help(
+            'Arrow keys to move. ' +
+            'Space bar to jump for fruit. ' +
+            'Watch for shaking trees with fruit.' +
+            'Get near the tree and jump before the fruit is gone!'
+        );
+         */
+    }
+    preloadResources();
     
     window.addEventListener('load', booting, false);
 })();
