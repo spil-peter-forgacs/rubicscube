@@ -25,7 +25,7 @@ var game = (function(){
     var windowHalfY = window.innerHeight / 2;
     
     // Mouse states
-    var mouseStates = {'axis':1, 'click':2, 'clickCaptured':3, 'clickReleased':4};
+    var mouseStates = {'axis':1, 'click':2, 'clickReleased':3};
     var mouseState = mouseStates.clickReleased;
     
     // Mouse data
@@ -366,12 +366,6 @@ var game = (function(){
      * @param zDirection boolean True, if Z rotation is clockwise
      */
     function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection) {
-        if (gameState != gameStates.playing) {
-            return;
-        }
-        
-        gameState = gameStates.movepage;
-        
         var xAxisLocal = new THREE.Vector3(1, 0, 0);
         var yAxisLocal = new THREE.Vector3(0, 1, 0);
         var zAxisLocal = new THREE.Vector3(0, 0, 1);
@@ -429,7 +423,6 @@ var game = (function(){
                     movePageZ(-rotAngle, z);
                 }
                 
-                mouseState = mouseStates.clickReleased;
                 gameState = gameStates.playing;
             }
         }
@@ -681,9 +674,11 @@ var game = (function(){
                         
                         if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
                             
-                            mouseState = mouseStates.clickCaptured;
+                            gameState = gameStates.movepage;
                             
                             rotatePage(x, y, z, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
+                            
+                            mouseState = mouseStates.clickReleased;
                         }
                         else {
                             mouseState = mouseStates.clickReleased;
@@ -702,7 +697,7 @@ var game = (function(){
             var axis = '';
             if ((Math.abs(mouseXDelta) > 40 || Math.abs(mouseYDelta) > 40)) {
                 
-                mouseState = mouseStates.clickCaptured;
+                gameState = gameStates.movepage;
                 
                 if (Math.abs(mouseXDelta) > Math.abs(mouseYDelta)) {
                     axis = 'y';
@@ -736,6 +731,8 @@ var game = (function(){
                         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
                     }
                 }
+                
+                mouseState = mouseStates.clickReleased;
             }
         }
     }
