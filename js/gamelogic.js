@@ -150,13 +150,14 @@ var game = (function(){
         var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 4, 4, 4);
         // Load images as textures.
         var cubeTexture = [
-            new THREE.ImageUtils.loadTexture("pics/green.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/blue.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/yellow.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/white.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/red.jpg"),
             new THREE.ImageUtils.loadTexture("pics/orange.jpg"),
+            new THREE.ImageUtils.loadTexture("pics/red.jpg"),
+            new THREE.ImageUtils.loadTexture("pics/white.jpg"),
+            new THREE.ImageUtils.loadTexture("pics/yellow.jpg"),
+            new THREE.ImageUtils.loadTexture("pics/blue.jpg"),
+            new THREE.ImageUtils.loadTexture("pics/green.jpg"),
             new THREE.ImageUtils.loadTexture("pics/gray.png"),
+            new THREE.ImageUtils.loadTexture("pics/whitespil.jpg"),
         ];
         
         // Cube colors: yellow, blue, red, green, orange, white
@@ -199,6 +200,10 @@ var game = (function(){
                     }
                     if (-1 != k) {
                         cubeMaterials[5] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                    }
+                    
+                    if (0 == i && 1 == j && 0 == k) {
+                        cubeMaterials[2] = new THREE.MeshBasicMaterial({map:cubeTexture[7]});
                     }
                     
                     // Create a MeshFaceMaterial, which allows the cube to have different materials on each face.
