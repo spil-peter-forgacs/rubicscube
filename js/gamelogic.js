@@ -79,7 +79,11 @@ var game = (function(){
     function initializeMenu() {
         var widthHeight = (xBiggerY ? windowHalfY * 0.3 : windowHalfX * 0.3);
         
+        removeMenuItem('solveCube');
+        removeMenuItem('shuffleCube');
+        
         addMenuItem({
+            id: 'solveCube',
             x: windowHalfX - (windowHalfX * (xBiggerY ? 0.6 : 0.9)),
             y: 0,
             width: widthHeight,
@@ -88,6 +92,7 @@ var game = (function(){
             cb: solveCube
         });
         addMenuItem({
+            id: 'shuffleCube',
             x: windowHalfX - (windowHalfX * (xBiggerY ? 0.6 : 0.9)),
             y: 1.1 * widthHeight,
             width: widthHeight,
@@ -97,12 +102,23 @@ var game = (function(){
     }
     
     /**
+     * Remove menu item.
+     */
+    function removeMenuItem(id) {
+        var element = document.getElementById( id );
+        if (element) {
+            document.getElementById( id ).remove();
+        }
+    }
+    
+    /**
      * Create menu elements.
      */
     function addMenuItem(menuObject) {
         var thisOpacity = 0.7;
         
         var menuContainer = document.createElement('img');
+        menuContainer.id = menuObject.id;
         menuContainer.style.position = 'absolute';
         menuContainer.style.backgroundColor = 'black';
         menuContainer.style.opacity = thisOpacity;
@@ -863,6 +879,8 @@ var game = (function(){
         camera.updateProjectionMatrix();
         
         renderer.setSize( window.innerWidth, window.innerHeight );
+        
+        initializeMenu();
     }
     
     
