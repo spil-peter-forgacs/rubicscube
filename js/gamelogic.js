@@ -254,6 +254,18 @@ var game = (function(){
         
         textMenu.position.set( -0.5 * textWidth, 120, -400 );
         //scene.add( textMenu );
+        
+        /*
+        var scoreboard = new Scoreboard();
+        scoreboard.countdown(45);
+        scoreboard.score();
+        scoreboard.help(
+            'Arrow keys to move. ' +
+            'Space bar to jump for fruit. ' +
+            'Watch for shaking trees with fruit.' +
+            'Get near the tree and jump before the fruit is gone!'
+        );
+         */
     }
     
     /**
@@ -339,6 +351,7 @@ var game = (function(){
                         rotateAroundWorldAxis(rubicsPage[xi][yi][zi], axisLocal, rotAndleDelta);
                     }
                 }
+                
                 setTimeout(function () {moveCubes()}, 20);
             }
             else {
