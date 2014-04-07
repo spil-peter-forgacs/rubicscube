@@ -44,6 +44,9 @@ var game = (function(){
     var gameStates = {'loading': 0, 'playing': 1, 'movepage': 2, 'solve': 3, 'shuffle': 4};
     var gameState = gameStates.loading;
     
+    // Preloader
+    var imageObj;
+    
     /**
      * Booting.
      */
@@ -81,7 +84,7 @@ var game = (function(){
             y: 0,
             width: widthHeight,
             height: widthHeight,
-            pic: 'pics/solve.png',
+            pic: imageObj[8].src,
             cb: solveCube
         });
         addMenuItem({
@@ -89,7 +92,7 @@ var game = (function(){
             y: 1.1 * widthHeight,
             width: widthHeight,
             height: widthHeight,
-            pic: 'pics/shuffle.png', cb: shuffleCube
+            pic: imageObj[9].src, cb: shuffleCube
         });
     }
     
@@ -295,14 +298,14 @@ var game = (function(){
         var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 4, 4, 4);
         // Load images as textures.
         var cubeTexture = [
-            new THREE.ImageUtils.loadTexture("pics/orange.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/red.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/white.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/yellow.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/blue.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/green.jpg"),
-            new THREE.ImageUtils.loadTexture("pics/gray.png"),
-            new THREE.ImageUtils.loadTexture("pics/whitespil.jpg"),
+            new THREE.ImageUtils.loadTexture(imageObj[0].src),
+            new THREE.ImageUtils.loadTexture(imageObj[1].src),
+            new THREE.ImageUtils.loadTexture(imageObj[2].src),
+            new THREE.ImageUtils.loadTexture(imageObj[3].src),
+            new THREE.ImageUtils.loadTexture(imageObj[4].src),
+            new THREE.ImageUtils.loadTexture(imageObj[5].src),
+            new THREE.ImageUtils.loadTexture(imageObj[6].src),
+            new THREE.ImageUtils.loadTexture(imageObj[7].src),
         ];
         
         // Cube colors: yellow, blue, red, green, orange, white
@@ -933,7 +936,7 @@ var game = (function(){
         // Counter.
         var i = 0;
         // Create objects.
-        var imageObj = [];
+        imageObj = [];
         imageObj[i] = new Image();
         imageObj[i].src = 'pics/orange.jpg';
         i++;
@@ -953,7 +956,7 @@ var game = (function(){
         imageObj[i].src = 'pics/green.jpg';
         i++;
         imageObj[i] = new Image();
-        imageObj[i].src = 'pics/gray.png';
+        imageObj[i].src = 'pics/gray2.png';
         i++;
         imageObj[i] = new Image();
         imageObj[i].src = 'pics/whitespil.jpg';
