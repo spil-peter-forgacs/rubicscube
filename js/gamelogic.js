@@ -94,7 +94,7 @@ var game = (function(){
         
         var aspect = canvasWidth / canvasHeight;
         camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 10000);
-        camera.position.set(0, 0, 10);
+        camera.position.set(0, 0, 9);
         scene.add(camera);
         camera.lookAt(scene.position);
         
