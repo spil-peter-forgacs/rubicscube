@@ -492,6 +492,7 @@ var game = (function(){
         }
         else {
             console.warn('Exception');
+            return;
         }
         
         var rotAngleDiff = 0;
@@ -740,7 +741,7 @@ var game = (function(){
     }
     
     function onDocumentTouchEnd( event ) {
-        if ( touches.length === 1 ) {
+        if ( touches && touches.length === 1 ) {
             event.preventDefault();
             
             mouseX = touches[ 0 ].pageX;
