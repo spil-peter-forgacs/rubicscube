@@ -830,7 +830,8 @@ var game = (function(){
                 else if ('y' == axis) {
                     yStatic = true;
                     // There are different rotation on the top and on the bottom of cube.
-                    yDirection = ((mouseXDelta >= 0 && mY >= 0) || (mouseXDelta < 0 && mY < 0));
+                    //yDirection = ((mouseXDelta >= 0 && mY >= -windowHalfY * 0.8) || (mouseXDelta < 0 && mY < -windowHalfY * 0.8));
+                    yDirection = (mouseXDelta >= 0);
                     for (var y = -1; y <= 1; y++) {
                         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
                     }
