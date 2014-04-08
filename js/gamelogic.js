@@ -17,17 +17,14 @@ var game = (function(){
     var rubicsPage = [];
     // Small cubes.
     var cubeMesh = [];
-    // Pages around the cube.
-    // Used for capturing the movements.
-    var cubePage = [];
     
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
     var xBiggerY = (windowHalfX > windowHalfY);
     
     // Mouse states
-    var mouseStates = {'axis':1, 'click':2, 'clickReleased':3};
-    var mouseState = mouseStates.clickReleased;
+    var mouseStates = {'released':1, 'clicked':2};
+    var mouseState = mouseStates.released;
     
     // Mouse data
     var mouseX = 0;
@@ -58,11 +55,17 @@ var game = (function(){
         
         // Normal mouse events.
         document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+        document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+        document.addEventListener( 'mouseout', onDocumentMouseOut, false );
         
         // Touch events.
         document.addEventListener( 'touchstart', onDocumentTouchStart, false );
         document.addEventListener( 'touchmove', onDocumentTouchMove, false );
         document.addEventListener( 'touchend', onDocumentTouchEnd, false );
+        document.addEventListener( 'touchenter', onDocumentTouchEnter, false );
+        document.addEventListener( 'touchleave', onDocumentTouchLeave, false );
+        document.addEventListener( 'touchcancel', onDocumentTouchCancel, false );
         
         initializeMenu();
         
@@ -133,7 +136,7 @@ var game = (function(){
         menuContainer.src = menuObject.pic;
         
         var menuContainerMouseUp = function () {
-            mouseState = mouseStates.clickReleased;
+            mouseState = mouseStates.released;
             menuObject.cb();
             
             // Animate.
@@ -263,30 +266,6 @@ var game = (function(){
         rubicsCube.rotation.y = Math.PI / 4;
         rubicsCube.rotation.x = Math.PI / 5;
         
-        // Pages.
-        var shape = new THREE.PlaneGeometry(3, 3);
-        var materials = [
-            new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.0 } )
-        ];
-        var cover = new THREE.MeshFaceMaterial( materials );
-        // Right
-        var i = 0;
-        cubePage[i] = new THREE.Mesh(shape, cover);
-        rubicsCube.add(cubePage[i]);
-        cubePage[i].position.set(0, 0, 1.6);
-        // Top
-        i++;
-        cubePage[i] = new THREE.Mesh(shape, cover);
-        rubicsCube.add(cubePage[i]);
-        cubePage[i].rotation.x = -Math.PI / 2;
-        cubePage[i].position.set(0, 1.6, 0);
-        // Left
-        i++;
-        cubePage[i] = new THREE.Mesh(shape, cover);
-        rubicsCube.add(cubePage[i]);
-        cubePage[i].rotation.y = -Math.PI / 2;
-        cubePage[i].position.set(-1.6, 0, 0);
-        
         // Light
         var light = new THREE.PointLight(0xffffff);
         light.position.set(0,0,1000);
@@ -381,7 +360,9 @@ var game = (function(){
                     // Containers.
                     rubicsPage[i][j][k] = new THREE.Object3D();
                     rubicsCube.add(rubicsPage[i][j][k]);
+                    
                     // Name it for debugging reason.
+                    cubeMesh[i][j][k].name = i + ',' + j + ',' + k;
                     rubicsPage[i][j][k].name = i + ',' + j + ',' + k;
                     
                     // Add the small cubes to their container.
@@ -644,102 +625,153 @@ var game = (function(){
         renderer.render(scene, camera);
     }
     
+    /**
+     * Mouse events.
+     */
+    
     function onDocumentMouseDown( event ) {
         event.preventDefault();
         
         mouseX = event.clientX;
         mouseY = event.clientY;
         
-        clickWithMouse(mouseX, mouseY);
-        
-        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-        document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-        document.addEventListener( 'mouseout', onDocumentMouseOut, false );
+        pointerDown(mouseX, mouseY);
     }
     
-    function clickWithMouse(mouseX, mouseY) {
-        if (mouseState != mouseStates.clickReleased) {
+    function onDocumentMouseMove( event ) {
+        event.preventDefault();
+        
+        pointerMove();
+    }
+    
+    function onDocumentMouseUp( event ) {
+        event.preventDefault();
+        
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+        
+        pointerUp(mouseX, mouseY);
+    }
+    
+    function onDocumentMouseOut( event ) {
+        pointerOut();
+    }
+    
+    function onDocumentTouchStart( event ) {
+        if ( event.touches.length === 1 ) {
+            event.preventDefault();
+            
+            mouseX = event.touches[ 0 ].pageX;
+            mouseY = event.touches[ 0 ].pageY;
+            
+            pointerDown(mouseX, mouseY);
+        }
+    }
+    
+    function onDocumentTouchMove( event ) {
+        event.preventDefault();
+        
+        pointerMove();
+    }
+    
+    function onDocumentTouchEnd( event ) {
+        if ( event.touches.length === 1 ) {
+            event.preventDefault();
+            
+            mouseX = event.touches[ 0 ].pageX;
+            mouseY = event.touches[ 0 ].pageY;
+            
+            pointerUp(mouseX, mouseY);
+        }
+    }
+    
+    function onDocumentTouchEnter( event ) {
+    }
+    
+    function onDocumentTouchLeave( event ) {
+        pointerOut();
+    }
+    
+    function onDocumentTouchCancel( event ) {
+        pointerOut();
+    }
+    
+    function pointerMove() {
+    }
+    
+    function pointerOut() {
+        mouseState = mouseStates.released;
+    }
+    
+    function pointerDown(mouseX, mouseY) {
+        if (mouseState != mouseStates.released) {
             return;
         }
         
-        var intersects = getClickTargetObjects(mouseX, mouseY);
+        mouseState = mouseStates.clicked;
         
-        if ( intersects.length > 0 ) {
-            var found = -1;
-            for (var i = 0; i < cubePage.length; i++) {
-                if (cubePage[i].id == intersects[ 0 ].object.id) {
-                    found = i;
-                }
-            }
-            if (found >= 0) {
-                mouseState = mouseStates.click;
-                
-                clickedObjects = intersects;
-            }
-        }
-        else {
-            mouseState = mouseStates.axis;
-        }
+        var intersects = getClickTargetObjects(mouseX, mouseY);
+        clickedObjects = intersects;
         
         mouseXOnMouseDown = mouseX - windowHalfX;
         mouseYOnMouseDown = mouseY - windowHalfY;
     }
     
-    function onDocumentMouseMove( event ) {
-        mouseX = event.clientX;
-        mouseY = event.clientY;
+    function pointerUp(mouseX, mouseY) {
+        if (mouseState != mouseStates.clicked) {
+            return;
+        }
         
-        moveWithMouse(mouseX, mouseY);
-    }
-    
-    function moveWithMouse(mouseX, mouseY) {
-        if (mouseState == mouseStates.click) {
-            var intersects = getClickTargetObjects(mouseX, mouseY);
-            
-            // The user navigate away from cube.
-            if (intersects.length == 0) {
-                mouseState = mouseStates.clickReleased;
-                return;
-            }
-            
-            if ( intersects.length > 0 && clickedObjects[ 0 ].object != intersects[ 0 ].object) {
-                var found = -1;
-                for (var i = 0; i < cubePage.length; i++) {
-                    if (cubePage[i].id == intersects[ 0 ].object.id) {
-                        found = i;
-                    }
-                }
-                if (found >= 0) {
-                    var point = clickedObjects[ 0 ].point;
-                    var x1 = clickedObjects[ 0 ].object.position.x;
-                    var y1 = clickedObjects[ 0 ].object.position.y;
-                    var z1 = clickedObjects[ 0 ].object.position.z;
-                    var x2 = intersects[ 0 ].object.position.x;
-                    var y2 = intersects[ 0 ].object.position.y;
-                    var z2 = intersects[ 0 ].object.position.z;
+        var intersects = getClickTargetObjects(mouseX, mouseY);
+        
+        if (intersects.length > 0 && clickedObjects.length > 0) {
+            // Don't move, if it is the same small cube.
+            if (clickedObjects[0].object != intersects[ 0 ].object) {
+                
+                gameState = gameStates.movepage;
+                
+                x1 = clickedObjects[0].object.cubeX;
+                y1 = clickedObjects[0].object.cubeY;
+                z1 = clickedObjects[0].object.cubeZ;
+                x2 = intersects[0].object.cubeX;
+                y2 = intersects[0].object.cubeY;
+                z2 = intersects[0].object.cubeZ;
+                
+                console.warn('released', clickedObjects[0].object.name, intersects[0].object.name, clickedObjects, intersects);
+                console.warn('released2', clickedObjects[0].object.cubeX, clickedObjects[0].object.cubeY, clickedObjects[0].object.cubeZ);
+                console.warn('released3', intersects[0].object.cubeX, intersects[0].object.cubeY, intersects[0].object.cubeZ);
+                console.warn('xyz1', x1, y1, z1);
+                console.warn('xyz2', x2, y2, z2);
+                console.warn('rotate', x1, y1, z1, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
+                rotatePage(x1, y1, z1, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
+                
+                /*
+                var point = clickedObjects[ 0 ].point;
+                var x1 = clickedObjects[ 0 ].object.position.x;
+                var y1 = clickedObjects[ 0 ].object.position.y;
+                var z1 = clickedObjects[ 0 ].object.position.z;
+                var x2 = intersects[ 0 ].object.position.x;
+                var y2 = intersects[ 0 ].object.position.y;
+                var z2 = intersects[ 0 ].object.position.z;
+                
+                if (clickedObjects.length > 1) {
+                    var x, y, z;
                     
-                    if (clickedObjects.length > 1) {
-                        var x, y, z;
-                        
-                        var foundedCube;
-                        for (var q = 0; q < clickedObjects.length; q++) {
-                            for (var i = -1; i <= 1; i++) {
-                                for (var j = -1; j <= 1; j++) {
-                                    if (rubicsPage[i][j][1].children[0] == clickedObjects[ q ].object) {
-                                        foundedCube = q;
-                                        x = i; y = j; z = 1;
-                                    }
-                                    else if (rubicsPage[-1][i][j].children[0] == clickedObjects[ q ].object) {
-                                        foundedCube = q;
-                                        x = -1; y = i; z = j;
-                                    }
-                                    else if (rubicsPage[j][1][i].children[0] == clickedObjects[ q ].object) {
-                                        foundedCube = q;
-                                        x = j; y = 1; z = i;
-                                    }
-                                    if (foundedCube) {
-                                        break;
-                                    }
+                    var foundedCube;
+                    for (var q = 0; q < clickedObjects.length; q++) {
+                        for (var i = -1; i <= 1; i++) {
+                            for (var j = -1; j <= 1; j++) {
+                                if (rubicsPage[i][j][1].children[0] == clickedObjects[ q ].object) {
+                                    foundedCube = q;
+                                    x = i; y = j; z = 1;
+                                }
+                                else if (rubicsPage[-1][i][j].children[0] == clickedObjects[ q ].object) {
+                                    foundedCube = q;
+                                    x = -1; y = i; z = j;
+                                }
+                                else if (rubicsPage[j][1][i].children[0] == clickedObjects[ q ].object) {
+                                    foundedCube = q;
+                                    x = j; y = 1; z = i;
                                 }
                                 if (foundedCube) {
                                     break;
@@ -749,23 +781,22 @@ var game = (function(){
                                 break;
                             }
                         }
-                        
-                        if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
-                            
-                            gameState = gameStates.movepage;
-                            
-                            rotatePage(x, y, z, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
-                            
-                            mouseState = mouseStates.clickReleased;
-                        }
-                        else {
-                            mouseState = mouseStates.clickReleased;
+                        if (foundedCube) {
+                            break;
                         }
                     }
+                    
+                    if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+                        
+                        gameState = gameStates.movepage;
+                        
+                        rotatePage(x, y, z, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
+                    }
                 }
+                */
             }
         }
-        else if (mouseState == mouseStates.axis) {
+        else if (intersects.length == 0 && clickedObjects.length == 0) {
             mX = mouseX - windowHalfX;
             mY = mouseY - windowHalfY;
             
@@ -809,48 +840,10 @@ var game = (function(){
                         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
                     }
                 }
-                
-                mouseState = mouseStates.clickReleased;
             }
         }
-    }
-    
-    function onDocumentMouseUp( event ) {
-        document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-        document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-        document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
-    }
-    
-    function onDocumentMouseOut( event ) {
-        document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-        document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-        document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
-    }
-    
-    function onDocumentTouchStart( event ) {
-        if ( event.touches.length === 1 ) {
-            event.preventDefault();
-            
-            mouseX = event.touches[ 0 ].pageX;
-            mouseY = event.touches[ 0 ].pageY;
-            
-            clickWithMouse(mouseX, mouseY);
-        }
-    }
-    
-    function onDocumentTouchMove( event ) {
-        if ( event.touches.length === 1 ) {
-            event.preventDefault();
-            
-            mouseX = event.touches[ 0 ].pageX;
-            mouseY = event.touches[ 0 ].pageY;
-            
-            moveWithMouse(mouseX, mouseY);
-        }
-    }
-    
-    function onDocumentTouchEnd( event ) {
-        event.preventDefault();
+        
+        mouseState = mouseStates.released;
     }
     
     /**
@@ -863,15 +856,41 @@ var game = (function(){
         var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
         
         var children = [];
-        for (var i = 0; i < rubicsCube.children.length; i++) {
-            if (rubicsCube.children[i].children.length > 0) {
-                children.push(rubicsCube.children[i].children[0]);
+        // Top.
+        for (var i = -1; i <= 1; i++) {
+            for (var j = -1; j <= 1; j++) {
+                rubicsPage[i][1][j].children[0].cubeX = i;
+                rubicsPage[i][1][j].children[0].cubeY = 1;
+                rubicsPage[i][1][j].children[0].cubeZ = j;
+                
+                children.push(rubicsPage[i][1][j].children[0]);
             }
-            else {
-                children.push(rubicsCube.children[i]);
+        }
+        // Left.
+        // Don't add top again.
+        for (var i = -1; i <= 0; i++) {
+            for (var j = -1; j <= 1; j++) {
+                rubicsPage[-1][i][j].children[0].cubeX = -1;
+                rubicsPage[-1][i][j].children[0].cubeY = i;
+                rubicsPage[-1][i][j].children[0].cubeZ = j;
+                
+                children.push(rubicsPage[-1][i][j].children[0]);
+            }
+        }
+        // Right.
+        // Don't add top and left again.
+        for (var i = 0; i <= 1; i++) {
+            for (var j = -1; j <= 0; j++) {
+                rubicsPage[i][j][1].children[0].cubeX = i;
+                rubicsPage[i][j][1].children[0].cubeY = j;
+                rubicsPage[i][j][1].children[0].cubeZ = 1;
+                
+                children.push(rubicsPage[i][j][1].children[0]);
             }
         }
         
+        // This gives back all the cubes intersected with the project vector.
+        // It is ordered by distance.
         var intersects = raycaster.intersectObjects( children );
         
         return intersects;
