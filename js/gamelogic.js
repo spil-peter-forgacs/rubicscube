@@ -107,6 +107,13 @@ var game = (function(){
             height: widthHeight,
             pic: imageObj['shuffle'].src, cb: shuffleCube
         });
+        
+        var scoreboard = new Scoreboard();
+        scoreboard.message("Rubic's cube");
+        scoreboard.help('Shuffle the cube with the shuffle button.' +
+            'Then you can move the pages touching the cube and moving to the right direction.'+
+            'You can mobe the cube too, if you wipe the screen outside of the cube (bottom, left, right).' +
+            'If you want to restart, click to the solve button.');
     }
     
     /**
@@ -836,7 +843,7 @@ var game = (function(){
             mouseYDelta = mY - mouseYOnMouseDown;
             
             var axis = '';
-            if (((Math.abs(mouseXDelta) > 20 && Math.abs(mouseYDelta) < 10) || (Math.abs(mouseYDelta) > 20 && Math.abs(mouseXDelta) < 10))) {
+            if (((Math.abs(mouseXDelta) > 20 && Math.abs(mouseYDelta) < 15) || (Math.abs(mouseYDelta) > 20 && Math.abs(mouseXDelta) < 15))) {
                 
                 gameState = gameStates.movepage;
                 

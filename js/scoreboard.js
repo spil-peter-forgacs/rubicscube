@@ -1,5 +1,9 @@
 function Scoreboard(options) {
   if (!options) options= {};
+  
+  if (document.body.getElementById && document.body.getElementById('scoreboard')) {
+    document.body.removeChild('scoreboard');
+  }
 
   this._message = options.message || '';
   this._score = options.score || 0;
@@ -250,15 +254,17 @@ Scoreboard.prototype.onTimeExpired = function(cb) {
 Scoreboard.prototype.ensureDom = function() {
   if (this.el) return;
 
+  var that = this;
+  
   var el = this.el = document.createElement('div');
   el.id = 'scoreboard';
   el.style.position = 'absolute';
   el.style.backgroundColor = 'black';
-  el.style.opacity = 0.7;
+  el.style.opacity = 1.0;
   el.style.borderRadius = "5px";
   el.style.padding = "5px 20px";
-  el.style.right = "50px";
-  el.style.top = "75px";
+  el.style.right = "0px";
+  el.style.top = "5px";
   el.style.width = (window.innerWidth * 0.2) + "px";
   el.style.minWidth = '200px';
 
@@ -279,7 +285,7 @@ Scoreboard.prototype.ensureDom = function() {
   var message_el = this.message_el = document.createElement('div');
   message_el.style.fontWeight = 'normal';
   message_el.style.color = 'white';
-  message_el.style.maxHeight = (window.innerHeight * 0.2) + "px";
+  //message_el.style.maxHeight = (window.innerHeight * 0.2) + "px";
   message_el.style.overflowY = 'auto';
   el.appendChild(message_el);
 
@@ -291,7 +297,7 @@ Scoreboard.prototype.ensureDom = function() {
   help_el.style.borderTop = "1px #676767 solid";
   help_el.style.marginTop = '5px';
   help_el.style.paddingTop = '3px';
-  help_el.style.maxHeight = (window.innerHeight * 0.2) + "px";
+  //help_el.style.maxHeight = (window.innerHeight * 0.2) + "px";
   help_el.style.overflowY = 'auto';
   el.appendChild(help_el);
 
@@ -299,14 +305,18 @@ Scoreboard.prototype.ensureDom = function() {
   help_footer.style.display = 'none';
   help_footer.style.fontWeight = 'normal';
   help_footer.style.color = 'white';
-  help_footer.style.maxHeight = (window.innerHeight * 0.2) + "px";
+  //help_footer.style.maxHeight = (window.innerHeight * 0.2) + "px";
   help_footer.style.fontSize = (window.innerHeight * 0.02) + "px";
   help_footer.style.borderTop = "1px #676767 solid";
   help_footer.style.marginTop = '5px';
-  help_footer.innerHTML = 'Press ? for help';
+  help_footer.innerHTML = 'Help';
+  function help_footer_mouseUp() {
+    that.toggleHelp();
+  }
+  help_footer.addEventListener( 'mouseup', help_footer_mouseUp, false );
+  help_footer.addEventListener( 'touchend', help_footer_mouseUp, false );
   el.appendChild(help_footer);
 
-  var that = this;
   document.addEventListener('keypress', function(event) {
     if (event.keyCode == 63) that.toggleHelp();
     if (event.keyCode == 47) that.toggleHelp();
