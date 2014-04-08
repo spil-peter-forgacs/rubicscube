@@ -310,7 +310,7 @@ Scoreboard.prototype.ensureDom = function() {
   help_footer.style.borderTop = "1px #676767 solid";
   help_footer.style.marginTop = '15px';
   help_footer.innerHTML = 'Help';
-  function help_footer_mouseUp() {
+  function help_footer_mouseUp(event) {
     that.toggleHelp();
   }
   help_footer.addEventListener( 'mouseup', help_footer_mouseUp, false );

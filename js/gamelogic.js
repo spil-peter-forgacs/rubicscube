@@ -728,6 +728,8 @@ var game = (function(){
             mouseX = event.touches[ 0 ].pageX;
             mouseY = event.touches[ 0 ].pageY;
             
+            touches = event.touches;
+            
             pointerDown(mouseX, mouseY);
         }
     }
@@ -819,6 +821,12 @@ var game = (function(){
                 var xDirection = y1Page > y2Page;
                 var yDirection = z1Page < z2Page;
                 var zDirection = y1Page > y2Page;
+                
+                rotatePage(
+                    x1Cube, y1Cube, z1Cube,
+                    xStatic, yStatic, zStatic,
+                    xDirection, yDirection, zDirection
+                );
             }
             // Move on the side.
             else if (clickedObjects['cube'][ 0 ].object != intersects['cube'][ 0 ].object) {
@@ -828,16 +836,16 @@ var game = (function(){
                 var xDirection = (0 != y1Page ? z2Cube > z1Cube : y2Cube < y1Cube);
                 var yDirection = (0 != x1Page ? z2Cube > z1Cube : x2Cube > x1Cube);
                 var zDirection = (0 != x1Page ? y2Cube < y1Cube : x2Cube < x1Cube);
+                
+                rotatePage(
+                    x1Cube, y1Cube, z1Cube,
+                    xStatic, yStatic, zStatic,
+                    xDirection, yDirection, zDirection
+                );
             }
-            
-            rotatePage(
-                x1Cube, y1Cube, z1Cube,
-                xStatic, yStatic, zStatic,
-                xDirection, yDirection, zDirection
-            );
         }
         // Move cube
-        else if (intersects.length == 0 && clickedObjects.length == 0) {
+        else if (intersects['page'].length == 0 && clickedObjects['page'].length == 0) {
             mX = mouseX - windowHalfX;
             mY = mouseY - windowHalfY;
             
