@@ -165,6 +165,7 @@ var game = (function(){
         
         gameState = gameStates.solve;
         
+        Sounds.snick.play();
         createCubeMesh();
         
         gameState = gameStates.playing;
@@ -175,6 +176,7 @@ var game = (function(){
             return;
         }
         
+        Sounds.drip.play();
         gameState = gameStates.shuffle;
         
         randomMove(Math.floor(Math.random() * 4) + 5);
@@ -430,7 +432,9 @@ var game = (function(){
      * @param zDirection boolean True, if Z rotation is clockwise
      */
     function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i) {
-        Sounds.scratch.play();
+        if (!cb) {
+            Sounds.scratch.play();
+        }
         
         var xAxisLocal = new THREE.Vector3(1, 0, 0);
         var yAxisLocal = new THREE.Vector3(0, 1, 0);
