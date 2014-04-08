@@ -306,9 +306,9 @@ Scoreboard.prototype.ensureDom = function() {
   help_footer.style.fontWeight = 'normal';
   help_footer.style.color = 'white';
   //help_footer.style.maxHeight = (window.innerHeight * 0.2) + "px";
-  help_footer.style.fontSize = (window.innerHeight * 0.02) + "px";
+  help_footer.style.fontSize = (window.innerHeight * 0.04) + "px";
   help_footer.style.borderTop = "1px #676767 solid";
-  help_footer.style.marginTop = '5px';
+  help_footer.style.marginTop = '15px';
   help_footer.innerHTML = 'Help';
   function help_footer_mouseUp() {
     that.toggleHelp();
