@@ -47,6 +47,8 @@ var game = (function(){
     // Preloader
     var imageObj;
     
+    var touches;
+    
     /**
      * Booting.
      */
@@ -699,14 +701,16 @@ var game = (function(){
         event.preventDefault();
         
         pointerMove();
+        
+        touches = event.touches;
     }
     
     function onDocumentTouchEnd( event ) {
-        if ( event.touches.length === 1 ) {
+        if ( touches.length === 1 ) {
             event.preventDefault();
             
-            mouseX = event.touches[ 0 ].pageX;
-            mouseY = event.touches[ 0 ].pageY;
+            mouseX = touches[ 0 ].pageX;
+            mouseY = touches[ 0 ].pageY;
             
             pointerUp(mouseX, mouseY);
         }
