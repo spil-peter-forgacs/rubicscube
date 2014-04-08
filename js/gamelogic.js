@@ -806,7 +806,7 @@ var game = (function(){
             mouseYDelta = mY - mouseYOnMouseDown;
             
             var axis = '';
-            if ((Math.abs(mouseXDelta) > 40 || Math.abs(mouseYDelta) > 40)) {
+            if (((Math.abs(mouseXDelta) > 40 && Math.abs(mouseYDelta) < 20) || (Math.abs(mouseYDelta) > 40 && Math.abs(mouseXDelta) < 20))) {
                 
                 gameState = gameStates.movepage;
                 
