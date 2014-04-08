@@ -39,7 +39,7 @@ var game = (function(){
     
     // Variables for the click event
     var projector = new THREE.Projector();
-    var clickedObjects;
+    var clickedObjects = [];
     
     var gameStates = {'loading': 0, 'playing': 1, 'movepage': 2, 'solve': 3, 'shuffle': 4};
     var gameState = gameStates.loading;
@@ -737,8 +737,8 @@ var game = (function(){
         
         mouseState = mouseStates.clicked;
         
-        var intersects = getClickTargetObjects(mouseX, mouseY);
-        clickedObjects = intersects;
+        clickedObjects['page'] = getClickTargetObjects(mouseX, mouseY, false);
+        clickedObjects['cube'] = getClickTargetObjects(mouseX, mouseY, true);
         
         mouseXOnMouseDown = mouseX - windowHalfX;
         mouseYOnMouseDown = mouseY - windowHalfY;
@@ -749,32 +749,55 @@ var game = (function(){
             return;
         }
         
-        var intersects = getClickTargetObjects(mouseX, mouseY, false);
+        var intersects = [];
+        intersects['page'] = getClickTargetObjects(mouseX, mouseY, false);
+        intersects['cube'] = getClickTargetObjects(mouseX, mouseY, true);
         
-        if (intersects.length > 0 && clickedObjects.length > 0) {
-            if (clickedObjects[ 0 ].object != intersects[ 0 ].object) {
-                
-                var x1 = clickedObjects[ 0 ].object.position.x;
-                var y1 = clickedObjects[ 0 ].object.position.y;
-                var z1 = clickedObjects[ 0 ].object.position.z;
-                var x2 = intersects[ 0 ].object.position.x;
-                var y2 = intersects[ 0 ].object.position.y;
-                var z2 = intersects[ 0 ].object.position.z;
-                
-                var intersectsCube = getClickTargetObjects(mouseX, mouseY, true);
-                
-                if (intersectsCube.length > 0) {
-                    
-                    gameState = gameStates.movepage;
-                    
-                    var x = intersectsCube[0].object.cubeX;
-                    var y = intersectsCube[0].object.cubeY;
-                    var z = intersectsCube[0].object.cubeZ;
-                    
-                    rotatePage(x, y, z, x1 == x2, y1 == y2, z1 == z2, y1 > y2, z1 < z2, y1 > y2);
-                }
+        // Move page.
+        if (intersects['page'].length > 0 && clickedObjects['page'].length > 0 && intersects['cube'].length > 0 && clickedObjects['cube'].length > 0) {
+            
+            gameState = gameStates.movepage;
+            
+            var x1Cube = clickedObjects['cube'][0].object.cubeX;
+            var y1Cube = clickedObjects['cube'][0].object.cubeY;
+            var z1Cube = clickedObjects['cube'][0].object.cubeZ;
+            var x2Cube = intersects['cube'][0].object.cubeX;
+            var y2Cube = intersects['cube'][0].object.cubeY;
+            var z2Cube = intersects['cube'][0].object.cubeZ;
+            
+            var x1Page = clickedObjects['page'][ 0 ].object.position.x;
+            var y1Page = clickedObjects['page'][ 0 ].object.position.y;
+            var z1Page = clickedObjects['page'][ 0 ].object.position.z;
+            var x2Page = intersects['page'][ 0 ].object.position.x;
+            var y2Page = intersects['page'][ 0 ].object.position.y;
+            var z2Page = intersects['page'][ 0 ].object.position.z;
+            
+            // Move through the edge.
+            if (clickedObjects['page'][ 0 ].object != intersects['page'][ 0 ].object) {
+                var xStatic = x1Page == x2Page;
+                var yStatic = y1Page == y2Page;
+                var zStatic = z1Page == z2Page;
+                var xDirection = y1Page > y2Page;
+                var yDirection = z1Page < z2Page;
+                var zDirection = y1Page > y2Page;
             }
+            // Move on the side.
+            else if (clickedObjects['cube'][ 0 ].object != intersects['cube'][ 0 ].object) {
+                var xStatic = (0 != y1Page || 0 != z1Page) && x1Cube == x2Cube;
+                var yStatic = (0 != x1Page || 0 != z1Page) && y1Cube == y2Cube;
+                var zStatic = (0 != x1Page || 0 != y1Page) && z1Cube == z2Cube;
+                var xDirection = (0 != y1Page ? z2Cube > z1Cube : y2Cube < y1Cube);
+                var yDirection = (0 != x1Page ? z2Cube > z1Cube : x2Cube > x1Cube);
+                var zDirection = (0 != x1Page ? y2Cube < y1Cube : x2Cube < x1Cube);
+            }
+            
+            rotatePage(
+                x1Cube, y1Cube, z1Cube,
+                xStatic, yStatic, zStatic,
+                xDirection, yDirection, zDirection
+            );
         }
+        // Move cube
         else if (intersects.length == 0 && clickedObjects.length == 0) {
             mX = mouseX - windowHalfX;
             mY = mouseY - windowHalfY;
