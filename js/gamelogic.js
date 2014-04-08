@@ -842,8 +842,12 @@ var game = (function(){
             mouseXDelta = mX - mouseXOnMouseDown;
             mouseYDelta = mY - mouseYOnMouseDown;
             
+            var mouseXDeltaAbs = Math.abs(mouseXDelta);
+            var mouseYDeltaAbs = Math.abs(mouseYDelta);
+            
             var axis = '';
-            if (((Math.abs(mouseXDelta) > 20 && Math.abs(mouseYDelta) < 15) || (Math.abs(mouseYDelta) > 20 && Math.abs(mouseXDelta) < 15))) {
+            if ((mouseXDeltaAbs > 20 && mouseYDeltaAbs < mouseXDeltaAbs / 2) ||
+                (mouseYDeltaAbs > 20 && mouseXDeltaAbs < mouseYDeltaAbs / 2)) {
                 
                 gameState = gameStates.movepage;
                 
