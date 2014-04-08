@@ -194,7 +194,7 @@ var game = (function(){
         Sounds.drip.play();
         gameState = gameStates.shuffle;
         
-        randomMove(Math.floor(Math.random() * 4) + 5);
+        randomMove(Math.floor(Math.random() * 4) + 10);
     }
     
     function randomMove(i) {
