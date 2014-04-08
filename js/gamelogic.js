@@ -96,7 +96,7 @@ var game = (function(){
             y: 0,
             width: widthHeight,
             height: widthHeight,
-            pic: imageObj[8].src,
+            pic: imageObj['solve'].src,
             cb: solveCube
         });
         addMenuItem({
@@ -105,7 +105,7 @@ var game = (function(){
             y: 1.1 * widthHeight,
             width: widthHeight,
             height: widthHeight,
-            pic: imageObj[9].src, cb: shuffleCube
+            pic: imageObj['shuffle'].src, cb: shuffleCube
         });
     }
     
@@ -301,6 +301,22 @@ var game = (function(){
         scene.add(light);
         
         createCubeMesh();
+        
+        var geometry = new THREE.Geometry();
+        var sprite = THREE.ImageUtils.loadTexture( imageObj['disc'].src );
+        for ( i = 0; i < 1000; i ++ ) {
+            var vertex = new THREE.Vector3();
+            vertex.x = 2000 * Math.random() - 1000;
+            vertex.y = -2000 * Math.random() + 1000;
+            vertex.z = -2000 * Math.random() + 1000;
+            
+            geometry.vertices.push( vertex );
+        }
+        material = new THREE.ParticleSystemMaterial( { size: (is_touch_device() ? 15 : 5), sizeAttenuation: false, map: sprite, transparent: true } );
+        material.color.setHSL( 0.6, 0.5, 0.5 );
+        particles = new THREE.ParticleSystem( geometry, material );
+        particles.sortParticles = true;
+        scene.add( particles );
     }
     
     function createCubeMesh() {
@@ -324,14 +340,14 @@ var game = (function(){
         var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 4, 4, 4);
         // Load images as textures.
         var cubeTexture = [
-            new THREE.ImageUtils.loadTexture(imageObj[0].src),
-            new THREE.ImageUtils.loadTexture(imageObj[1].src),
-            new THREE.ImageUtils.loadTexture(imageObj[2].src),
-            new THREE.ImageUtils.loadTexture(imageObj[3].src),
-            new THREE.ImageUtils.loadTexture(imageObj[4].src),
-            new THREE.ImageUtils.loadTexture(imageObj[5].src),
-            new THREE.ImageUtils.loadTexture(imageObj[6].src),
-            new THREE.ImageUtils.loadTexture(imageObj[7].src),
+            new THREE.ImageUtils.loadTexture(imageObj['orange'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['red'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['white'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['yellow'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['blue'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['green'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['gray2'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['whitespil'].src),
         ];
         
         // Cube colors: yellow, blue, red, green, orange, white
@@ -444,7 +460,7 @@ var game = (function(){
     function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i) {
         // Play sound, if it is not shuffle.
         // Mobile devices can't handle so much requests.
-        if (!cb) {
+        if (!is_touch_device()) {
             Sounds.scratch.play();
         }
         
@@ -650,6 +666,16 @@ var game = (function(){
      */
     function animateScene() {
         requestAnimationFrame(animateScene);
+        
+        var time = Date.now() * 0.00005;
+        //h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
+        //material.color.setHSL( h, 0.5, 0.5 );
+        
+        //var alpha = h * 2 * Math.PI;
+        //particles.position.x = 100 * Math.sin(alpha);
+        //particles.position.y = 100 * Math.cos(alpha);
+        //particles.position.z = 100 * Math.sin(alpha);
+        particles.rotation.y = time / 10;
         
         renderer.render(scene, camera);
     }
@@ -908,6 +934,9 @@ var game = (function(){
         return intersects;
     }
     
+    function is_touch_device() {
+        return !!('ontouchstart' in window);
+    }
     
     function onWindowResize() {
         windowHalfX = window.innerWidth / 2;
@@ -990,40 +1019,30 @@ var game = (function(){
             );
         }
         
-        // Counter.
-        var i = 0;
         // Create objects.
         imageObj = [];
-        imageObj[i] = new Image();
-        imageObj[i].src = 'pics/orange.jpg';
-        i++;
-        imageObj[i] = new Image();
-        imageObj[i].src = 'pics/red.jpg';
-        i++;
-        imageObj[i] = new Image();
-        imageObj[i].src = 'pics/white.jpg';
-        i++;
-        imageObj[i] = new Image();
-        imageObj[i].src = 'pics/yellow.jpg';
-        i++;
-        imageObj[i] = new Image();
-        imageObj[i].src = 'pics/blue.jpg';
-        i++;
-        imageObj[i] = new Image();
-        imageObj[i].src = 'pics/green.jpg';
-        i++;
-        imageObj[i] = new Image();
-        imageObj[i].src = 'pics/gray2.png';
-        i++;
-        imageObj[i] = new Image();
-        imageObj[i].src = 'pics/whitespil.jpg';
-        i++;
-        imageObj[i] = new Image();
-        imageObj[i].src = 'pics/solve.png';
-        i++;
-        imageObj[i] = new Image();
-        imageObj[i].src = 'pics/shuffle.png';
-        i++;
+        imageObj['orange'] = new Image();
+        imageObj['orange'].src = 'pics/orange.jpg';
+        imageObj['red'] = new Image();
+        imageObj['red'].src = 'pics/red.jpg';
+        imageObj['white'] = new Image();
+        imageObj['white'].src = 'pics/white.jpg';
+        imageObj['yellow'] = new Image();
+        imageObj['yellow'].src = 'pics/yellow.jpg';
+        imageObj['blue'] = new Image();
+        imageObj['blue'].src = 'pics/blue.jpg';
+        imageObj['green'] = new Image();
+        imageObj['green'].src = 'pics/green.jpg';
+        imageObj['gray2'] = new Image();
+        imageObj['gray2'].src = 'pics/gray2.png';
+        imageObj['whitespil'] = new Image();
+        imageObj['whitespil'].src = 'pics/whitespil.jpg';
+        imageObj['solve'] = new Image();
+        imageObj['solve'].src = 'pics/solve.png';
+        imageObj['shuffle'] = new Image();
+        imageObj['shuffle'].src = 'pics/shuffle.png';
+        imageObj['disc'] = new Image();
+        imageObj['disc'].src = 'pics/disc.png';
     }
     preloadResources();
     
