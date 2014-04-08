@@ -258,6 +258,7 @@ var game = (function(){
         
         // Create the scene, in which all objects are stored (e. g. camera, lights, geometries, ...).
         scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2( 0x000000, 0.001 );
         
         var aspect = canvasWidth / canvasHeight;
         camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 10000);
@@ -311,7 +312,7 @@ var game = (function(){
         
         var geometry = new THREE.Geometry();
         var sprite = THREE.ImageUtils.loadTexture( imageObj['disc'].src );
-        for ( i = 0; i < 1000; i ++ ) {
+        for ( i = 0; i < 2000; i ++ ) {
             var vertex = new THREE.Vector3();
             vertex.x = 2000 * Math.random() - 1000;
             vertex.y = -2000 * Math.random() + 1000;
