@@ -432,6 +432,8 @@ var game = (function(){
      * @param zDirection boolean True, if Z rotation is clockwise
      */
     function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i) {
+        // Play sound, if it is not shuffle.
+        // Mobile devices can't handle so much requests.
         if (!cb) {
             Sounds.scratch.play();
         }
