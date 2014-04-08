@@ -1,8 +1,9 @@
 function Scoreboard(options) {
   if (!options) options= {};
   
-  if (document.body.getElementById && document.body.getElementById('scoreboard')) {
-    document.body.removeChild('scoreboard');
+  var element = document.getElementById('scoreboard');
+  if (element) {
+    element.parentNode.removeChild(element);
   }
 
   this._message = options.message || '';
