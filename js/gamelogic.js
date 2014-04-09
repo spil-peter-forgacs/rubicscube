@@ -54,7 +54,7 @@ var game = (function(){
     var touches;
     
     // Scoreboard.
-    var scoreboard;
+    var scoreboard = new Scoreboard();
     var isTimerShow = false;
     var topScore;
     
@@ -135,8 +135,10 @@ var game = (function(){
             pic: imageObj['shuffle'].src, cb: shuffleCube
         });
         
-        scoreboard = new Scoreboard();
         scoreboard.message(gameName);
+        if (scoreboard.getTime() > 0.1) {
+            scoreboard.showTimer();
+        }
         setTopScore(localStorage.getItem("topScore"));
         scoreboard.help('Shuffle the cube with the shuffle button.' +
             'Then you can move the pages touching the cube and moving to the right direction.'+

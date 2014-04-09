@@ -181,6 +181,9 @@ Scoreboard.prototype.resetTimer = function() {
 };
 
 Scoreboard.prototype.getTime = function() {
+  if (!this._timer) {
+    return null;
+  }
   return this._timer.diff() / 1000;
 };
 
