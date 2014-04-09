@@ -110,7 +110,7 @@ var game = (function(){
         
         addMenuItem({
             id: 'solveCube',
-            x: windowHalfX - (windowHalfX * (xBiggerY ? 0.6 : 0.9)),
+            x: windowHalfX - (windowHalfX * (xBiggerY ? 0.7 : 0.9)),
             y: 0,
             width: widthHeight,
             height: widthHeight,
@@ -119,7 +119,7 @@ var game = (function(){
         });
         addMenuItem({
             id: 'shuffleCube',
-            x: windowHalfX - (windowHalfX * (xBiggerY ? 0.6 : 0.9)),
+            x: windowHalfX - (windowHalfX * (xBiggerY ? 0.7 : 0.9)),
             y: 1.1 * widthHeight,
             width: widthHeight,
             height: widthHeight,

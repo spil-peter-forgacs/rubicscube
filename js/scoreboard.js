@@ -266,7 +266,7 @@ Scoreboard.prototype.ensureDom = function() {
   el.style.padding = "5px 20px";
   el.style.right = "0px";
   el.style.top = "5px";
-  el.style.width = (window.innerWidth * 0.1) + "px";
+  el.style.width = (window.innerWidth * 0.2) + "px";
   el.style.minWidth = '150px';
 
   el.style.color = 'yellow';
