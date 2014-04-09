@@ -322,16 +322,47 @@ var game = (function(){
         cubePage[i].position.set(-1.5, 0, 0);
         
         // Light
-        //var light = new THREE.PointLight(0xffffff);
-        //light.position.set(0,0,1000);
-        //scene.add(light);
-        // Sunlight
-        //var sunlight = new THREE.DirectionalLight();
-        //sunlight.intensity = 0.5;
-        //sunlight.position.set(100, 100, 100);
-        //scene.add(sunlight);
+        
+        if (!is_touch_device()) {
+            var sunIntensity = 0.8;
+            var pointIntensity = 0.6;
+            
+            ambientLight = new THREE.AmbientLight( 0x999999 );
+            scene.add( ambientLight );
+            
+            pointLight = new THREE.PointLight( 0xeeeeee, pointIntensity, 5000 );
+            pointLight.position.set( -10, -10, -10 );
+            scene.add( pointLight );
+            pointLight2 = new THREE.PointLight( 0xeeeeee, pointIntensity, 5000 );
+            pointLight2.position.set( 10, -10, -10 );
+            scene.add( pointLight2 );
+            pointLight3 = new THREE.PointLight( 0xeeeeee, pointIntensity, 5000 );
+            pointLight3.position.set( 0, 1000, 10 );
+            scene.add( pointLight3 );
+            
+            sunLight = new THREE.SpotLight( 0xbbbbbb, sunIntensity, 0, Math.PI/2, 1 );
+            sunLight.position.set( 100, -200, -100 );
+            //sunLight.castShadow = true;
+            //sunLight.shadowDarkness = 0.3 * sunIntensity;
+            //sunLight.shadowBias = -0.0002;
+            //sunLight.shadowCameraNear = 750;
+            //sunLight.shadowCameraFar = 4000;
+            //sunLight.shadowCameraFov = 30;
+            //sunLight.shadowCameraVisible = false;
+            scene.add( sunLight );
+            
+            sunLight2 = new THREE.SpotLight( 0xbbbbbb, sunIntensity, 0, Math.PI/2, 1 );
+            sunLight2.position.set( -100, -200, -100 );
+            scene.add( sunLight2 );
+        }
+        
+        
+        // Cube
         
         createCubeMesh();
+        
+        
+        // Particles
         
         var geometry = new THREE.Geometry();
         var sprite = THREE.ImageUtils.loadTexture( imageObj['disc'].src );
@@ -395,44 +426,67 @@ var game = (function(){
                 rubicsPage[i][j] = [];
                 for (var k = -1; k <= 1; k++) {
                     // Define six texture materials.
-                    var cubeMaterials = [
-                        new THREE.MeshBasicMaterial({map:cubeTexture[0]}),
-                        new THREE.MeshBasicMaterial({map:cubeTexture[1]}),
-                        new THREE.MeshBasicMaterial({map:cubeTexture[2]}),
-                        new THREE.MeshBasicMaterial({map:cubeTexture[3]}),
-                        new THREE.MeshBasicMaterial({map:cubeTexture[4]}),
-                        new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
-                    ];
+                    var cubeMaterials;
+                    if (is_touch_device()) {
+                        var cubeMaterials = [
+                            new THREE.MeshBasicMaterial({map:cubeTexture[0]}),
+                            new THREE.MeshBasicMaterial({map:cubeTexture[1]}),
+                            new THREE.MeshBasicMaterial({map:cubeTexture[2]}),
+                            new THREE.MeshBasicMaterial({map:cubeTexture[3]}),
+                            new THREE.MeshBasicMaterial({map:cubeTexture[4]}),
+                            new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
+                        ];
+                    }
+                    else {
+                        //var phongSettings = { shininess: 75, ambient: 0xffffff, color: 0xffffff, specular: 0xffffff, map:null};
+                        var cubeMaterials = [
+                            new THREE.MeshPhongMaterial({map:cubeTexture[0]}),
+                            new THREE.MeshPhongMaterial({map:cubeTexture[1]}),
+                            new THREE.MeshPhongMaterial({map:cubeTexture[2]}),
+                            new THREE.MeshPhongMaterial({map:cubeTexture[3]}),
+                            new THREE.MeshPhongMaterial({map:cubeTexture[4]}),
+                            new THREE.MeshPhongMaterial({map:cubeTexture[5]}),
+                        ];
+                    }
                     // Make the non visible sides black.
+                    var cubeMaterialsTmp;
+                    if (is_touch_device()) {
+                        cubeMaterialsTmp = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                    }
+                    else {
+                        cubeMaterialsTmp = new THREE.MeshPhongMaterial({map:cubeTexture[6]});
+                    }
                     if (1 != i) {
-                        cubeMaterials[0] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                        cubeMaterials[0] = cubeMaterialsTmp;
                     }
                     if (-1 != i) {
-                        cubeMaterials[1] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                        cubeMaterials[1] = cubeMaterialsTmp;
                     }
                     if (1 != j) {
-                        cubeMaterials[2] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                        cubeMaterials[2] = cubeMaterialsTmp;
                     }
                     if (-1 != j) {
-                        cubeMaterials[3] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                        cubeMaterials[3] = cubeMaterialsTmp;
                     }
                     if (1 != k) {
-                        cubeMaterials[4] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                        cubeMaterials[4] = cubeMaterialsTmp;
                     }
                     if (-1 != k) {
-                        cubeMaterials[5] = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                        cubeMaterials[5] = cubeMaterialsTmp;
                     }
                     
                     // Logo on middle white item.
                     if (0 == i && 1 == j && 0 == k) {
-                        cubeMaterials[2] = new THREE.MeshBasicMaterial({map:cubeTexture[7]});
+                        if (is_touch_device()) {
+                            cubeMaterials[2] = new THREE.MeshBasicMaterial({map:cubeTexture[7]});
+                        }
+                        else {
+                            cubeMaterials[2] = new THREE.MeshPhongMaterial({map:cubeTexture[7]});
+                        }
                     }
                     
                     // Create a MeshFaceMaterial, which allows the cube to have different materials on each face.
                     var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
-                    //var cubeMaterial = new THREE.MeshPhongMaterial(cubeMaterials);
-                    //cubeMaterial.emissive.setRGB(0.8, 0.1, 0.1);
-                    //cubeMaterial.specular.setRGB(0.9, 0.9, 0.9);
                     cubeMesh[i][j][k] = new THREE.Mesh(cubeGeometry, cubeMaterial);
                     cubeMesh[i][j][k].position.set(i, j, k);
                     
@@ -863,11 +917,15 @@ var game = (function(){
                 var yDirection = (0 != x1Page ? z2Cube > z1Cube : x2Cube > x1Cube);
                 var zDirection = (0 != x1Page ? y2Cube < y1Cube : x2Cube < x1Cube);
                 
-                rotatePage(
-                    x1Cube, y1Cube, z1Cube,
-                    xStatic, yStatic, zStatic,
-                    xDirection, yDirection, zDirection
-                );
+                if ((xStatic && !yStatic && !zStatic) ||
+                    (!xStatic && yStatic && !zStatic) ||
+                    (!xStatic && !yStatic && zStatic)) {
+                    rotatePage(
+                        x1Cube, y1Cube, z1Cube,
+                        xStatic, yStatic, zStatic,
+                        xDirection, yDirection, zDirection
+                    );
+                }
             }
         }
         // Move cube
