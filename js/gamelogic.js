@@ -50,6 +50,24 @@ var game = (function(){
     var touches;
     
     /**
+     * Full screen
+     */
+    function launchFullscreen(element) {
+      // Find the right method, call on correct element
+      if(element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if(element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if(element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if(element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+      }
+    }
+    // Launch fullscreen for browsers that support it!
+    //launchFullscreen(document.documentElement); // the whole page
+    
+    /**
      * Booting.
      */
     function booting() {
@@ -304,9 +322,14 @@ var game = (function(){
         cubePage[i].position.set(-1.5, 0, 0);
         
         // Light
-        var light = new THREE.PointLight(0xffffff);
-        light.position.set(0,0,1000);
-        scene.add(light);
+        //var light = new THREE.PointLight(0xffffff);
+        //light.position.set(0,0,1000);
+        //scene.add(light);
+        // Sunlight
+        //var sunlight = new THREE.DirectionalLight();
+        //sunlight.intensity = 0.5;
+        //sunlight.position.set(100, 100, 100);
+        //scene.add(sunlight);
         
         createCubeMesh();
         
@@ -407,6 +430,9 @@ var game = (function(){
                     
                     // Create a MeshFaceMaterial, which allows the cube to have different materials on each face.
                     var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
+                    //var cubeMaterial = new THREE.MeshPhongMaterial(cubeMaterials);
+                    //cubeMaterial.emissive.setRGB(0.8, 0.1, 0.1);
+                    //cubeMaterial.specular.setRGB(0.9, 0.9, 0.9);
                     cubeMesh[i][j][k] = new THREE.Mesh(cubeGeometry, cubeMaterial);
                     cubeMesh[i][j][k].position.set(i, j, k);
                     
