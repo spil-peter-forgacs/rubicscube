@@ -134,7 +134,8 @@ var game = (function(){
             y: 1.1 * widthHeight,
             width: widthHeight,
             height: widthHeight,
-            pic: imageObj['shuffle'].src, cb: shuffleCube
+            pic: imageObj['shuffle'].src,
+            cb: shuffleCube
         });
         
         scoreboard.message(gameName);
