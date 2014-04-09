@@ -646,10 +646,13 @@ var game = (function(){
         }
     }
     
+    /**
+     * Checking if the cube is solved.
+     */
     function isCubeSolved() {
         var solved = true;
         
-        
+        // X axis
         for (var i = -1; i <= 1; i++) {
             var pX = pY = pZ = null;
             var isSameX = isSameY = isSameZ = true;
@@ -676,9 +679,11 @@ var game = (function(){
                 }
             }
             
+            // A page is solved, if the color (original position) is the same.
             solved = solved && (isSameX || isSameY || isSameZ);
         }
         
+        // Y axis
         for (var i = -1; i <= 1; i++) {
             var pX = pY = pZ = null;
             var isSameX = isSameY = isSameZ = true;
@@ -708,6 +713,7 @@ var game = (function(){
             solved = solved && (isSameX || isSameY || isSameZ);
         }
         
+        // Z axis
         for (var i = -1; i <= 1; i++) {
             var pX = pY = pZ = null;
             var isSameX = isSameY = isSameZ = true;
