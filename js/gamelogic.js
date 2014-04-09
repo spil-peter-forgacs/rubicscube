@@ -41,13 +41,19 @@ var game = (function(){
     var projector = new THREE.Projector();
     var clickedObjects = [];
     
+    // Game states.
     var gameStates = {'loading': 0, 'playing': 1, 'movepage': 2, 'solve': 3, 'shuffle': 4};
     var gameState = gameStates.loading;
     
     // Preloader
     var imageObj;
     
+    // Storing touches.
     var touches;
+    
+    // Scoreboard.
+    var scoreboard;
+    var isTimerShow = false;
     
     /**
      * Full screen
@@ -126,7 +132,7 @@ var game = (function(){
             pic: imageObj['shuffle'].src, cb: shuffleCube
         });
         
-        var scoreboard = new Scoreboard();
+        scoreboard = new Scoreboard();
         scoreboard.message("Rubic's cube");
         scoreboard.help('Shuffle the cube with the shuffle button.' +
             'Then you can move the pages touching the cube and moving to the right direction.'+
@@ -198,6 +204,13 @@ var game = (function(){
         
         gameState = gameStates.solve;
         
+        if (isTimerShow) {
+            scoreboard.hideTimer();
+            scoreboard.resetTimer();
+            scoreboard.stopTimer();
+        }
+        isTimerShow = false;
+        
         Sounds.snick.play();
         createCubeMesh();
         
@@ -209,9 +222,14 @@ var game = (function(){
             return;
         }
         
-        Sounds.drip.play();
         gameState = gameStates.shuffle;
         
+        scoreboard.showTimer();
+        scoreboard.resetTimer();
+        scoreboard.startTimer();
+        isTimerShow = true;
+        
+        Sounds.drip.play();
         randomMove(Math.floor(Math.random() * 4) + 10);
     }
     
@@ -497,6 +515,9 @@ var game = (function(){
                     // Name it for debugging reason.
                     cubeMesh[i][j][k].name = i + ',' + j + ',' + k;
                     rubicsPage[i][j][k].name = i + ',' + j + ',' + k;
+                    rubicsPage[i][j][k].pageX = i;
+                    rubicsPage[i][j][k].pageY = j;
+                    rubicsPage[i][j][k].pageZ = k;
                     
                     // Add the small cubes to their container.
                     rubicsPage[i][j][k].add(cubeMesh[i][j][k]);
@@ -615,10 +636,108 @@ var game = (function(){
                     cb(i);
                 }
                 else {
+                    if (isTimerShow && isCubeSolved()) {
+                        scoreboard.stopTimer();
+                    }
+                    
                     gameState = gameStates.playing;
                 }
             }
         }
+    }
+    
+    function isCubeSolved() {
+        var solved = true;
+        
+        
+        for (var i = -1; i <= 1; i++) {
+            var pX = pY = pZ = null;
+            var isSameX = isSameY = isSameZ = true;
+            for (var j = -1; j <= 1; j++) {
+                for (var k = -1; k <= 1; k++) {
+                    if (pX === null) {
+                        pX = rubicsPage[i][j][k].pageX;
+                    }
+                    else {
+                        isSameX = (pX == rubicsPage[i][j][k].pageX ? isSameX : false);
+                    }
+                    if (pY === null) {
+                        pY = rubicsPage[i][j][k].pageY;
+                    }
+                    else {
+                        isSameY = (pY == rubicsPage[i][j][k].pageY ? isSameY : false);
+                    }
+                    if (pZ === null) {
+                        pZ = rubicsPage[i][j][k].pageZ;
+                    }
+                    else {
+                        isSameZ = (pZ == rubicsPage[i][j][k].pageZ ? isSameZ : false);
+                    }
+                }
+            }
+            
+            solved = solved && (isSameX || isSameY || isSameZ);
+        }
+        
+        for (var i = -1; i <= 1; i++) {
+            var pX = pY = pZ = null;
+            var isSameX = isSameY = isSameZ = true;
+            for (var j = -1; j <= 1; j++) {
+                for (var k = -1; k <= 1; k++) {
+                    if (pX === null) {
+                        pX = rubicsPage[j][i][k].pageX;
+                    }
+                    else {
+                        isSameX = (pX == rubicsPage[j][i][k].pageX ? isSameX : false);
+                    }
+                    if (pY === null) {
+                        pY = rubicsPage[j][i][k].pageY;
+                    }
+                    else {
+                        isSameY = (pY == rubicsPage[j][i][k].pageY ? isSameY : false);
+                    }
+                    if (pZ === null) {
+                        pZ = rubicsPage[j][i][k].pageZ;
+                    }
+                    else {
+                        isSameZ = (pZ == rubicsPage[j][i][k].pageZ ? isSameZ : false);
+                    }
+                }
+            }
+            
+            solved = solved && (isSameX || isSameY || isSameZ);
+        }
+        
+        for (var i = -1; i <= 1; i++) {
+            var pX = pY = pZ = null;
+            var isSameX = isSameY = isSameZ = true;
+            for (var j = -1; j <= 1; j++) {
+                for (var k = -1; k <= 1; k++) {
+                    if (pX === null) {
+                        pX = rubicsPage[j][k][i].pageX;
+                    }
+                    else {
+                        isSameX = (pX == rubicsPage[j][k][i].pageX ? isSameX : false);
+                    }
+                    if (pY === null) {
+                        pY = rubicsPage[j][k][i].pageY;
+                    }
+                    else {
+                        isSameY = (pY == rubicsPage[j][k][i].pageY ? isSameY : false);
+                    }
+                    if (pZ === null) {
+                        pZ = rubicsPage[j][k][i].pageZ;
+                    }
+                    else {
+                        isSameZ = (pZ == rubicsPage[j][k][i].pageZ ? isSameZ : false);
+                    }
+                }
+            }
+            
+            solved = solved && (isSameX || isSameY || isSameZ);
+        }
+        
+        return solved;
     }
     
     function moveMiddleX(direction, i) {

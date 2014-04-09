@@ -274,6 +274,14 @@ Scoreboard.prototype.ensureDom = function() {
   el.style.fontWeight = 'bold';
   el.style.fontSize = (window.innerHeight * 0.033) + "px";
 
+  var message_el = this.message_el = document.createElement('div');
+  message_el.style.fontWeight = 'normal';
+  message_el.style.color = 'white';
+  message_el.style.fontSize = (window.innerHeight * 0.04) + "px";
+  //message_el.style.maxHeight = (window.innerHeight * 0.2) + "px";
+  message_el.style.overflowY = 'auto';
+  el.appendChild(message_el);
+
   var countdown_el = this.countdown_el = document.createElement('div');
   el.appendChild(countdown_el);
 
@@ -282,13 +290,6 @@ Scoreboard.prototype.ensureDom = function() {
 
   var score_el = this.score_el = document.createElement('div');
   el.appendChild(score_el);
-
-  var message_el = this.message_el = document.createElement('div');
-  message_el.style.fontWeight = 'normal';
-  message_el.style.color = 'white';
-  //message_el.style.maxHeight = (window.innerHeight * 0.2) + "px";
-  message_el.style.overflowY = 'auto';
-  el.appendChild(message_el);
 
   var help_el = this.help_el = document.createElement('div');
   help_el.style.display = 'none';
