@@ -20,6 +20,8 @@ var game = (function(){
     // Pages around the cube.
     // Used for capturing the movements.
     var cubePage = [];
+    // Cube image textures
+    var cubeTexture;
     
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
@@ -383,6 +385,18 @@ var game = (function(){
         
         // Cube
         
+        // Load images as textures.
+        cubeTexture = [
+            new THREE.ImageUtils.loadTexture(imageObj['orange'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['red'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['white'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['yellow'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['blue'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['green'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['gray2'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['whitespil'].src),
+        ];
+        // Create cube.
         createCubeMesh();
         
         
@@ -424,17 +438,6 @@ var game = (function(){
         // The WebGLRenderer doesn't needs this workaround.
         // Original: var cubeGeometry = new THREE.CubeGeometry(2.0, 2.0, 2.0);
         var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 4, 4, 4);
-        // Load images as textures.
-        var cubeTexture = [
-            new THREE.ImageUtils.loadTexture(imageObj['orange'].src),
-            new THREE.ImageUtils.loadTexture(imageObj['red'].src),
-            new THREE.ImageUtils.loadTexture(imageObj['white'].src),
-            new THREE.ImageUtils.loadTexture(imageObj['yellow'].src),
-            new THREE.ImageUtils.loadTexture(imageObj['blue'].src),
-            new THREE.ImageUtils.loadTexture(imageObj['green'].src),
-            new THREE.ImageUtils.loadTexture(imageObj['gray2'].src),
-            new THREE.ImageUtils.loadTexture(imageObj['whitespil'].src),
-        ];
         
         // Cube colors: yellow, blue, red, green, orange, white
         // Color order:
