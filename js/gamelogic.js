@@ -1,5 +1,5 @@
 /**
- * Rubic's Cube
+ * Rubik's Cube
  * 
  * @author Peter Forgacs
  * @version 1.0
@@ -12,9 +12,9 @@ var game = (function(){
     var scene, camera, renderer;
     
     // Whole cube.
-    var rubicsCube;
+    var rubiksCube;
     // Container of small cubes.
-    var rubicsPage = [];
+    var rubiksPage = [];
     // Small cubes.
     var cubeMesh = [];
     // Pages around the cube.
@@ -47,7 +47,7 @@ var game = (function(){
     var gameStates = {'loading': 0, 'playing': 1, 'movepage': 2, 'solve': 3, 'shuffle': 4};
     var gameState = gameStates.loading;
     
-    var gameName = "Rubic's Cube";
+    var gameName = "Rubik's Cube";
     
     // Preloader
     var imageObj;
@@ -313,16 +313,16 @@ var game = (function(){
         
         
         //
-        // Rubic's cube.
+        // Rubik's cube.
         //
         
-        // The Rubic's cube.
-        rubicsCube = new THREE.Object3D();
-        scene.add(rubicsCube);
+        // The Rubik's cube.
+        rubiksCube = new THREE.Object3D();
+        scene.add(rubiksCube);
         
         // Rotation
-        rubicsCube.rotation.y = Math.PI / 4;
-        rubicsCube.rotation.x = Math.PI / 5;
+        rubiksCube.rotation.y = Math.PI / 4;
+        rubiksCube.rotation.x = Math.PI / 5;
         
         // Pages.
         var shape = new THREE.PlaneGeometry(3, 3);
@@ -333,18 +333,18 @@ var game = (function(){
         // Right
         var i = 0;
         cubePage[i] = new THREE.Mesh(shape, cover);
-        rubicsCube.add(cubePage[i]);
+        rubiksCube.add(cubePage[i]);
         cubePage[i].position.set(0, 0, 1.5);
         // Top
         i++;
         cubePage[i] = new THREE.Mesh(shape, cover);
-        rubicsCube.add(cubePage[i]);
+        rubiksCube.add(cubePage[i]);
         cubePage[i].rotation.x = -Math.PI / 2;
         cubePage[i].position.set(0, 1.5, 0);
         // Left
         i++;
         cubePage[i] = new THREE.Mesh(shape, cover);
-        rubicsCube.add(cubePage[i]);
+        rubiksCube.add(cubePage[i]);
         cubePage[i].rotation.y = -Math.PI / 2;
         cubePage[i].position.set(-1.5, 0, 0);
         
@@ -426,8 +426,8 @@ var game = (function(){
             for (var i = -1; i <= 1; i++) {
                 for (var j = -1; j <= 1; j++) {
                     for (var k = -1; k <= 1; k++) {
-                        rubicsPage[i][j][k].remove(cubeMesh[i][j][k]);
-                        rubicsCube.remove(rubicsPage[i][j][k]);
+                        rubiksPage[i][j][k].remove(cubeMesh[i][j][k]);
+                        rubiksCube.remove(rubiksPage[i][j][k]);
                     }
                 }
             }
@@ -448,10 +448,10 @@ var game = (function(){
         
         for (var i = -1; i <= 1; i++) {
             cubeMesh[i] = [];
-            rubicsPage[i] = [];
+            rubiksPage[i] = [];
             for (var j = -1; j <= 1; j++) {
                 cubeMesh[i][j] = [];
-                rubicsPage[i][j] = [];
+                rubiksPage[i][j] = [];
                 for (var k = -1; k <= 1; k++) {
                     // Define six texture materials.
                     var cubeMaterials;
@@ -519,18 +519,18 @@ var game = (function(){
                     cubeMesh[i][j][k].position.set(i, j, k);
                     
                     // Containers.
-                    rubicsPage[i][j][k] = new THREE.Object3D();
-                    rubicsCube.add(rubicsPage[i][j][k]);
+                    rubiksPage[i][j][k] = new THREE.Object3D();
+                    rubiksCube.add(rubiksPage[i][j][k]);
                     
                     // Name it for debugging reason.
                     cubeMesh[i][j][k].name = i + ',' + j + ',' + k;
-                    rubicsPage[i][j][k].name = i + ',' + j + ',' + k;
-                    rubicsPage[i][j][k].pageX = i;
-                    rubicsPage[i][j][k].pageY = j;
-                    rubicsPage[i][j][k].pageZ = k;
+                    rubiksPage[i][j][k].name = i + ',' + j + ',' + k;
+                    rubiksPage[i][j][k].pageX = i;
+                    rubiksPage[i][j][k].pageY = j;
+                    rubiksPage[i][j][k].pageZ = k;
                     
                     // Add the small cubes to their container.
-                    rubicsPage[i][j][k].add(cubeMesh[i][j][k]);
+                    rubiksPage[i][j][k].add(cubeMesh[i][j][k]);
                 }
             }
         }
@@ -623,7 +623,7 @@ var game = (function(){
                         var xi = (xStatic ? x : p[pi++]);
                         var yi = (yStatic ? y : p[pi++]);
                         var zi = (zStatic ? z : p[pi++]);
-                        rotateAroundWorldAxis(rubicsPage[xi][yi][zi], axisLocal, rotAndleDelta);
+                        rotateAroundWorldAxis(rubiksPage[xi][yi][zi], axisLocal, rotAndleDelta);
                     }
                 }
                 
@@ -682,22 +682,22 @@ var game = (function(){
             for (var j = -1; j <= 1; j++) {
                 for (var k = -1; k <= 1; k++) {
                     if (pX === null) {
-                        pX = rubicsPage[i][j][k].pageX;
+                        pX = rubiksPage[i][j][k].pageX;
                     }
                     else {
-                        isSameX = (pX == rubicsPage[i][j][k].pageX ? isSameX : false);
+                        isSameX = (pX == rubiksPage[i][j][k].pageX ? isSameX : false);
                     }
                     if (pY === null) {
-                        pY = rubicsPage[i][j][k].pageY;
+                        pY = rubiksPage[i][j][k].pageY;
                     }
                     else {
-                        isSameY = (pY == rubicsPage[i][j][k].pageY ? isSameY : false);
+                        isSameY = (pY == rubiksPage[i][j][k].pageY ? isSameY : false);
                     }
                     if (pZ === null) {
-                        pZ = rubicsPage[i][j][k].pageZ;
+                        pZ = rubiksPage[i][j][k].pageZ;
                     }
                     else {
-                        isSameZ = (pZ == rubicsPage[i][j][k].pageZ ? isSameZ : false);
+                        isSameZ = (pZ == rubiksPage[i][j][k].pageZ ? isSameZ : false);
                     }
                 }
             }
@@ -713,22 +713,22 @@ var game = (function(){
             for (var j = -1; j <= 1; j++) {
                 for (var k = -1; k <= 1; k++) {
                     if (pX === null) {
-                        pX = rubicsPage[j][i][k].pageX;
+                        pX = rubiksPage[j][i][k].pageX;
                     }
                     else {
-                        isSameX = (pX == rubicsPage[j][i][k].pageX ? isSameX : false);
+                        isSameX = (pX == rubiksPage[j][i][k].pageX ? isSameX : false);
                     }
                     if (pY === null) {
-                        pY = rubicsPage[j][i][k].pageY;
+                        pY = rubiksPage[j][i][k].pageY;
                     }
                     else {
-                        isSameY = (pY == rubicsPage[j][i][k].pageY ? isSameY : false);
+                        isSameY = (pY == rubiksPage[j][i][k].pageY ? isSameY : false);
                     }
                     if (pZ === null) {
-                        pZ = rubicsPage[j][i][k].pageZ;
+                        pZ = rubiksPage[j][i][k].pageZ;
                     }
                     else {
-                        isSameZ = (pZ == rubicsPage[j][i][k].pageZ ? isSameZ : false);
+                        isSameZ = (pZ == rubiksPage[j][i][k].pageZ ? isSameZ : false);
                     }
                 }
             }
@@ -743,22 +743,22 @@ var game = (function(){
             for (var j = -1; j <= 1; j++) {
                 for (var k = -1; k <= 1; k++) {
                     if (pX === null) {
-                        pX = rubicsPage[j][k][i].pageX;
+                        pX = rubiksPage[j][k][i].pageX;
                     }
                     else {
-                        isSameX = (pX == rubicsPage[j][k][i].pageX ? isSameX : false);
+                        isSameX = (pX == rubiksPage[j][k][i].pageX ? isSameX : false);
                     }
                     if (pY === null) {
-                        pY = rubicsPage[j][k][i].pageY;
+                        pY = rubiksPage[j][k][i].pageY;
                     }
                     else {
-                        isSameY = (pY == rubicsPage[j][k][i].pageY ? isSameY : false);
+                        isSameY = (pY == rubiksPage[j][k][i].pageY ? isSameY : false);
                     }
                     if (pZ === null) {
-                        pZ = rubicsPage[j][k][i].pageZ;
+                        pZ = rubiksPage[j][k][i].pageZ;
                     }
                     else {
-                        isSameZ = (pZ == rubicsPage[j][k][i].pageZ ? isSameZ : false);
+                        isSameZ = (pZ == rubiksPage[j][k][i].pageZ ? isSameZ : false);
                     }
                 }
             }
@@ -770,98 +770,98 @@ var game = (function(){
     }
     
     function moveMiddleX(direction, i) {
-        var tmp = rubicsPage[i][0][1];
+        var tmp = rubiksPage[i][0][1];
         if (direction > 0) {
-            rubicsPage[i][0][1] = rubicsPage[i][-1][0];
-            rubicsPage[i][-1][0] = rubicsPage[i][0][-1];
-            rubicsPage[i][0][-1] = rubicsPage[i][1][0];
-            rubicsPage[i][1][0] = tmp;
+            rubiksPage[i][0][1] = rubiksPage[i][-1][0];
+            rubiksPage[i][-1][0] = rubiksPage[i][0][-1];
+            rubiksPage[i][0][-1] = rubiksPage[i][1][0];
+            rubiksPage[i][1][0] = tmp;
         }
         else {
-            rubicsPage[i][0][1] = rubicsPage[i][1][0];
-            rubicsPage[i][1][0] = rubicsPage[i][0][-1];
-            rubicsPage[i][0][-1] = rubicsPage[i][-1][0];
-            rubicsPage[i][-1][0] = tmp;
+            rubiksPage[i][0][1] = rubiksPage[i][1][0];
+            rubiksPage[i][1][0] = rubiksPage[i][0][-1];
+            rubiksPage[i][0][-1] = rubiksPage[i][-1][0];
+            rubiksPage[i][-1][0] = tmp;
         }
     }
     
     function moveMiddleY(direction, i) {
-        var tmp = rubicsPage[0][i][1];
+        var tmp = rubiksPage[0][i][1];
         if (direction > 0) {
-            rubicsPage[0][i][1] = rubicsPage[-1][i][0];
-            rubicsPage[-1][i][0] = rubicsPage[0][i][-1];
-            rubicsPage[0][i][-1] = rubicsPage[1][i][0];
-            rubicsPage[1][i][0] = tmp;
+            rubiksPage[0][i][1] = rubiksPage[-1][i][0];
+            rubiksPage[-1][i][0] = rubiksPage[0][i][-1];
+            rubiksPage[0][i][-1] = rubiksPage[1][i][0];
+            rubiksPage[1][i][0] = tmp;
         }
         else {
-            rubicsPage[0][i][1] = rubicsPage[1][i][0];
-            rubicsPage[1][i][0] = rubicsPage[0][i][-1];
-            rubicsPage[0][i][-1] = rubicsPage[-1][i][0];
-            rubicsPage[-1][i][0] = tmp;
+            rubiksPage[0][i][1] = rubiksPage[1][i][0];
+            rubiksPage[1][i][0] = rubiksPage[0][i][-1];
+            rubiksPage[0][i][-1] = rubiksPage[-1][i][0];
+            rubiksPage[-1][i][0] = tmp;
         }
     }
     
     function moveMiddleZ(direction, i) {
-        var tmp = rubicsPage[0][1][i];
+        var tmp = rubiksPage[0][1][i];
         if (direction > 0) {
-            rubicsPage[0][1][i] = rubicsPage[-1][0][i];
-            rubicsPage[-1][0][i] = rubicsPage[0][-1][i];
-            rubicsPage[0][-1][i] = rubicsPage[1][0][i];
-            rubicsPage[1][0][i] = tmp;
+            rubiksPage[0][1][i] = rubiksPage[-1][0][i];
+            rubiksPage[-1][0][i] = rubiksPage[0][-1][i];
+            rubiksPage[0][-1][i] = rubiksPage[1][0][i];
+            rubiksPage[1][0][i] = tmp;
         }
         else {
-            rubicsPage[0][1][i] = rubicsPage[1][0][i];
-            rubicsPage[1][0][i] = rubicsPage[0][-1][i];
-            rubicsPage[0][-1][i] = rubicsPage[-1][0][i];
-            rubicsPage[-1][0][i] = tmp;
+            rubiksPage[0][1][i] = rubiksPage[1][0][i];
+            rubiksPage[1][0][i] = rubiksPage[0][-1][i];
+            rubiksPage[0][-1][i] = rubiksPage[-1][0][i];
+            rubiksPage[-1][0][i] = tmp;
         }
     }
     
     function moveCornerX(direction, i) {
-        var tmp = rubicsPage[i][1][1];
+        var tmp = rubiksPage[i][1][1];
         if (direction > 0) {
-            rubicsPage[i][1][1] = rubicsPage[i][-1][1];
-            rubicsPage[i][-1][1] = rubicsPage[i][-1][-1];
-            rubicsPage[i][-1][-1] = rubicsPage[i][1][-1];
-            rubicsPage[i][1][-1] = tmp;
+            rubiksPage[i][1][1] = rubiksPage[i][-1][1];
+            rubiksPage[i][-1][1] = rubiksPage[i][-1][-1];
+            rubiksPage[i][-1][-1] = rubiksPage[i][1][-1];
+            rubiksPage[i][1][-1] = tmp;
         }
         else {
-            rubicsPage[i][1][1] = rubicsPage[i][1][-1];
-            rubicsPage[i][1][-1] = rubicsPage[i][-1][-1];
-            rubicsPage[i][-1][-1] = rubicsPage[i][-1][1];
-            rubicsPage[i][-1][1] = tmp;
+            rubiksPage[i][1][1] = rubiksPage[i][1][-1];
+            rubiksPage[i][1][-1] = rubiksPage[i][-1][-1];
+            rubiksPage[i][-1][-1] = rubiksPage[i][-1][1];
+            rubiksPage[i][-1][1] = tmp;
         }
     }
     
     function moveCornerY(direction, i) {
-        var tmp = rubicsPage[1][i][1];
+        var tmp = rubiksPage[1][i][1];
         if (direction > 0) {
-            rubicsPage[1][i][1] = rubicsPage[-1][i][1];
-            rubicsPage[-1][i][1] = rubicsPage[-1][i][-1];
-            rubicsPage[-1][i][-1] = rubicsPage[1][i][-1];
-            rubicsPage[1][i][-1] = tmp;
+            rubiksPage[1][i][1] = rubiksPage[-1][i][1];
+            rubiksPage[-1][i][1] = rubiksPage[-1][i][-1];
+            rubiksPage[-1][i][-1] = rubiksPage[1][i][-1];
+            rubiksPage[1][i][-1] = tmp;
         }
         else {
-            rubicsPage[1][i][1] = rubicsPage[1][i][-1];
-            rubicsPage[1][i][-1] = rubicsPage[-1][i][-1];
-            rubicsPage[-1][i][-1] = rubicsPage[-1][i][1];
-            rubicsPage[-1][i][1] = tmp;
+            rubiksPage[1][i][1] = rubiksPage[1][i][-1];
+            rubiksPage[1][i][-1] = rubiksPage[-1][i][-1];
+            rubiksPage[-1][i][-1] = rubiksPage[-1][i][1];
+            rubiksPage[-1][i][1] = tmp;
         }
     }
     
     function moveCornerZ(direction, i) {
-        var tmp = rubicsPage[1][1][i];
+        var tmp = rubiksPage[1][1][i];
         if (direction > 0) {
-            rubicsPage[1][1][i] = rubicsPage[-1][1][i];
-            rubicsPage[-1][1][i] = rubicsPage[-1][-1][i];
-            rubicsPage[-1][-1][i] = rubicsPage[1][-1][i];
-            rubicsPage[1][-1][i] = tmp;
+            rubiksPage[1][1][i] = rubiksPage[-1][1][i];
+            rubiksPage[-1][1][i] = rubiksPage[-1][-1][i];
+            rubiksPage[-1][-1][i] = rubiksPage[1][-1][i];
+            rubiksPage[1][-1][i] = tmp;
         }
         else {
-            rubicsPage[1][1][i] = rubicsPage[1][-1][i];
-            rubicsPage[1][-1][i] = rubicsPage[-1][-1][i];
-            rubicsPage[-1][-1][i] = rubicsPage[-1][1][i];
-            rubicsPage[-1][1][i] = tmp;
+            rubiksPage[1][1][i] = rubiksPage[1][-1][i];
+            rubiksPage[1][-1][i] = rubiksPage[-1][-1][i];
+            rubiksPage[-1][-1][i] = rubiksPage[-1][1][i];
+            rubiksPage[-1][1][i] = tmp;
         }
     }
     
@@ -1146,33 +1146,33 @@ var game = (function(){
             // Top.
             for (var i = -1; i <= 1; i++) {
                 for (var j = -1; j <= 1; j++) {
-                    rubicsPage[i][1][j].children[0].cubeX = i;
-                    rubicsPage[i][1][j].children[0].cubeY = 1;
-                    rubicsPage[i][1][j].children[0].cubeZ = j;
+                    rubiksPage[i][1][j].children[0].cubeX = i;
+                    rubiksPage[i][1][j].children[0].cubeY = 1;
+                    rubiksPage[i][1][j].children[0].cubeZ = j;
                     
-                    children.push(rubicsPage[i][1][j].children[0]);
+                    children.push(rubiksPage[i][1][j].children[0]);
                 }
             }
             // Left.
             // Don't add top again.
             for (var i = -1; i <= 0; i++) {
                 for (var j = -1; j <= 1; j++) {
-                    rubicsPage[-1][i][j].children[0].cubeX = -1;
-                    rubicsPage[-1][i][j].children[0].cubeY = i;
-                    rubicsPage[-1][i][j].children[0].cubeZ = j;
+                    rubiksPage[-1][i][j].children[0].cubeX = -1;
+                    rubiksPage[-1][i][j].children[0].cubeY = i;
+                    rubiksPage[-1][i][j].children[0].cubeZ = j;
                     
-                    children.push(rubicsPage[-1][i][j].children[0]);
+                    children.push(rubiksPage[-1][i][j].children[0]);
                 }
             }
             // Right.
             // Don't add top and left again.
             for (var i = 0; i <= 1; i++) {
                 for (var j = -1; j <= 0; j++) {
-                    rubicsPage[i][j][1].children[0].cubeX = i;
-                    rubicsPage[i][j][1].children[0].cubeY = j;
-                    rubicsPage[i][j][1].children[0].cubeZ = 1;
+                    rubiksPage[i][j][1].children[0].cubeX = i;
+                    rubiksPage[i][j][1].children[0].cubeY = j;
+                    rubiksPage[i][j][1].children[0].cubeZ = 1;
                     
-                    children.push(rubicsPage[i][j][1].children[0]);
+                    children.push(rubiksPage[i][j][1].children[0]);
                 }
             }
         }
