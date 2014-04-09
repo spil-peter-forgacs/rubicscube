@@ -45,6 +45,8 @@ var game = (function(){
     var gameStates = {'loading': 0, 'playing': 1, 'movepage': 2, 'solve': 3, 'shuffle': 4};
     var gameState = gameStates.loading;
     
+    var gameName = "Rubic's Cube";
+    
     // Preloader
     var imageObj;
     
@@ -54,6 +56,7 @@ var game = (function(){
     // Scoreboard.
     var scoreboard;
     var isTimerShow = false;
+    var topScore;
     
     /**
      * Full screen
@@ -133,7 +136,8 @@ var game = (function(){
         });
         
         scoreboard = new Scoreboard();
-        scoreboard.message("Rubic's cube");
+        scoreboard.message(gameName);
+        setTopScore(localStorage.getItem("topScore"));
         scoreboard.help('Shuffle the cube with the shuffle button.' +
             'Then you can move the pages touching the cube and moving to the right direction.'+
             'You can mobe the cube too, if you wipe the screen outside of the cube (bottom, left, right).' +
@@ -638,11 +642,24 @@ var game = (function(){
                 else {
                     if (isTimerShow && isCubeSolved()) {
                         scoreboard.stopTimer();
+                        setTopScore(scoreboard.getTime());
                     }
                     
                     gameState = gameStates.playing;
                 }
             }
+        }
+    }
+    
+    /**
+     * Set Top Score
+     */
+    function setTopScore(score) {
+        if (score && (!topScore || topScore > score)) {
+            topScore = score;
+            localStorage.setItem("topScore", topScore);
+            
+            scoreboard.message(gameName + '<br />Top Score: ' + parseInt(score) + 'sec');
         }
     }
     
