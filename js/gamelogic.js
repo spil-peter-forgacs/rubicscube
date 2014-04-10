@@ -193,7 +193,7 @@ var game = (function(){
         addMenuItem({
             id: 'goBackCube',
             x: windowHalfX - (windowHalfX * (xBiggerY ? 0.7 : 0.9)),
-            y: (2 * windowHalfY) - (1.1 * widthHeight),
+            y: (2 * windowHalfY) - (1.0 * widthHeight),
             width: widthHeight,
             height: widthHeight,
             pic: imageObj['back'].src,
@@ -253,7 +253,7 @@ var game = (function(){
         addMenuItem({
             id: 'rotate',
             x: windowHalfX + (windowHalfX * (xBiggerY ? 0.7 : 0.9)) - (1.1 * widthHeight),
-            y: (2 * windowHalfY) - (1.1 * widthHeight),
+            y: (2 * windowHalfY) - (1.0 * widthHeight),
             width: widthHeight,
             height: widthHeight,
             pic: imageObj['rotate'].src,
