@@ -124,7 +124,7 @@ var game = (function(){
         gameState = gameStates.playing;
         
         // Sound.
-        var isPlay = localStorage.getItem('rubikMusic');
+        var isPlay = (fancy3D() ? localStorage.getItem('rubikMusic') : false);
         isPlay = (isPlay === 'true' || isPlay === null);
         sound = new Howl({
             urls: ['music/Pamgaea.mp3'],
@@ -459,6 +459,10 @@ var game = (function(){
         rotatePageHistory(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, randomMove, i);
     }
     
+    function fancy3D() {
+        return (Detector.webgl && !is_touch_device());
+    }
+    
     /**
      * Initialize scene.
      */
@@ -538,7 +542,7 @@ var game = (function(){
         
         // Light
         
-        if (!is_touch_device()) {
+        if (fancy3D()) {
             var sunIntensity = 0.8;
             var pointIntensity = 0.6;
             
@@ -606,7 +610,7 @@ var game = (function(){
         
         // Particles
         
-        if (Detector.webgl) {
+        if (fancy3D()) {
             var geometry = new THREE.Geometry();
             var sprite = THREE.ImageUtils.loadTexture( imageObj['disc'].src );
             for ( i = 0; i < 200; i ++ ) {
@@ -617,7 +621,7 @@ var game = (function(){
                 
                 geometry.vertices.push( vertex );
             }
-            material = new THREE.ParticleSystemMaterial( { size: (is_touch_device() ? 10 : 3), sizeAttenuation: false, map: sprite, transparent: true } );
+            material = new THREE.ParticleSystemMaterial( { size: (fancy3D() ? 3 : 10), sizeAttenuation: false, map: sprite, transparent: true } );
             material.color.setHSL( 0.6, 0.5, 0.5 );
             particles = new THREE.ParticleSystem( geometry, material );
             particles.sortParticles = true;
@@ -646,7 +650,7 @@ var game = (function(){
         // To get rid of this, you only have to increase the number of cube segments.
         // The WebGLRenderer doesn't needs this workaround.
         // Original: var cubeGeometry = new THREE.CubeGeometry(2.0, 2.0, 2.0);
-        var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 4, 4, 4);
+        var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 8, 8, 8);
         
         // Cube colors: yellow, blue, red, green, orange, white
         // Color order:
@@ -663,17 +667,7 @@ var game = (function(){
                 for (var k = -1; k <= 1; k++) {
                     // Define six texture materials.
                     var cubeMaterials;
-                    if (is_touch_device()) {
-                        var cubeMaterials = [
-                            new THREE.MeshBasicMaterial({map:cubeTexture[0]}),
-                            new THREE.MeshBasicMaterial({map:cubeTexture[1]}),
-                            new THREE.MeshBasicMaterial({map:cubeTexture[2]}),
-                            new THREE.MeshBasicMaterial({map:cubeTexture[3]}),
-                            new THREE.MeshBasicMaterial({map:cubeTexture[4]}),
-                            new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
-                        ];
-                    }
-                    else {
+                    if (fancy3D()) {
                         //var phongSettings = { shininess: 75, ambient: 0xffffff, color: 0xffffff, specular: 0xffffff, map:null};
                         var cubeMaterials = [
                             new THREE.MeshPhongMaterial({map:cubeTexture[0]}),
@@ -684,13 +678,23 @@ var game = (function(){
                             new THREE.MeshPhongMaterial({map:cubeTexture[5]}),
                         ];
                     }
+                    else {
+                        var cubeMaterials = [
+                             new THREE.MeshBasicMaterial({map:cubeTexture[0]}),
+                             new THREE.MeshBasicMaterial({map:cubeTexture[1]}),
+                             new THREE.MeshBasicMaterial({map:cubeTexture[2]}),
+                             new THREE.MeshBasicMaterial({map:cubeTexture[3]}),
+                             new THREE.MeshBasicMaterial({map:cubeTexture[4]}),
+                             new THREE.MeshBasicMaterial({map:cubeTexture[5]}),
+                         ];
+                    }
                     // Make the non visible sides black.
                     var cubeMaterialsTmp;
-                    if (is_touch_device()) {
-                        cubeMaterialsTmp = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
+                    if (fancy3D()) {
+                        cubeMaterialsTmp = new THREE.MeshPhongMaterial({map:cubeTexture[6]});
                     }
                     else {
-                        cubeMaterialsTmp = new THREE.MeshPhongMaterial({map:cubeTexture[6]});
+                        cubeMaterialsTmp = new THREE.MeshBasicMaterial({map:cubeTexture[6]});
                     }
                     if (1 != i) {
                         cubeMaterials[0] = cubeMaterialsTmp;
@@ -713,11 +717,11 @@ var game = (function(){
                     
                     // Logo on middle white item.
                     if (0 == i && 1 == j && 0 == k) {
-                        if (is_touch_device()) {
-                            cubeMaterials[2] = new THREE.MeshBasicMaterial({map:cubeTexture[7]});
+                        if (fancy3D()) {
+                            cubeMaterials[2] = new THREE.MeshPhongMaterial({map:cubeTexture[7]});
                         }
                         else {
-                            cubeMaterials[2] = new THREE.MeshPhongMaterial({map:cubeTexture[7]});
+                            cubeMaterials[2] = new THREE.MeshBasicMaterial({map:cubeTexture[7]});
                         }
                     }
                     
@@ -810,7 +814,7 @@ var game = (function(){
     function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i) {
         // Play sound, if it is not shuffle.
         // Mobile devices can't handle so much requests.
-        if (!is_touch_device()) {
+        if (fancy3D()) {
             Sounds.scratch.play();
         }
         
@@ -837,7 +841,7 @@ var game = (function(){
             return;
         }
         
-        var rotateSteps = (Detector.webgl ? 8 : 1);
+        var rotateSteps = (fancy3D() ? 8 : 1);
         var rotAngleDiff = 0;
         var rotAndleDelta = rotAngle / rotateSteps;
         moveCubes();
@@ -1220,7 +1224,7 @@ var game = (function(){
     function animateScene() {
         requestAnimationFrame(animateScene);
         
-        if (Detector.webgl) {
+        if (fancy3D()) {
             var time = Date.now() * 0.00005;
             //h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
             //material.color.setHSL( h, 0.5, 0.5 );
