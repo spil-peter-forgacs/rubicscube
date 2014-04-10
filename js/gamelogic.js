@@ -44,7 +44,7 @@ var game = (function(){
     var clickedObjects = [];
     
     // Game states.
-    var gameStates = {'loading': 0, 'playing': 1, 'movepage': 2, 'solve': 3, 'shuffle': 4};
+    var gameStates = {'loading': 0, 'playing': 1, 'movepage': 2, 'solve': 3, 'shuffle': 4, 'movehistory' : 5};
     var gameState = gameStates.loading;
     
     var gameName = "Rubik's Cube";
@@ -137,6 +137,70 @@ var game = (function(){
             pic: imageObj['shuffle'].src,
             cb: shuffleCube
         });
+        addMenuItem({
+            id: 'goForwardCube',
+            x: windowHalfX - (windowHalfX * (xBiggerY ? 0.7 : 0.9)),
+            y: (2 * windowHalfY) - (2.1 * widthHeight),
+            width: widthHeight,
+            height: widthHeight,
+            pic: imageObj['forward'].src,
+            cb: function () {
+                if (gameState != gameStates.playing) {
+                    return;
+                }
+                
+                gameState = gameStates.movehistory;
+                
+                var move = history.goForward();
+                if (move.pageRotation) {
+                    rotatePage(move.x, move.y, move.z, move.xStatic, move.yStatic, move.zStatic, move.xDirection, move.yDirection, move.zDirection);
+                }
+                else {
+                    var x, y, z;
+                    for (var i = -1; i <= 1; i++) {
+                        x = (move.xRotate ? i : 0);
+                        y = (move.yRotate ? i : 0);
+                        z = (move.zRotate ? i : 0);
+                        rotatePage(x, y, z, move.xStatic, move.yStatic, move.zStatic, move.xDirection, move.yDirection, move.zDirection);
+                    }
+                }
+                
+                setForwarBackVisibility();
+            }
+        });
+        addMenuItem({
+            id: 'goBackCube',
+            x: windowHalfX - (windowHalfX * (xBiggerY ? 0.7 : 0.9)),
+            y: (2 * windowHalfY) - (1.1 * widthHeight),
+            width: widthHeight,
+            height: widthHeight,
+            pic: imageObj['back'].src,
+            cb: function () {
+                if (gameState != gameStates.playing) {
+                    return;
+                }
+                
+                gameState = gameStates.movehistory;
+                
+                var move = history.goBack();
+                if (move.pageRotation) {
+                    rotatePage(move.x, move.y, move.z, move.xStatic, move.yStatic, move.zStatic, !move.xDirection, !move.yDirection, !move.zDirection);
+                }
+                else {
+                    var x, y, z;
+                    for (var i = -1; i <= 1; i++) {
+                        x = (move.xRotate ? i : 0);
+                        y = (move.yRotate ? i : 0);
+                        z = (move.zRotate ? i : 0);
+                        rotatePage(x, y, z, move.xStatic, move.yStatic, move.zStatic, !move.xDirection, !move.yDirection, !move.zDirection);
+                    }
+                }
+                
+                setForwarBackVisibility();
+            }
+        });
+        
+        setForwarBackVisibility();
         
         scoreboard.message(gameName);
         if (scoreboard.getTime() > 0.1) {
@@ -148,6 +212,12 @@ var game = (function(){
             'You can mobe the cube too, if you wipe the screen outside of the cube (bottom, left, right).' +
             'If you want to restart, click to the solve button.');
     }
+    
+    function setForwarBackVisibility() {
+        document.getElementById('goForwardCube').style.visibility = (history.isLast() ? 'hidden': 'visible');
+        document.getElementById('goBackCube').style.visibility = (history.isFirst() ? 'hidden': 'visible');
+    }
+
     
     /**
      * Remove menu item.
@@ -167,6 +237,8 @@ var game = (function(){
         
         var menuContainer = document.createElement('img');
         menuContainer.id = menuObject.id;
+        //menuContainer.style.visibility = menuObject.visibility;
+        //menuContainer.style.display = menuObject.display;
         menuContainer.style.position = 'absolute';
         menuContainer.style.backgroundColor = 'black';
         menuContainer.style.opacity = thisOpacity;
@@ -221,6 +293,7 @@ var game = (function(){
         isTimerShow = false;
         
         history.empty();
+        setForwarBackVisibility();
         
         Sounds.snick.play();
         createCubeMesh();
@@ -239,8 +312,6 @@ var game = (function(){
         scoreboard.resetTimer();
         scoreboard.startTimer();
         isTimerShow = true;
-        
-        history.empty();
         
         Sounds.drip.play();
         randomMove(Math.floor(Math.random() * 4) + 10);
@@ -572,6 +643,7 @@ var game = (function(){
      */
     function rotatePageHistory(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i) {
         var element = {
+            'pageRotation': true,
             'x': x,
             'y': y,
             'z': z,
@@ -674,6 +746,8 @@ var game = (function(){
                         scoreboard.stopTimer();
                         setTopScore(scoreboard.getTime());
                     }
+                    
+                    setForwarBackVisibility();
                     
                     gameState = gameStates.playing;
                 }
@@ -1132,9 +1206,10 @@ var game = (function(){
                     xDirection = (mouseYDelta >= 0);
                     
                     var element = {
-                            'rotateX': true,
-                            'rotateY': false,
-                            'rotateZ': false,
+                            'pageRotation': false,
+                            'xRotate': true,
+                            'yRotate': false,
+                            'zRotate': false,
                             'xStatic': xStatic,
                             'yStatic': yStatic,
                             'zStatic': zStatic,
@@ -1155,9 +1230,10 @@ var game = (function(){
                     yDirection = (mouseXDelta >= 0);
                     
                     var element = {
-                            'rotateX': false,
-                            'rotateY': true,
-                            'rotateZ': false,
+                            'pageRotation': false,
+                            'xRotate': false,
+                            'yRotate': true,
+                            'zRotate': false,
                             'xStatic': xStatic,
                             'yStatic': yStatic,
                             'zStatic': zStatic,
@@ -1176,9 +1252,10 @@ var game = (function(){
                     zDirection = (mouseYDelta >= 0);
                     
                     var element = {
-                            'rotateX': false,
-                            'rotateY': false,
-                            'rotateZ': true,
+                            'pageRotation': false,
+                            'xRotate': false,
+                            'yRotate': false,
+                            'zRotate': true,
                             'xStatic': xStatic,
                             'yStatic': yStatic,
                             'zStatic': zStatic,
@@ -1362,6 +1439,10 @@ var game = (function(){
         imageObj['shuffle'].src = 'pics/shuffle.png';
         imageObj['disc'] = new Image();
         imageObj['disc'].src = 'pics/disc.png';
+        imageObj['forward'] = new Image();
+        imageObj['forward'].src = 'pics/forward.png';
+        imageObj['back'] = new Image();
+        imageObj['back'].src = 'pics/back.png';
     }
     preloadResources();
     

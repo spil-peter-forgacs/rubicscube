@@ -12,7 +12,7 @@ var history = (function(){
     var maxHistory = 1000;
     var cutHistory = 100;
     
-    var isLocalStorage = true;
+    var isLocalStorage = false;
     
     
     function getLenght() {
@@ -66,7 +66,7 @@ var history = (function(){
         
         // Cut the beginning of history, if it is too much.
         if (pointerEnd > maxHistory) {
-            history.slice(cutHistory);
+            history = history.slice(cutHistory);
             pointerCurrent -= cutHistory;
             pointerEnd -= cutHistory;
         }
@@ -80,16 +80,20 @@ var history = (function(){
             pointerCurrent--;
             savePointers();
             
-            return history[pointerCurrent];
+            var element = history[pointerCurrent];
+            
+            return element;
         }
     }
     
     function goForward() {
         if (!isLast()) {
+            var element = history[pointerCurrent];
+            
             pointerCurrent++;
             savePointers();
             
-            return history[pointerCurrent];
+            return element;
         }
     }
     
