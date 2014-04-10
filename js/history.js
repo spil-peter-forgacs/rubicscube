@@ -28,6 +28,12 @@ var history = (function(){
         return (pointerCurrent === pointerEnd);
     }
     
+    function empty() {
+        history = [];
+        pointerCurrent = 0;
+        pointerEnd = 0;
+    }
+    
     function addElement(element) {
         history[pointerCurrent] = element;
         
