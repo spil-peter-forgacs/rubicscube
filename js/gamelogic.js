@@ -118,6 +118,8 @@ var game = (function(){
         
         removeMenuItem('solveCube');
         removeMenuItem('shuffleCube');
+        removeMenuItem('goForwardCube');
+        removeMenuItem('goBackCube');
         
         addMenuItem({
             id: 'solveCube',
@@ -197,6 +199,13 @@ var game = (function(){
                 }
                 
                 setForwarBackVisibility();
+                
+                if (isTimerShow) {
+                    scoreboard.hideTimer();
+                    scoreboard.resetTimer();
+                    scoreboard.stopTimer();
+                }
+                isTimerShow = false;
             }
         });
         
