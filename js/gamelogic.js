@@ -23,6 +23,9 @@ var game = (function(){
     // Cube image textures
     var cubeTexture;
     
+    var bgScene = new THREE.Scene();
+    var bgCam = new THREE.Camera();
+    
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
     var xBiggerY = (windowHalfX > windowHalfY);
@@ -468,6 +471,19 @@ var game = (function(){
         }
         
         
+        // Background
+        var bg = new THREE.Mesh(
+            new THREE.PlaneGeometry(2, 2, 0),
+            new THREE.MeshBasicMaterial({map: new THREE.ImageUtils.loadTexture(imageObj['background'].src)})
+        );
+        // The bg plane shouldn't care about the z-buffer.
+        bg.material.depthTest = false;
+        bg.material.depthWrite = false;
+        bgScene = new THREE.Scene();
+        bgCam = new THREE.Camera();
+        bgScene.add(bgCam);
+        bgScene.add(bg);
+        
         // Cube
         
         // Load images as textures.
@@ -489,7 +505,7 @@ var game = (function(){
         
         var geometry = new THREE.Geometry();
         var sprite = THREE.ImageUtils.loadTexture( imageObj['disc'].src );
-        for ( i = 0; i < 2000; i ++ ) {
+        for ( i = 0; i < 200; i ++ ) {
             var vertex = new THREE.Vector3();
             vertex.x = 2000 * Math.random() - 1000;
             vertex.y = -2000 * Math.random() + 1000;
@@ -497,7 +513,7 @@ var game = (function(){
             
             geometry.vertices.push( vertex );
         }
-        material = new THREE.ParticleSystemMaterial( { size: (is_touch_device() ? 15 : 5), sizeAttenuation: false, map: sprite, transparent: true } );
+        material = new THREE.ParticleSystemMaterial( { size: (is_touch_device() ? 10 : 3), sizeAttenuation: false, map: sprite, transparent: true } );
         material.color.setHSL( 0.6, 0.5, 0.5 );
         particles = new THREE.ParticleSystem( geometry, material );
         particles.sortParticles = true;
@@ -1021,6 +1037,10 @@ var game = (function(){
         //particles.position.z = 100 * Math.sin(alpha);
         particles.rotation.y = time / 10;
         
+        renderer.autoClear = false;
+        renderer.clear();
+        renderer.render(bgScene, bgCam);
+        
         renderer.render(scene, camera);
     }
     
@@ -1452,6 +1472,8 @@ var game = (function(){
         imageObj['forward'].src = 'pics/forward.png';
         imageObj['back'] = new Image();
         imageObj['back'].src = 'pics/back.png';
+        imageObj['background'] = new Image();
+        imageObj['background'].src = 'pics/galaxysmall.jpg';
     }
     preloadResources();
     
