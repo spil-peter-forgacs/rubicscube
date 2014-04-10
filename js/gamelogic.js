@@ -141,7 +141,7 @@ var game = (function(){
             width: widthHeight,
             height: widthHeight,
             pic: imageObj['solve'].src,
-            cb: solveCube
+            onrelease: solveCube
         });
         addMenuItem({
             id: 'shuffleCube',
@@ -150,7 +150,7 @@ var game = (function(){
             width: widthHeight,
             height: widthHeight,
             pic: imageObj['shuffle'].src,
-            cb: shuffleCube
+            onrelease: shuffleCube
         });
         addMenuItem({
             id: 'goForwardCube',
@@ -159,7 +159,7 @@ var game = (function(){
             width: widthHeight,
             height: widthHeight,
             pic: imageObj['forward'].src,
-            cb: function () {
+            onrelease: function () {
                 if (gameState != gameStates.playing) {
                     return;
                 }
@@ -190,7 +190,7 @@ var game = (function(){
             width: widthHeight,
             height: widthHeight,
             pic: imageObj['back'].src,
-            cb: function () {
+            onrelease: function () {
                 if (gameState != gameStates.playing) {
                     return;
                 }
@@ -219,6 +219,26 @@ var game = (function(){
                     scoreboard.stopTimer();
                 }
                 isTimerShow = false;
+            }
+        });
+        addMenuItem({
+            id: 'music',
+            x: windowHalfX + (windowHalfX * (xBiggerY ? 0.7 : 0.9)),
+            y: (2 * windowHalfY) - (2.1 * widthHeight),
+            width: widthHeight,
+            height: widthHeight,
+            pic: imageObj['music'].src,
+            onrelease: function () {
+            }
+        });
+        addMenuItem({
+            id: 'rotate',
+            x: windowHalfX + (windowHalfX * (xBiggerY ? 0.7 : 0.9)),
+            y: (2 * windowHalfY) - (1.1 * widthHeight),
+            width: widthHeight,
+            height: widthHeight,
+            pic: imageObj['rotate'].src,
+            onrelease: function () {
             }
         });
         
@@ -278,7 +298,7 @@ var game = (function(){
         
         var menuContainerMouseUp = function () {
             mouseState = mouseStates.released;
-            menuObject.cb();
+            menuObject.onrelease();
             
             // Animate.
             var opacityDirection = 0.1;
@@ -1485,7 +1505,7 @@ var game = (function(){
         imageObj['back'] = new Image();
         imageObj['back'].src = 'pics/back.jpg';
         imageObj['rotate'] = new Image();
-        imageObj['rotate'].src = 'pics/rotate.png';
+        imageObj['rotate'].src = 'pics/rotate.jpg';
         imageObj['music'] = new Image();
         imageObj['music'].src = 'pics/music.jpg';
         imageObj['background'] = new Image();
