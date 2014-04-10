@@ -63,6 +63,9 @@ var game = (function(){
     var isTimerShow = false;
     var topScore;
     
+    var sound;
+    var soundVolume = 0.5;
+    
     /**
      * Full screen
      */
@@ -112,11 +115,13 @@ var game = (function(){
         
         gameState = gameStates.playing;
         
-        var sound = new Howl({
+        var isPlay = localStorage.getItem('rubikMusic');
+        isPlay = (isPlay === 'true' || isPlay === null);
+        sound = new Howl({
             urls: ['music/Pamgaea.mp3'],
-            autoplay: true,
+            autoplay: isPlay,
             loop: true,
-            volume: 1.0,
+            volume: (isPlay ? soundVolume : 0.0),
             onend: function() {
                 //
             }
@@ -229,6 +234,18 @@ var game = (function(){
             height: widthHeight,
             pic: imageObj['music'].src,
             onrelease: function () {
+                var len = 1000;
+                if (sound.volume() > 0) {
+                    var to = 0.0;
+                    localStorage.setItem('rubikMusic', false)
+                    sound.fadeOut(to, len, function  () {
+                    });
+                }
+                else {
+                    localStorage.setItem('rubikMusic', true)
+                    sound.fadeIn(soundVolume, len, function  () {
+                    });
+                }
             }
         });
         addMenuItem({
