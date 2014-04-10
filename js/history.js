@@ -100,8 +100,14 @@ var history = (function(){
         if (rubikHistory) {
             history = rubikHistory;
         }
-        pointerCurrent = localStorage.getItem('rubikPointerCurrent');
-        pointerEnd = localStorage.getItem('rubikPointerEnd');
+        var pC = localStorage.getItem('rubikPointerCurrent');
+        if (pC) {
+            pointerCurrent = pC;
+        }
+        var pE = localStorage.getItem('rubikPointerEnd');
+        if (pE) {
+            pointerEnd = pE;
+        }
     }
     
     return {

@@ -220,10 +220,10 @@ var game = (function(){
         }
         isTimerShow = false;
         
+        history.empty();
+        
         Sounds.snick.play();
         createCubeMesh();
-        
-        history.empty();
         
         gameState = gameStates.playing;
     }
@@ -240,10 +240,10 @@ var game = (function(){
         scoreboard.startTimer();
         isTimerShow = true;
         
+        history.empty();
+        
         Sounds.drip.play();
         randomMove(Math.floor(Math.random() * 4) + 10);
-        
-        history.empty();
     }
     
     function randomMove(i) {
@@ -272,7 +272,7 @@ var game = (function(){
             z = Math.floor(Math.random() * 3) - 1;
         }
         
-        rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, randomMove, i);
+        rotatePageHistory(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, randomMove, i);
     }
     
     /**
@@ -565,6 +565,26 @@ var game = (function(){
         object.matrix = rotWorldMatrix;
         
         object.rotation.setFromRotationMatrix(object.matrix);
+    }
+    
+    /**
+     * Create history and rotate.
+     */
+    function rotatePageHistory(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i) {
+        var element = {
+            'x': x,
+            'y': y,
+            'z': z,
+            'xStatic': xStatic,
+            'yStatic': yStatic,
+            'zStatic': zStatic,
+            'xDirection': xDirection,
+            'yDirection': yDirection,
+            'zDirection': zDirection
+        };
+        history.addElement(element);
+        
+        rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i);
     }
     
     /**
@@ -1054,7 +1074,7 @@ var game = (function(){
                 var yDirection = z1Page < z2Page;
                 var zDirection = y1Page > y2Page;
                 
-                rotatePage(
+                rotatePageHistory(
                     x1Cube, y1Cube, z1Cube,
                     xStatic, yStatic, zStatic,
                     xDirection, yDirection, zDirection
@@ -1072,7 +1092,7 @@ var game = (function(){
                 if ((xStatic && !yStatic && !zStatic) ||
                     (!xStatic && yStatic && !zStatic) ||
                     (!xStatic && !yStatic && zStatic)) {
-                    rotatePage(
+                    rotatePageHistory(
                         x1Cube, y1Cube, z1Cube,
                         xStatic, yStatic, zStatic,
                         xDirection, yDirection, zDirection
@@ -1110,6 +1130,20 @@ var game = (function(){
                 if ('x' == axis) {
                     xStatic = true;
                     xDirection = (mouseYDelta >= 0);
+                    
+                    var element = {
+                            'rotateX': true,
+                            'rotateY': false,
+                            'rotateZ': false,
+                            'xStatic': xStatic,
+                            'yStatic': yStatic,
+                            'zStatic': zStatic,
+                            'xDirection': xDirection,
+                            'yDirection': yDirection,
+                            'zDirection': zDirection
+                        };
+                    history.addElement(element);
+                    
                     for (var x = -1; x <= 1; x++) {
                         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
                     }
@@ -1119,6 +1153,20 @@ var game = (function(){
                     // There are different rotation on the top and on the bottom of cube.
                     //yDirection = ((mouseXDelta >= 0 && mY >= -windowHalfY * 0.8) || (mouseXDelta < 0 && mY < -windowHalfY * 0.8));
                     yDirection = (mouseXDelta >= 0);
+                    
+                    var element = {
+                            'rotateX': false,
+                            'rotateY': true,
+                            'rotateZ': false,
+                            'xStatic': xStatic,
+                            'yStatic': yStatic,
+                            'zStatic': zStatic,
+                            'xDirection': xDirection,
+                            'yDirection': yDirection,
+                            'zDirection': zDirection
+                        };
+                    history.addElement(element);
+                    
                     for (var y = -1; y <= 1; y++) {
                         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
                     }
@@ -1126,6 +1174,20 @@ var game = (function(){
                 else if ('z' == axis) {
                     zStatic = true;
                     zDirection = (mouseYDelta >= 0);
+                    
+                    var element = {
+                            'rotateX': false,
+                            'rotateY': false,
+                            'rotateZ': true,
+                            'xStatic': xStatic,
+                            'yStatic': yStatic,
+                            'zStatic': zStatic,
+                            'xDirection': xDirection,
+                            'yDirection': yDirection,
+                            'zDirection': zDirection
+                        };
+                    history.addElement(element);
+                    
                     for (var z = -1; z <= 1; z++) {
                         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
                     }
