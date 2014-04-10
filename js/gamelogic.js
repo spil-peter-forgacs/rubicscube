@@ -841,7 +841,7 @@ var game = (function(){
             return;
         }
         
-        var rotateSteps = (fancy3D() ? 8 : 1);
+        var rotateSteps = (fancy3D() ? 16 : 8);
         var rotAngleDiff = 0;
         var rotAndleDelta = rotAngle / rotateSteps;
         moveCubes();
@@ -863,7 +863,7 @@ var game = (function(){
                     }
                 }
                 
-                setTimeout(function () {moveCubes()}, 20);
+                setTimeout(function () {moveCubes()}, (fancy3D() ? 10 : 20));
             }
             else {
                 // Moving virtual containers.
