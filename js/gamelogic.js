@@ -142,7 +142,7 @@ var game = (function(){
         if (scoreboard.getTime() > 0.1) {
             scoreboard.showTimer();
         }
-        setTopScore(localStorage.getItem("topScore"));
+        setTopScore(localStorage.getItem("rubikTopScore"));
         scoreboard.help('Shuffle the cube with the shuffle button.' +
             'Then you can move the pages touching the cube and moving to the right direction.'+
             'You can mobe the cube too, if you wipe the screen outside of the cube (bottom, left, right).' +
@@ -663,7 +663,7 @@ var game = (function(){
     function setTopScore(score) {
         if (score && (!topScore || topScore > score)) {
             topScore = score;
-            localStorage.setItem("topScore", topScore);
+            localStorage.setItem("rubikTopScore", topScore);
             
             scoreboard.message(gameName + '<br />Top Score: ' + parseInt(score) + 'sec');
         }
