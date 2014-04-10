@@ -136,11 +136,6 @@ var game = (function(){
     function initializeMenu() {
         var widthHeight = (xBiggerY ? windowHalfY * 0.3 : windowHalfX * 0.3);
         
-        removeMenuItem('solveCube');
-        removeMenuItem('shuffleCube');
-        removeMenuItem('goForwardCube');
-        removeMenuItem('goBackCube');
-        
         addMenuItem({
             id: 'solveCube',
             x: windowHalfX - (windowHalfX * (xBiggerY ? 0.7 : 0.9)),
@@ -299,22 +294,16 @@ var game = (function(){
         document.getElementById('goForwardCube').style.visibility = (history.isLast() ? 'hidden': 'visible');
         document.getElementById('goBackCube').style.visibility = (history.isFirst() ? 'hidden': 'visible');
     }
-
-    
-    /**
-     * Remove menu item.
-     */
-    function removeMenuItem(id) {
-        var element = document.getElementById( id );
-        if (element) {
-            document.getElementById( id ).remove();
-        }
-    }
     
     /**
      * Create menu elements.
      */
     function addMenuItem(menuObject) {
+        var element = document.getElementById( menuObject.id );
+        if (element) {
+            document.getElementById( id ).remove();
+        }
+        
         var thisOpacity = 0.7;
         
         var menuContainer = document.createElement('img');
