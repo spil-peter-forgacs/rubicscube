@@ -35,13 +35,13 @@ var history = (function(){
         return (pointerCurrent === pointerEnd);
     }
     
-    var function saveHistory() {
+    function saveHistory() {
         if (isLocalStorage) {
             localStorage.setItem('rubikHistory', history);
         }
     }
     
-    var function savePointers() {
+    function savePointers() {
         if (isLocalStorage) {
             localStorage.setItem('rubikPointerCurrent', history);
             localStorage.setItem('rubikPointerEnd', history);
@@ -104,4 +104,15 @@ var history = (function(){
         pointerEnd = localStorage.getItem('rubikPointerEnd');
     }
     
+    return {
+        getLenght: getLenght,
+        getCurrent: getCurrent,
+        getHistory: getHistory,
+        isFirst: isFirst,
+        isLast: isLast,
+        empty: empty,
+        addElement: addElement,
+        goBack: goBack,
+        goForward: goForward,
+    }
 })();

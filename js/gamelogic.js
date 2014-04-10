@@ -223,6 +223,8 @@ var game = (function(){
         Sounds.snick.play();
         createCubeMesh();
         
+        history.empty();
+        
         gameState = gameStates.playing;
     }
     
@@ -240,6 +242,8 @@ var game = (function(){
         
         Sounds.drip.play();
         randomMove(Math.floor(Math.random() * 4) + 10);
+        
+        history.empty();
     }
     
     function randomMove(i) {
