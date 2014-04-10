@@ -314,7 +314,7 @@ Scoreboard.prototype.ensureDom = function() {
   help_footer.style.fontSize = (window.innerHeight * 0.04) + "px";
   help_footer.style.borderTop = "1px #676767 solid";
   help_footer.style.marginTop = '15px';
-  help_footer.innerHTML = 'Help';
+  help_footer.innerHTML = 'Help & Credits';
   function help_footer_mouseUp(event) {
     that.toggleHelp();
   }
