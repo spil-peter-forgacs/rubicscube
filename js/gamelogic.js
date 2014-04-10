@@ -577,17 +577,19 @@ var game = (function(){
         
         
         // Background
-        var bg = new THREE.Mesh(
-            new THREE.PlaneGeometry(2, 2, 0),
-            new THREE.MeshBasicMaterial({map: new THREE.ImageUtils.loadTexture(imageObj['background'].src)})
-        );
-        // The bg plane shouldn't care about the z-buffer.
-        bg.material.depthTest = false;
-        bg.material.depthWrite = false;
-        bgScene = new THREE.Scene();
-        bgCam = new THREE.Camera();
-        bgScene.add(bgCam);
-        bgScene.add(bg);
+        if (Detector.webgl) {
+            var bg = new THREE.Mesh(
+                    new THREE.PlaneGeometry(2, 2, 0),
+                    new THREE.MeshBasicMaterial({map: new THREE.ImageUtils.loadTexture(imageObj['background'].src)})
+                );
+                // The bg plane shouldn't care about the z-buffer.
+                bg.material.depthTest = false;
+                bg.material.depthWrite = false;
+                bgScene = new THREE.Scene();
+                bgCam = new THREE.Camera();
+                bgScene.add(bgCam);
+                bgScene.add(bg);
+        }
         
         //
         // Cube
@@ -1236,9 +1238,11 @@ var game = (function(){
             particles.rotation.y = time / 10;
         }
         
-        renderer.autoClear = false;
-        renderer.clear();
-        renderer.render(bgScene, bgCam);
+        if (Detector.webgl) {
+            renderer.autoClear = false;
+            renderer.clear();
+            renderer.render(bgScene, bgCam);
+        }
         
         renderer.render(scene, camera);
     }
