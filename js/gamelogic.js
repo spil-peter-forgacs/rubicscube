@@ -522,7 +522,7 @@ var game = (function(){
         // To get rid of this, you only have to increase the number of cube segments.
         // The WebGLRenderer doesn't needs this workaround.
         // Original: var cubeGeometry = new THREE.CubeGeometry(2.0, 2.0, 2.0);
-        var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 4, 4, 4);
+        var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 1, 1, 1);
         
         // Cube colors: yellow, blue, red, green, orange, white
         // Color order:
