@@ -23,9 +23,11 @@ var game = (function(){
     // Cube image textures
     var cubeTexture;
     
+    // Background element.
     var bgScene = new THREE.Scene();
     var bgCam = new THREE.Camera();
     
+    // Window size and aspect.
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
     var xBiggerY = (windowHalfX > windowHalfY);
@@ -50,6 +52,7 @@ var game = (function(){
     var gameStates = {'loading': 0, 'playing': 1, 'movepage': 2, 'solve': 3, 'shuffle': 4, 'movehistory' : 5};
     var gameState = gameStates.loading;
     
+    // Name of the game.
     var gameName = "Rubik's Cube";
     
     // Preloader
@@ -63,9 +66,12 @@ var game = (function(){
     var isTimerShow = false;
     var topScore;
     
+    // Sound (music).
     var sound;
     var soundVolume = 0.5;
     
+    // Store the rotated state of cube.
+    // Used in rotate button.
     var isRotated = false;
     
     /**
@@ -117,6 +123,7 @@ var game = (function(){
         
         gameState = gameStates.playing;
         
+        // Sound.
         var isPlay = localStorage.getItem('rubikMusic');
         isPlay = (isPlay === 'true' || isPlay === null);
         sound = new Howl({
@@ -170,9 +177,11 @@ var game = (function(){
                 
                 var move = history.goForward();
                 if (move.pageRotation) {
+                    // Page rotation.
                     rotatePage(move.x, move.y, move.z, move.xStatic, move.yStatic, move.zStatic, move.xDirection, move.yDirection, move.zDirection);
                 }
                 else {
+                    // Cube rotation.
                     var x, y, z;
                     for (var i = -1; i <= 1; i++) {
                         x = (move.xRotate ? i : 0);
@@ -201,9 +210,11 @@ var game = (function(){
                 
                 var move = history.goBack();
                 if (move.pageRotation) {
+                    // Page rotation.
                     rotatePage(move.x, move.y, move.z, move.xStatic, move.yStatic, move.zStatic, !move.xDirection, !move.yDirection, !move.zDirection);
                 }
                 else {
+                    // Cube rotation.
                     var x, y, z;
                     for (var i = -1; i <= 1; i++) {
                         x = (move.xRotate ? i : 0);
@@ -215,6 +226,7 @@ var game = (function(){
                 
                 setForwarBackVisibility();
                 
+                // Stepped back. Don't need timer.
                 if (isTimerShow) {
                     scoreboard.hideTimer();
                     scoreboard.resetTimer();
@@ -231,6 +243,7 @@ var game = (function(){
             height: widthHeight,
             pic: imageObj['music'].src,
             onrelease: function () {
+                // Music on-off switch.
                 var len = 1000;
                 if (sound.volume() > 0) {
                     var to = 0.0;
@@ -260,6 +273,7 @@ var game = (function(){
                 }
             },
             onout: function () {
+                // Same as onrelease.
                 if (isRotated) {
                     var yAxisLocal = new THREE.Vector3(0, 1, 0);
                     rotateAroundWorldAxis(rubiksCube, yAxisLocal, Math.PI);
@@ -290,6 +304,9 @@ var game = (function(){
             'Developer: Peter Forgacs');
     }
     
+    /**
+     * Set the visibility of forward and backward buttons.
+     */
     function setForwarBackVisibility() {
         document.getElementById('goForwardCube').style.visibility = (history.isLast() ? 'hidden': 'visible');
         document.getElementById('goBackCube').style.visibility = (history.isFirst() ? 'hidden': 'visible');
@@ -299,6 +316,7 @@ var game = (function(){
      * Create menu elements.
      */
     function addMenuItem(menuObject) {
+        // Remove previous one, if there is any.
         var element = document.getElementById( menuObject.id );
         if (element) {
             document.getElementById( id ).remove();
@@ -330,6 +348,7 @@ var game = (function(){
             // Animate.
             var opacityDirection = 0.1;
             var animMenu = function () {
+                // Bright effect.
                 setTimeout(function () {
                     if (parseFloat(menuContainer.style.opacity) >= 1) {
                         opacityDirection = -opacityDirection;
@@ -360,6 +379,9 @@ var game = (function(){
         document.body.appendChild(menuContainer);
     }
     
+    /**
+     * Solve (recreate) the cube.
+     */
     function solveCube() {
         if (gameState != gameStates.playing) {
             return;
@@ -383,6 +405,9 @@ var game = (function(){
         gameState = gameStates.playing;
     }
     
+    /**
+     * Shuffle the cube.
+     */
     function shuffleCube() {
         if (gameState != gameStates.playing) {
             return;
@@ -399,6 +424,12 @@ var game = (function(){
         randomMove(Math.floor(Math.random() * 4) + 10);
     }
     
+    /**
+     * A random move.
+     * 
+     * @param Integer i
+     *     Shows how many steps do we still need.
+     */
     function randomMove(i) {
         if (i <= 0) {
             return;
@@ -554,7 +585,9 @@ var game = (function(){
         bgScene.add(bgCam);
         bgScene.add(bg);
         
+        //
         // Cube
+        //
         
         // Load images as textures.
         cubeTexture = [
@@ -590,6 +623,9 @@ var game = (function(){
         scene.add( particles );
     }
     
+    /**
+     * Create the small cubes and their containers.
+     */
     function createCubeMesh() {
         // Remove previous cube, if there is any.
         if (cubeMesh[0]) {
@@ -766,6 +802,8 @@ var game = (function(){
      * @param xDirection boolean True, if X rotation is clockwise
      * @param yDirection boolean True, if Y rotation is clockwise
      * @param zDirection boolean True, if Z rotation is clockwise
+     * @param Function cb Call back
+     * @param Integer i Recursive variable
      */
     function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i) {
         // Play sound, if it is not shuffle.
@@ -837,6 +875,8 @@ var game = (function(){
                     cb(i);
                 }
                 else {
+                    // Done.
+                    
                     if (isTimerShow && isCubeSolved()) {
                         scoreboard.stopTimer();
                         setTopScore(scoreboard.getTime());
@@ -869,6 +909,7 @@ var game = (function(){
         var solved = true;
         
         // X axis
+        // The idea is checking X, Y and Z parameter. If any of the is the same on the page, than that page is solved.
         for (var i = -1; i <= 1; i++) {
             var pX = pY = pZ = null;
             var isSameX = isSameY = isSameZ = true;
@@ -930,6 +971,7 @@ var game = (function(){
         }
         
         // Z axis
+        // We don't have to check Z axis after X and Y, but the check is much simmetrical with Z.
         for (var i = -1; i <= 1; i++) {
             var pX = pY = pZ = null;
             var isSameX = isSameY = isSameZ = true;
@@ -962,6 +1004,13 @@ var game = (function(){
         return solved;
     }
     
+    /**
+     * Move middle X cubes.
+     * 
+     * @param Boolean direction
+     * @param Integer i
+     *   Number of X page.
+     */
     function moveMiddleX(direction, i) {
         var tmp = rubiksPage[i][0][1];
         if (direction > 0) {
@@ -978,6 +1027,13 @@ var game = (function(){
         }
     }
     
+    /**
+     * Move middle Y cubes.
+     * 
+     * @param Boolean direction
+     * @param Integer i
+     *   Number of Y page.
+     */
     function moveMiddleY(direction, i) {
         var tmp = rubiksPage[0][i][1];
         if (direction > 0) {
@@ -994,6 +1050,13 @@ var game = (function(){
         }
     }
     
+    /**
+     * Move middle Z cubes.
+     * 
+     * @param Boolean direction
+     * @param Integer i
+     *   Number of Z page.
+     */
     function moveMiddleZ(direction, i) {
         var tmp = rubiksPage[0][1][i];
         if (direction > 0) {
@@ -1010,6 +1073,13 @@ var game = (function(){
         }
     }
     
+    /**
+     * Move corner X cubes.
+     * 
+     * @param Boolean direction
+     * @param Integer i
+     *   Number of X page.
+     */
     function moveCornerX(direction, i) {
         var tmp = rubiksPage[i][1][1];
         if (direction > 0) {
@@ -1026,6 +1096,13 @@ var game = (function(){
         }
     }
     
+    /**
+     * Move corner Y cubes.
+     * 
+     * @param Boolean direction
+     * @param Integer i
+     *   Number of Y page.
+     */
     function moveCornerY(direction, i) {
         var tmp = rubiksPage[1][i][1];
         if (direction > 0) {
@@ -1042,6 +1119,13 @@ var game = (function(){
         }
     }
     
+    /**
+     * Move corner Z cubes.
+     * 
+     * @param Boolean direction
+     * @param Integer i
+     *   Number of Z page.
+     */
     function moveCornerZ(direction, i) {
         var tmp = rubiksPage[1][1][i];
         if (direction > 0) {
@@ -1058,33 +1142,69 @@ var game = (function(){
         }
     }
     
+    /**
+     * Move X page.
+     * 
+     * @param Boolean direction
+     * @param Integer i
+     *   Number of X page.
+     */
     function movePageX(direction, i) {
       moveCornerX(direction, i);
       moveMiddleX(direction, i);
     }
     
+    /**
+     * Move Y page.
+     * 
+     * @param Boolean direction
+     * @param Integer i
+     *   Number of Y page.
+     */
     function movePageY(direction, i) {
       moveCornerY(direction, i);
       moveMiddleY(direction, i);
     }
     
+    /**
+     * Move Z page.
+     * 
+     * @param Boolean direction
+     * @param Integer i
+     *   Number of Z page.
+     */
     function movePageZ(direction, i) {
       moveCornerZ(direction, i);
       moveMiddleZ(direction, i);
     }
     
+    /**
+     * Move cube with X pages.
+     * 
+     * @param Boolean direction
+     */
     function movePageXAll(direction) {
         for (var i = -1; i <= 1; i++) {
             movePageX(direction, i);
         }
     }
     
+    /**
+     * Move cube with Y pages.
+     * 
+     * @param Boolean direction
+     */
     function movePageYAll(direction) {
         for (var i = -1; i <= 1; i++) {
             movePageY(direction, i);
         }
     }
     
+    /**
+     * Move cube with Z pages.
+     * 
+     * @param Boolean direction
+     */
     function movePageZAll(direction) {
         for (var i = -1; i <= 1; i++) {
             movePageZ(direction, i);
@@ -1118,6 +1238,9 @@ var game = (function(){
      * Mouse events.
      */
     
+    /**
+     * Mouse down.
+     */
     function onDocumentMouseDown( event ) {
         event.preventDefault();
         
@@ -1127,12 +1250,18 @@ var game = (function(){
         pointerDown(mouseX, mouseY);
     }
     
+    /**
+     * Mouse move.
+     */
     function onDocumentMouseMove( event ) {
         event.preventDefault();
         
         pointerMove();
     }
     
+    /**
+     * Mouse up.
+     */
     function onDocumentMouseUp( event ) {
         event.preventDefault();
         
@@ -1142,10 +1271,16 @@ var game = (function(){
         pointerUp(mouseX, mouseY);
     }
     
+    /**
+     * Mouse out.
+     */
     function onDocumentMouseOut( event ) {
         pointerOut();
     }
     
+    /**
+     * Touch start.
+     */
     function onDocumentTouchStart( event ) {
         if ( event.touches.length === 1 ) {
             event.preventDefault();
@@ -1159,6 +1294,9 @@ var game = (function(){
         }
     }
     
+    /**
+     * Touch move.
+     */
     function onDocumentTouchMove( event ) {
         event.preventDefault();
         
@@ -1167,6 +1305,9 @@ var game = (function(){
         touches = event.touches;
     }
     
+    /**
+     * Touch end.
+     */
     function onDocumentTouchEnd( event ) {
         if ( touches && touches.length === 1 ) {
             event.preventDefault();
@@ -1178,24 +1319,42 @@ var game = (function(){
         }
     }
     
+    /**
+     * Touch enter.
+     */
     function onDocumentTouchEnter( event ) {
     }
     
+    /**
+     * Touch leave.
+     */
     function onDocumentTouchLeave( event ) {
         pointerOut();
     }
     
+    /**
+     * Touch cancel.
+     */
     function onDocumentTouchCancel( event ) {
         pointerOut();
     }
     
+    /**
+     * Mouse or touch move.
+     */
     function pointerMove() {
     }
     
+    /**
+     * Mouse or touch out.
+     */
     function pointerOut() {
         mouseState = mouseStates.released;
     }
     
+    /**
+     * Mouse or touch down.
+     */
     function pointerDown(mouseX, mouseY) {
         if (mouseState != mouseStates.released) {
             return;
@@ -1210,6 +1369,9 @@ var game = (function(){
         mouseYOnMouseDown = mouseY - windowHalfY;
     }
     
+    /**
+     * Mouse or touch up.
+     */
     function pointerUp(mouseX, mouseY) {
         if (mouseState != mouseStates.clicked) {
             return;
@@ -1285,6 +1447,7 @@ var game = (function(){
             var mouseYDeltaAbs = Math.abs(mouseYDelta);
             
             var axis = '';
+            // Mouse delta should be enough big, and only in one direction.
             if ((mouseXDeltaAbs > 20 && mouseYDeltaAbs < mouseXDeltaAbs / 2) ||
                 (mouseYDeltaAbs > 20 && mouseXDeltaAbs < mouseYDeltaAbs / 2)) {
                 
@@ -1376,6 +1539,13 @@ var game = (function(){
     
     /**
      * Getting the clicked objects.
+     * 
+     * @param Integer eventX
+     *     Mouse or touch X
+     * @param Integer eventY
+     *     Mouse or touch Y
+     * @param Boolean isCube
+     *     Is cube or page check?
      */
     function getClickTargetObjects(eventX, eventY, isCube) {
         var vector = new THREE.Vector3( ( eventX / window.innerWidth ) * 2 - 1, - ( eventY / window.innerHeight ) * 2 + 1, 0.5 );
@@ -1429,10 +1599,20 @@ var game = (function(){
         return intersects;
     }
     
+    /**
+     * Gives back a boolean about.
+     * True, if it is a touch device.
+     * False otherwise.
+     * 
+     * @return Boolean
+     */
     function is_touch_device() {
         return !!('ontouchstart' in window);
     }
     
+    /**
+     * Window resize event.
+     */
     function onWindowResize() {
         windowHalfX = window.innerWidth / 2;
         windowHalfY = window.innerHeight / 2;
@@ -1447,8 +1627,13 @@ var game = (function(){
     }
     
     
-    // Writing some basic texts.
+    // Writing out some basic texts.
     var writeTextContainer;
+    /**
+     * Write text.
+     * 
+     * @param String text
+     */
     function writeText(text) {
         if (!writeTextContainer) {
             writeTextContainer = document.createElement('div');
@@ -1472,6 +1657,9 @@ var game = (function(){
         
         writeTextContainer.innerHTML = text;
     }
+    /**
+     * Remove text.
+     */
     function clearText() {
         if (!writeTextContainer) {
             return;
@@ -1491,6 +1679,7 @@ var game = (function(){
         var textEnding = '';
         writeText(text);
         
+        // Preloader anymation.
         animateText();
         function animateText() {
             setTimeout(
@@ -1514,7 +1703,7 @@ var game = (function(){
             );
         }
         
-        // Create objects.
+        // Preload all the images.
         imageObj = [];
         imageObj['orange'] = new Image();
         imageObj['orange'].src = 'pics/orange.jpg';
