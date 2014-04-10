@@ -506,7 +506,7 @@ var game = (function(){
             new THREE.ImageUtils.loadTexture(imageObj['yellow'].src),
             new THREE.ImageUtils.loadTexture(imageObj['blue'].src),
             new THREE.ImageUtils.loadTexture(imageObj['green'].src),
-            new THREE.ImageUtils.loadTexture(imageObj['gray2'].src),
+            new THREE.ImageUtils.loadTexture(imageObj['gray'].src),
             new THREE.ImageUtils.loadTexture(imageObj['whitespil'].src),
         ];
         // Create cube.
@@ -1470,8 +1470,8 @@ var game = (function(){
         imageObj['blue'].src = 'pics/blue.jpg';
         imageObj['green'] = new Image();
         imageObj['green'].src = 'pics/green.jpg';
-        imageObj['gray2'] = new Image();
-        imageObj['gray2'].src = 'pics/gray2.png';
+        imageObj['gray'] = new Image();
+        imageObj['gray'].src = 'pics/gray3.png';
         imageObj['whitespil'] = new Image();
         imageObj['whitespil'].src = 'pics/whitespil.jpg';
         imageObj['solve'] = new Image();
@@ -1481,9 +1481,13 @@ var game = (function(){
         imageObj['disc'] = new Image();
         imageObj['disc'].src = 'pics/disc.png';
         imageObj['forward'] = new Image();
-        imageObj['forward'].src = 'pics/forward.png';
+        imageObj['forward'].src = 'pics/forward.jpg';
         imageObj['back'] = new Image();
-        imageObj['back'].src = 'pics/back.png';
+        imageObj['back'].src = 'pics/back.jpg';
+        imageObj['rotate'] = new Image();
+        imageObj['rotate'].src = 'pics/rotate.png';
+        imageObj['music'] = new Image();
+        imageObj['music'].src = 'pics/music.jpg';
         imageObj['background'] = new Image();
         imageObj['background'].src = 'pics/galaxysmall.jpg';
     }
