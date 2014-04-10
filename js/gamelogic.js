@@ -606,21 +606,23 @@ var game = (function(){
         
         // Particles
         
-        var geometry = new THREE.Geometry();
-        var sprite = THREE.ImageUtils.loadTexture( imageObj['disc'].src );
-        for ( i = 0; i < 200; i ++ ) {
-            var vertex = new THREE.Vector3();
-            vertex.x = 2000 * Math.random() - 1000;
-            vertex.y = -2000 * Math.random() + 1000;
-            vertex.z = -2000 * Math.random() + 1000;
-            
-            geometry.vertices.push( vertex );
+        if (Detector.webgl) {
+            var geometry = new THREE.Geometry();
+            var sprite = THREE.ImageUtils.loadTexture( imageObj['disc'].src );
+            for ( i = 0; i < 200; i ++ ) {
+                var vertex = new THREE.Vector3();
+                vertex.x = 2000 * Math.random() - 1000;
+                vertex.y = -2000 * Math.random() + 1000;
+                vertex.z = -2000 * Math.random() + 1000;
+                
+                geometry.vertices.push( vertex );
+            }
+            material = new THREE.ParticleSystemMaterial( { size: (is_touch_device() ? 10 : 3), sizeAttenuation: false, map: sprite, transparent: true } );
+            material.color.setHSL( 0.6, 0.5, 0.5 );
+            particles = new THREE.ParticleSystem( geometry, material );
+            particles.sortParticles = true;
+            scene.add( particles );
         }
-        material = new THREE.ParticleSystemMaterial( { size: (is_touch_device() ? 10 : 3), sizeAttenuation: false, map: sprite, transparent: true } );
-        material.color.setHSL( 0.6, 0.5, 0.5 );
-        particles = new THREE.ParticleSystem( geometry, material );
-        particles.sortParticles = true;
-        scene.add( particles );
     }
     
     /**
@@ -644,7 +646,7 @@ var game = (function(){
         // To get rid of this, you only have to increase the number of cube segments.
         // The WebGLRenderer doesn't needs this workaround.
         // Original: var cubeGeometry = new THREE.CubeGeometry(2.0, 2.0, 2.0);
-        var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 1, 1, 1);
+        var cubeGeometry = new THREE.CubeGeometry(1.0, 1.0, 1.0, 4, 4, 4);
         
         // Cube colors: yellow, blue, red, green, orange, white
         // Color order:
@@ -835,8 +837,9 @@ var game = (function(){
             return;
         }
         
+        var rotateSteps = (Detector.webgl ? 8 : 1);
         var rotAngleDiff = 0;
-        var rotAndleDelta = rotAngle / 8;
+        var rotAndleDelta = rotAngle / rotateSteps;
         moveCubes();
         // Animate the cube movements
         function moveCubes() {
@@ -1217,15 +1220,17 @@ var game = (function(){
     function animateScene() {
         requestAnimationFrame(animateScene);
         
-        var time = Date.now() * 0.00005;
-        //h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
-        //material.color.setHSL( h, 0.5, 0.5 );
-        
-        //var alpha = h * 2 * Math.PI;
-        //particles.position.x = 100 * Math.sin(alpha);
-        //particles.position.y = 100 * Math.cos(alpha);
-        //particles.position.z = 100 * Math.sin(alpha);
-        particles.rotation.y = time / 10;
+        if (Detector.webgl) {
+            var time = Date.now() * 0.00005;
+            //h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
+            //material.color.setHSL( h, 0.5, 0.5 );
+            
+            //var alpha = h * 2 * Math.PI;
+            //particles.position.x = 100 * Math.sin(alpha);
+            //particles.position.y = 100 * Math.cos(alpha);
+            //particles.position.z = 100 * Math.sin(alpha);
+            particles.rotation.y = time / 10;
+        }
         
         renderer.autoClear = false;
         renderer.clear();
