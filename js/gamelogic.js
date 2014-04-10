@@ -66,6 +66,8 @@ var game = (function(){
     var sound;
     var soundVolume = 0.5;
     
+    var isRotated = false;
+    
     /**
      * Full screen
      */
@@ -255,7 +257,26 @@ var game = (function(){
             width: widthHeight,
             height: widthHeight,
             pic: imageObj['rotate'].src,
+            onpress: function () {
+                if (!isRotated) {
+                    var yAxisLocal = new THREE.Vector3(0, 1, 0);
+                    rotateAroundWorldAxis(rubiksCube, yAxisLocal, Math.PI);
+                    isRotated = true;
+                }
+            },
+            onout: function () {
+                if (isRotated) {
+                    var yAxisLocal = new THREE.Vector3(0, 1, 0);
+                    rotateAroundWorldAxis(rubiksCube, yAxisLocal, Math.PI);
+                    isRotated = false;
+                }
+            },
             onrelease: function () {
+                if (isRotated) {
+                    var yAxisLocal = new THREE.Vector3(0, 1, 0);
+                    rotateAroundWorldAxis(rubiksCube, yAxisLocal, Math.PI);
+                    isRotated = false;
+                }
             }
         });
         
@@ -335,6 +356,17 @@ var game = (function(){
         };
         menuContainer.addEventListener( 'mouseup', menuContainerMouseUp, false );
         menuContainer.addEventListener( 'touchend', menuContainerMouseUp, false );
+        
+        if (menuObject.onpress) {
+            menuContainer.addEventListener( 'mousedown', menuObject.onpress, false );
+            menuContainer.addEventListener( 'touchstart', menuObject.onpress, false );
+        }
+        
+        if (menuObject.onout) {
+            menuContainer.addEventListener( 'mouseout', menuObject.onout, false );
+            menuContainer.addEventListener( 'touchleave', menuObject.onout, false );
+            menuContainer.addEventListener( 'touchcancel', menuObject.onout, false );
+        }
         
         document.body.appendChild(menuContainer);
     }
