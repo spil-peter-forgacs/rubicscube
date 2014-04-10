@@ -230,7 +230,7 @@ var game = (function(){
         });
         addMenuItem({
             id: 'music',
-            x: windowHalfX + (windowHalfX * (xBiggerY ? 0.7 : 0.9)),
+            x: windowHalfX + (windowHalfX * (xBiggerY ? 0.7 : 0.9)) - (1.1 * widthHeight),
             y: (2 * windowHalfY) - (2.1 * widthHeight),
             width: widthHeight,
             height: widthHeight,
@@ -252,7 +252,7 @@ var game = (function(){
         });
         addMenuItem({
             id: 'rotate',
-            x: windowHalfX + (windowHalfX * (xBiggerY ? 0.7 : 0.9)),
+            x: windowHalfX + (windowHalfX * (xBiggerY ? 0.7 : 0.9)) - (1.1 * widthHeight),
             y: (2 * windowHalfY) - (1.1 * widthHeight),
             width: widthHeight,
             height: widthHeight,
