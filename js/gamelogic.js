@@ -314,12 +314,14 @@ var game = (function(){
     
     /**
      * Create menu elements.
+     * 
+     * @param Object menuObject
      */
     function addMenuItem(menuObject) {
         // Remove previous one, if there is any.
         var element = document.getElementById( menuObject.id );
         if (element) {
-            document.getElementById( id ).remove();
+            document.getElementById( menuObject.id ).remove();
         }
         
         var thisOpacity = 0.7;
