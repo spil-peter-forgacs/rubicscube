@@ -74,6 +74,23 @@ var game = (function(){
     // Used in rotate button.
     var isRotated = false;
     
+    // Detect iOS.
+    var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
+    
+    // Music.
+    var isMusic = (!iOS);
+    
+    // History.
+    var isHistory = (!iOS);
+    
+    // Animation.
+    var isAnimation = (!iOS);
+    
+    // Timer.
+    var isTimer = (!iOS);
+    
+    var isScoreboard = (!iOS);
+    
     /**
      * Full screen
      */
@@ -124,17 +141,19 @@ var game = (function(){
         gameState = gameStates.playing;
         
         // Sound.
-        var isPlay = (fancy3D() ? localStorage.getItem('rubikMusic') : false);
-        isPlay = (isPlay === 'true' || isPlay === null);
-        sound = new Howl({
-            urls: ['music/Pamgaea.mp3'],
-            autoplay: isPlay,
-            loop: true,
-            volume: (isPlay ? soundVolume : 0.0),
-            onend: function() {
-                //
-            }
-        });
+        if (isMusic) {
+            var isPlay = (fancy3D() ? localStorage.getItem('rubikMusic') : false);
+            isPlay = (isPlay === 'true' || isPlay === null);
+            sound = new Howl({
+                urls: ['music/Pamgaea.mp3'],
+                autoplay: isPlay,
+                loop: true,
+                volume: (isPlay ? soundVolume : 0.0),
+                onend: function() {
+                    //
+                }
+            });
+        }
     }
     
     /**
@@ -175,8 +194,8 @@ var game = (function(){
                 
                 gameState = gameStates.movehistory;
                 
-                var move = history.goForward();
-                if (move.pageRotation) {
+                var move = (isHistory && history ? history.goForward() : false);
+                if (move && move.pageRotation) {
                     // Page rotation.
                     rotatePage(move.x, move.y, move.z, move.xStatic, move.yStatic, move.zStatic, move.xDirection, move.yDirection, move.zDirection);
                 }
@@ -208,8 +227,8 @@ var game = (function(){
                 
                 gameState = gameStates.movehistory;
                 
-                var move = history.goBack();
-                if (move.pageRotation) {
+                var move = (isHistory && history ? history.goBack() : false);
+                if (move && move.pageRotation) {
                     // Page rotation.
                     rotatePage(move.x, move.y, move.z, move.xStatic, move.yStatic, move.zStatic, !move.xDirection, !move.yDirection, !move.zDirection);
                 }
@@ -227,7 +246,7 @@ var game = (function(){
                 setForwarBackVisibility();
                 
                 // Stepped back. Don't need timer.
-                if (isTimerShow) {
+                if (isScoreboard && isTimer && isTimerShow) {
                     scoreboard.hideTimer();
                     scoreboard.resetTimer();
                     scoreboard.stopTimer();
@@ -235,29 +254,33 @@ var game = (function(){
                 isTimerShow = false;
             }
         });
-        addMenuItem({
-            id: 'music',
-            x: windowHalfX + (windowHalfX * (xBiggerY ? 0.7 : 0.9)) - (1.1 * widthHeight),
-            y: (2 * windowHalfY) - (2.1 * widthHeight),
-            width: widthHeight,
-            height: widthHeight,
-            pic: imageObj['music'].src,
-            onrelease: function () {
-                // Music on-off switch.
-                var len = 1000;
-                if (sound.volume() > 0) {
-                    var to = 0.0;
-                    localStorage.setItem('rubikMusic', false)
-                    sound.fadeOut(to, len, function  () {
-                    });
+        if (isMusic) {
+            addMenuItem({
+                id: 'music',
+                x: windowHalfX + (windowHalfX * (xBiggerY ? 0.7 : 0.9)) - (1.1 * widthHeight),
+                y: (2 * windowHalfY) - (2.1 * widthHeight),
+                width: widthHeight,
+                height: widthHeight,
+                pic: imageObj['music'].src,
+                onrelease: function () {
+                    if (isMusic) {
+                        // Music on-off switch.
+                        var len = 1000;
+                        if (sound.volume() > 0) {
+                            var to = 0.0;
+                            localStorage.setItem('rubikMusic', false)
+                            sound.fadeOut(to, len, function  () {
+                            });
+                        }
+                        else {
+                            localStorage.setItem('rubikMusic', true)
+                            sound.fadeIn(soundVolume, len, function  () {
+                            });
+                        }
+                    }
                 }
-                else {
-                    localStorage.setItem('rubikMusic', true)
-                    sound.fadeIn(soundVolume, len, function  () {
-                    });
-                }
-            }
-        });
+            });
+        }
         addMenuItem({
             id: 'rotate',
             x: windowHalfX + (windowHalfX * (xBiggerY ? 0.7 : 0.9)) - (1.1 * widthHeight),
@@ -291,25 +314,33 @@ var game = (function(){
         
         setForwarBackVisibility();
         
-        scoreboard.message(gameName);
-        if (scoreboard.getTime() > 0.1) {
-            scoreboard.showTimer();
+        if (isScoreboard) {
+            scoreboard.message(gameName);
+            if (isTimer && scoreboard.getTime() > 0.1) {
+                scoreboard.showTimer();
+            }
+            setTopScore(localStorage.getItem("rubikTopScore"));
+            scoreboard.help('Shuffle the cube with the shuffle button.' +
+                'Then you can move the pages touching the cube and moving to the right direction.'+
+                'You can move the cube too, if you wipe the screen outside of the cube (bottom, left, right).' +
+                //'If you want to restart, click to the solve button.<br />' +
+                'Music: "Pamgaea" Kevin MacLeod (incompetech.com)<br />'+
+                'Developer: Peter Forgacs');
         }
-        setTopScore(localStorage.getItem("rubikTopScore"));
-        scoreboard.help('Shuffle the cube with the shuffle button.' +
-            'Then you can move the pages touching the cube and moving to the right direction.'+
-            'You can move the cube too, if you wipe the screen outside of the cube (bottom, left, right).' +
-            //'If you want to restart, click to the solve button.<br />' +
-            'Music: "Pamgaea" Kevin MacLeod (incompetech.com)<br />'+
-            'Developer: Peter Forgacs');
     }
     
     /**
      * Set the visibility of forward and backward buttons.
      */
     function setForwarBackVisibility() {
-        document.getElementById('goForwardCube').style.visibility = (history.isLast() ? 'hidden': 'visible');
-        document.getElementById('goBackCube').style.visibility = (history.isFirst() ? 'hidden': 'visible');
+        if (isHistory) {
+            document.getElementById('goForwardCube').style.visibility = (!history || history.isLast() ? 'hidden': 'visible');
+            document.getElementById('goBackCube').style.visibility = (!history || history.isFirst() ? 'hidden': 'visible');
+        }
+        else {
+            document.getElementById('goForwardCube').style.visibility = 'hidden';
+            document.getElementById('goBackCube').style.visibility = 'hidden';
+        }
     }
     
     /**
@@ -371,7 +402,9 @@ var game = (function(){
                     }
                 }, 20);
             }
-            animMenu();
+            if (isAnimation) {
+                animMenu();
+            }
         };
         menuContainer.addEventListener( 'mouseup', menuContainerMouseUp, false );
         menuContainer.addEventListener( 'touchend', menuContainerMouseUp, false );
@@ -400,17 +433,24 @@ var game = (function(){
         
         gameState = gameStates.solve;
         
-        if (isTimerShow) {
+        if (isScoreboard && isTimer && isTimerShow) {
             scoreboard.hideTimer();
             scoreboard.resetTimer();
             scoreboard.stopTimer();
         }
         isTimerShow = false;
         
-        history.empty();
-        setForwarBackVisibility();
+        if (isHistory) {
+            !history || history.empty();
+            setForwarBackVisibility();
+        }
         
-        Sounds.snick.play();
+        var isPlay = (fancy3D() ? localStorage.getItem('rubikMusic') : false);
+        isPlay = (isPlay === 'true' || isPlay === null);
+        if (isPlay) {
+            Sounds.snick.play();
+        }
+        
         createCubeMesh();
         
         gameState = gameStates.playing;
@@ -426,12 +466,19 @@ var game = (function(){
         
         gameState = gameStates.shuffle;
         
-        scoreboard.showTimer();
-        scoreboard.resetTimer();
-        scoreboard.startTimer();
+        if (isScoreboard && isTimer) {
+            scoreboard.showTimer();
+            scoreboard.resetTimer();
+            scoreboard.startTimer();
+        }
         isTimerShow = true;
         
-        Sounds.drip.play();
+        var isPlay = (fancy3D() ? localStorage.getItem('rubikMusic') : false);
+        isPlay = (isPlay === 'true' || isPlay === null);
+        if (isPlay) {
+            Sounds.drip.play();
+        }
+        
         randomMove(Math.floor(Math.random() * 4) + 10);
     }
     
@@ -804,7 +851,10 @@ var game = (function(){
             'yDirection': yDirection,
             'zDirection': zDirection
         };
-        history.addElement(element);
+        
+        if (isHistory) {
+            !history || history.addElement(element);
+        }
         
         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i);
     }
@@ -827,7 +877,9 @@ var game = (function(){
     function rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i) {
         // Play sound, if it is not shuffle.
         // Mobile devices can't handle so much requests.
-        if (fancy3D()) {
+        var isPlay = (fancy3D() ? localStorage.getItem('rubikMusic') : false);
+        isPlay = (isPlay === 'true' || isPlay === null);
+        if (isPlay) {
             Sounds.scratch.play();
         }
         
@@ -854,7 +906,7 @@ var game = (function(){
             return;
         }
         
-        var rotateSteps = (fancy3D() ? 16 : 8);
+        var rotateSteps = (fancy3D() ? 16 : (Detector.webgl ? 8 : (isAnimation ? 3 : 2)));
         var rotAngleDiff = 0;
         var rotAndleDelta = rotAngle / rotateSteps;
         moveCubes();
@@ -897,7 +949,7 @@ var game = (function(){
                 else {
                     // Done.
                     
-                    if (isTimerShow && isCubeSolved()) {
+                    if (isScoreboard && isTimer && isTimerShow && isCubeSolved()) {
                         scoreboard.stopTimer();
                         setTopScore(scoreboard.getTime());
                     }
@@ -918,7 +970,9 @@ var game = (function(){
             topScore = score;
             localStorage.setItem("rubikTopScore", topScore);
             
-            scoreboard.message(gameName + '<br />Top Score: ' + parseInt(score) + 'sec');
+            if (isScoreboard) {
+                scoreboard.message(gameName + '<br />Top Score: ' + parseInt(score) + 'sec');
+            }
         }
     }
     
@@ -1503,7 +1557,10 @@ var game = (function(){
                             'yDirection': yDirection,
                             'zDirection': zDirection
                         };
-                    history.addElement(element);
+                    
+                    if (isHistory) {
+                        !history || history.addElement(element);
+                    }
                     
                     for (var x = -1; x <= 1; x++) {
                         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
@@ -1527,7 +1584,9 @@ var game = (function(){
                             'yDirection': yDirection,
                             'zDirection': zDirection
                         };
-                    history.addElement(element);
+                    if (isHistory) {
+                        !history || history.addElement(element);
+                    }
                     
                     for (var y = -1; y <= 1; y++) {
                         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
@@ -1549,7 +1608,9 @@ var game = (function(){
                             'yDirection': yDirection,
                             'zDirection': zDirection
                         };
-                    history.addElement(element);
+                    if (isHistory) {
+                        !history || history.addElement(element);
+                    }
                     
                     for (var z = -1; z <= 1; z++) {
                         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection);
