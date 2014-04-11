@@ -278,6 +278,7 @@ Scoreboard.prototype.ensureDom = function() {
   el.style.fontSize = Math.min(window.innerHeight * 0.033, 20) + "px";
 
   var message_el = this.message_el = document.createElement('div');
+  message_el.id = 'message_el';
   message_el.style.fontWeight = 'normal';
   message_el.style.color = 'white';
   message_el.style.fontSize = Math.min(window.innerHeight * 0.04, 20) + "px";
@@ -295,6 +296,7 @@ Scoreboard.prototype.ensureDom = function() {
   el.appendChild(score_el);
 
   var help_el = this.help_el = document.createElement('div');
+  help_el.id = 'help_el';
   help_el.style.display = 'none';
   help_el.style.fontWeight = 'normal';
   help_el.style.color = 'white';
@@ -307,6 +309,7 @@ Scoreboard.prototype.ensureDom = function() {
   el.appendChild(help_el);
 
   var help_footer = this.help_footer = document.createElement('div');
+  help_footer.id = 'help_footer';
   help_footer.style.display = 'none';
   help_footer.style.fontWeight = 'normal';
   help_footer.style.color = 'white';
@@ -329,6 +332,22 @@ Scoreboard.prototype.ensureDom = function() {
 
   document.body.appendChild(el);
 };
+
+window.addEventListener('resize', scoreboardResize, false);
+function scoreboardResize() {
+  var el = document.getElementById('scoreboard');
+  el.style.width = Math.min((window.innerWidth * 0.5), 200) + "px";
+  el.style.fontSize = Math.min(window.innerHeight * 0.033, 20) + "px";
+  
+  var message_el = document.getElementById('message_el');
+  message_el.style.fontSize = Math.min(window.innerHeight * 0.04, 20) + "px";
+  
+  var help_el = document.getElementById('help_el');
+  help_el.style.fontSize = Math.min(window.innerHeight * 0.028, 20) + "px";
+  
+  var help_footer = document.getElementById('help_footer');
+  help_footer.style.fontSize = Math.min(window.innerHeight * 0.04, 20) + "px";
+}
 
 /****
  * Timer Class
