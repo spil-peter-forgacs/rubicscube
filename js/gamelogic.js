@@ -316,6 +316,15 @@ var game = (function(){
      * Create menu elements.
      * 
      * @param Object menuObject
+            id: Id of element,
+            x: X position,
+            y: Y position,
+            width: Width,
+            height: Height,
+            pic: Source of button picture,
+            onpress: On press function (mouse and touch),
+            onout: On out function (mouse and touch),
+            onrelease: On release function (mouse and touch)
      */
     function addMenuItem(menuObject) {
         // Remove previous one, if there is any.
