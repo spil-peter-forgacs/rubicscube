@@ -275,12 +275,12 @@ Scoreboard.prototype.ensureDom = function() {
   el.style.color = 'yellow';
   el.style.fontFamily = 'Arial, San Serif';
   el.style.fontWeight = 'bold';
-  el.style.fontSize = (window.innerHeight * 0.033) + "px";
+  el.style.fontSize = Math.min(window.innerHeight * 0.033, 20) + "px";
 
   var message_el = this.message_el = document.createElement('div');
   message_el.style.fontWeight = 'normal';
   message_el.style.color = 'white';
-  message_el.style.fontSize = (window.innerHeight * 0.04) + "px";
+  message_el.style.fontSize = Math.min(window.innerHeight * 0.04, 20) + "px";
   //message_el.style.maxHeight = (window.innerHeight * 0.2) + "px";
   message_el.style.overflowY = 'auto';
   el.appendChild(message_el);
@@ -298,7 +298,7 @@ Scoreboard.prototype.ensureDom = function() {
   help_el.style.display = 'none';
   help_el.style.fontWeight = 'normal';
   help_el.style.color = 'white';
-  help_el.style.fontSize = (window.innerHeight * 0.028) + "px";
+  help_el.style.fontSize = Math.min(window.innerHeight * 0.028, 20) + "px";
   help_el.style.borderTop = "1px #676767 solid";
   help_el.style.marginTop = '5px';
   help_el.style.paddingTop = '3px';
@@ -311,7 +311,7 @@ Scoreboard.prototype.ensureDom = function() {
   help_footer.style.fontWeight = 'normal';
   help_footer.style.color = 'white';
   //help_footer.style.maxHeight = (window.innerHeight * 0.2) + "px";
-  help_footer.style.fontSize = (window.innerHeight * 0.04) + "px";
+  help_footer.style.fontSize = Math.min(window.innerHeight * 0.04, 20) + "px";
   help_footer.style.borderTop = "1px #676767 solid";
   help_footer.style.marginTop = '15px';
   help_footer.innerHTML = 'Help & Credits';
