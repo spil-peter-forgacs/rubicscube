@@ -45,11 +45,11 @@ It uses canvas fallback with Safari and iOS. In this case the geometry is ugly a
 
 Game logic
 ----------
-The game uses the rubiksCube 3D object, as a main container of cube.
-The rubiksPage is an array. Contains objects, that are virtual objects containing the small cubes.
+* The game uses the rubiksCube 3D object, as a main container of cube.
+* The rubiksPage is an array. Contains objects, that are virtual objects containing the small cubes.
   They are always on same positions. Used by calculating the clicked objects.
-The cubeMesh is an array. Contains objects of the small cubes.
-The three cubePage is an array. They contains objects, that are used for catching the clicks.
+* The cubeMesh is an array. Contains objects of the small cubes.
+* The three cubePage is an array. They contains objects, that are used for catching the clicks.
   They are front of the three visible cube pages.
 
 Possible future developments
@@ -71,7 +71,9 @@ Mostly self made and GPL.
 Music
 -----
 "Pamgaea" Kevin MacLeod (incompetech.com)
+
 Licensed under Creative Commons: By Attribution 3.0
+
 http://creativecommons.org/licenses/by/3.0/
 
 Developer
