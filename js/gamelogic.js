@@ -448,7 +448,15 @@ var game = (function(){
         var isPlay = (fancy3D() ? localStorage.getItem('rubikMusic') : false);
         isPlay = (isPlay === 'true' || isPlay === null);
         if (isPlay) {
-            Sounds.snick.play();
+            sound = new Howl({
+                urls: ['sounds/snick.mp3'],
+                autoplay: true,
+                loop: false,
+                volume: soundVolume,
+                onend: function() {
+                    //
+                }
+            });
         }
         
         createCubeMesh();
@@ -476,7 +484,15 @@ var game = (function(){
         var isPlay = (fancy3D() ? localStorage.getItem('rubikMusic') : false);
         isPlay = (isPlay === 'true' || isPlay === null);
         if (isPlay) {
-            Sounds.drip.play();
+            sound = new Howl({
+                urls: ['sounds/drip.mp3'],
+                autoplay: true,
+                loop: false,
+                volume: soundVolume,
+                onend: function() {
+                    //
+                }
+            });
         }
         
         randomMove(Math.floor(Math.random() * 4) + 10);
@@ -880,7 +896,15 @@ var game = (function(){
         var isPlay = (fancy3D() ? localStorage.getItem('rubikMusic') : false);
         isPlay = (isPlay === 'true' || isPlay === null);
         if (isPlay) {
-            Sounds.scratch.play();
+            sound = new Howl({
+                urls: ['sounds/scratch.mp3'],
+                autoplay: true,
+                loop: false,
+                volume: soundVolume,
+                onend: function() {
+                    //
+                }
+            });
         }
         
         var xAxisLocal = new THREE.Vector3(1, 0, 0);
@@ -906,7 +930,7 @@ var game = (function(){
             return;
         }
         
-        var rotateSteps = (fancy3D() ? 16 : (Detector.webgl ? 8 : (isAnimation ? 3 : 2)));
+        var rotateSteps = (fancy3D() ? 8 : (Detector.webgl ? 8 : (isAnimation ? 3 : 2)));
         var rotAngleDiff = 0;
         var rotAndleDelta = rotAngle / rotateSteps;
         moveCubes();
@@ -928,7 +952,7 @@ var game = (function(){
                     }
                 }
                 
-                setTimeout(function () {moveCubes()}, (fancy3D() ? 10 : 20));
+                setTimeout(function () {moveCubes()}, (fancy3D() ? 15 : 20));
             }
             else {
                 // Moving virtual containers.
