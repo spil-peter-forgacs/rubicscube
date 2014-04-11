@@ -12,7 +12,7 @@
     <style type="text/css">
         body {
             /* Set the background color of the HTML page to black. */
-            background-color: #000000;
+            background-color: #ffffff;
             /* Hide oversized content. This prevents the scroll bars. */
             overflow: hidden;
         }
@@ -30,6 +30,17 @@
     <script src="js/history.js"></script>
 </head>
 <body>
-    <script src="js/gamelogic.js"></script>
+    <script>
+    if (Detector.webgl || window.location.search == '?go=true') {
+        document.write('<scr' + 'ipt src="js/gamelogic.js"></scr' + 'ipt>');
+    }
+    else {
+        document.write('<h1>WebGL</h1>You need a webGL supported browser (e.g. Chrome, Firefox, Opera) to play this game.<br />' +
+            '<h2>Safari</h2>For Safari browser you can enable it in this way:<br />' +
+            'Click in menu bar. Then: Safari / Preferences / Advanced / Enable "Show Developer menu in menu bar" checkbox<br />' +
+            'After that click in Developer in menu bar, and "Enable WebGL"<br />' +
+            '<h2>Enable the game</h2>Or you can enable the game clicking <a href="?go=true">here</a>.');
+    }
+    </script>
 </body>
 </html>
