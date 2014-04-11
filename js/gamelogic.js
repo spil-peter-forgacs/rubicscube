@@ -299,7 +299,7 @@ var game = (function(){
         scoreboard.help('Shuffle the cube with the shuffle button.' +
             'Then you can move the pages touching the cube and moving to the right direction.'+
             'You can move the cube too, if you wipe the screen outside of the cube (bottom, left, right).' +
-            'If you want to restart, click to the solve button.<br />' +
+            //'If you want to restart, click to the solve button.<br />' +
             'Music: "Pamgaea" Kevin MacLeod (incompetech.com)<br />'+
             'Developer: Peter Forgacs');
     }
