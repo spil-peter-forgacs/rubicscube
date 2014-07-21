@@ -6,7 +6,7 @@
  * @created 31-March-2014 - 11-April-2014
  */
 
-var history = (function(){
+var myHistory = (function(){
     // History container.
     var history = [];
     

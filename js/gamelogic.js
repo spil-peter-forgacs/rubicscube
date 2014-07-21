@@ -194,7 +194,7 @@ var game = (function(){
                 
                 gameState = gameStates.movehistory;
                 
-                var move = (isHistory && history ? history.goForward() : false);
+                var move = (isHistory && myHistory ? myHistory.goForward() : false);
                 if (move && move.pageRotation) {
                     // Page rotation.
                     rotatePage(move.x, move.y, move.z, move.xStatic, move.yStatic, move.zStatic, move.xDirection, move.yDirection, move.zDirection);
@@ -227,7 +227,7 @@ var game = (function(){
                 
                 gameState = gameStates.movehistory;
                 
-                var move = (isHistory && history ? history.goBack() : false);
+                var move = (isHistory && myHistory ? myHistory.goBack() : false);
                 if (move && move.pageRotation) {
                     // Page rotation.
                     rotatePage(move.x, move.y, move.z, move.xStatic, move.yStatic, move.zStatic, !move.xDirection, !move.yDirection, !move.zDirection);
@@ -334,8 +334,8 @@ var game = (function(){
      */
     function setForwarBackVisibility() {
         if (isHistory) {
-            document.getElementById('goForwardCube').style.visibility = (!history || history.isLast() ? 'hidden': 'visible');
-            document.getElementById('goBackCube').style.visibility = (!history || history.isFirst() ? 'hidden': 'visible');
+            document.getElementById('goForwardCube').style.visibility = (!myHistory || myHistory.isLast() ? 'hidden': 'visible');
+            document.getElementById('goBackCube').style.visibility = (!myHistory || myHistory.isFirst() ? 'hidden': 'visible');
         }
         else {
             document.getElementById('goForwardCube').style.visibility = 'hidden';
@@ -441,7 +441,7 @@ var game = (function(){
         isTimerShow = false;
         
         if (isHistory) {
-            !history || history.empty();
+            !myHistory || myHistory.empty();
             setForwarBackVisibility();
         }
         
@@ -869,7 +869,7 @@ var game = (function(){
         };
         
         if (isHistory) {
-            !history || history.addElement(element);
+            !myHistory || myHistory.addElement(element);
         }
         
         rotatePage(x, y, z, xStatic, yStatic, zStatic, xDirection, yDirection, zDirection, cb, i);
@@ -1583,7 +1583,7 @@ var game = (function(){
                         };
                     
                     if (isHistory) {
-                        !history || history.addElement(element);
+                        !myHistory || myHistory.addElement(element);
                     }
                     
                     for (var x = -1; x <= 1; x++) {
@@ -1609,7 +1609,7 @@ var game = (function(){
                             'zDirection': zDirection
                         };
                     if (isHistory) {
-                        !history || history.addElement(element);
+                        !myHistory || myHistory.addElement(element);
                     }
                     
                     for (var y = -1; y <= 1; y++) {
@@ -1633,7 +1633,7 @@ var game = (function(){
                             'zDirection': zDirection
                         };
                     if (isHistory) {
-                        !history || history.addElement(element);
+                        !myHistory || myHistory.addElement(element);
                     }
                     
                     for (var z = -1; z <= 1; z++) {
