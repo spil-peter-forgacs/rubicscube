@@ -1458,6 +1458,10 @@ var game = (function(){
      * Mouse or touch down.
      */
     function pointerDown(mouseX, mouseY) {
+        if (gameState != gameStates.playing) {
+            return;
+        }
+        
         if (mouseState != mouseStates.released) {
             return;
         }
