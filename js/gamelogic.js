@@ -1507,14 +1507,14 @@ var game = (function(){
             // Move through the edge.
             if (clickedObjects['page'][ 0 ].object != intersects['page'][ 0 ].object) {
                 
-                gameState = gameStates.movepage;
-                
                 var xStatic = x1Page == x2Page;
                 var yStatic = y1Page == y2Page;
                 var zStatic = z1Page == z2Page;
                 var xDirection = y1Page > y2Page;
                 var yDirection = z1Page < z2Page;
                 var zDirection = y1Page > y2Page;
+                
+                gameState = gameStates.movepage;
                 
                 rotatePageHistory(
                     x1Cube, y1Cube, z1Cube,
@@ -1524,8 +1524,6 @@ var game = (function(){
             }
             // Move on the side.
             else if (clickedObjects['cube'][ 0 ].object != intersects['cube'][ 0 ].object) {
-                
-                gameState = gameStates.movepage;
                 
                 var xStatic = (0 != y1Page || 0 != z1Page) && x1Cube == x2Cube;
                 var yStatic = (0 != x1Page || 0 != z1Page) && y1Cube == y2Cube;
@@ -1537,6 +1535,9 @@ var game = (function(){
                 if ((xStatic && !yStatic && !zStatic) ||
                     (!xStatic && yStatic && !zStatic) ||
                     (!xStatic && !yStatic && zStatic)) {
+                    
+                    gameState = gameStates.movepage;
+                    
                     rotatePageHistory(
                         x1Cube, y1Cube, z1Cube,
                         xStatic, yStatic, zStatic,
